@@ -113,10 +113,10 @@
       padding: 66px 28px 58px;
     }
 
-    /* Site-wide page views and China Standard Time */
+    /* China Standard Time */
     .hero-stats {
       position: absolute;
-      top: 108px;
+      top: 85px; /* 调整了 top 值，让时间与主标题对齐更佳 */
       right: 28px;
       z-index: 1;
       min-width: 190px;
@@ -124,20 +124,6 @@
       text-align: right;
       line-height: 1.55;
       font-variant-numeric: tabular-nums;
-    }
-
-    .hero-stats-views {
-      color: var(--navy);
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .hero-stats-views strong {
-      margin-left: 5px;
-      color: var(--blue);
-      font-size: 17px;
-      font-weight: 700;
     }
 
     .hero-stats-date,
@@ -321,7 +307,7 @@
       }
       .nav { justify-content: flex-start; gap: 5px 15px; }
       .hero-inner { padding-top: 104px; padding-bottom: 42px; }
-      .hero-stats { top: 14px; right: 20px; }
+      .hero-stats { top: 24px; right: 20px; }
       section { padding: 40px 0; }
       h2 { font-size: 23px; }
     }
@@ -356,10 +342,7 @@
 
   <div class="hero" id="home">
     <div class="hero-inner">
-      <div class="hero-stats" aria-label="Website statistics and China Standard Time">
-        <div class="hero-stats-views">
-          Total Views <strong id="busuanzi_site_pv">_</strong>
-        </div>
+      <div class="hero-stats" aria-label="China Standard Time">
         <div class="hero-stats-date" id="china-date">---- -- --</div>
         <div class="hero-stats-time" id="china-time">--:--:--</div>
       </div>
@@ -469,9 +452,6 @@
       background: transparent;
     }
   </style>
-
-  <!-- Website-wide page-view counter (shared by the English and Chinese pages) -->
-  <script defer src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script>
 
   <script>
     // Display the current date and time in China Standard Time (UTC+8).
