@@ -61,16 +61,12 @@ We welcome highly motivated individuals interested in AI for Science, nucleic ac
 
 ---
 
+# Disclaimer
 
+The information on this website, including laboratory descriptions, personal profiles, research activities, and scientific achievements, is provided for informational and academic purposes only. It does not constitute medical, healthcare, diagnostic, therapeutic, or investment advice.
 
-<div style="color: #6FA8DC;">
+Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.
 
-<h1>Disclaimer</h1>
-
-<p>The information on this website, including laboratory descriptions, personal profiles, research activities, and scientific achievements, is provided for informational and academic purposes only. It does not constitute medical, healthcare, diagnostic, therapeutic, or investment advice.</p>
-
-<p>Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.</p>
-
-<p>While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.</p>
+While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.
 
 </div>
