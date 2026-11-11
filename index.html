@@ -329,12 +329,23 @@
     © <span id="year">2026</span> The Qingquan Xiao Lab · Zhejiang University
   </footer>
   <style>
-    /* Discourage casual saving or dragging of displayed images */
+    /* Disable text selection across the website */
+    body {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /* Disable image selection and dragging */
     img {
       -webkit-user-drag: none;
       user-drag: none;
       user-select: none;
       -webkit-user-select: none;
+    }
+
+    /* Prevent selected text from being highlighted */
+    ::selection {
+      background: transparent;
     }
   </style>
 
