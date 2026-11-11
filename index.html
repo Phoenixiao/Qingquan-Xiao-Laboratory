@@ -200,6 +200,48 @@
       line-height: 1.8;
     }
 
+
+    .footer-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0 22px;
+    }
+
+    .footer-qr img {
+      display: block;
+      width: 132px;
+      height: 132px;
+      object-fit: contain;
+      padding: 5px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .footer-qr-title {
+      margin: 0;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .footer-qr-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 420px) {
+      .footer-qr img {
+        width: 124px;
+        height: 124px;
+      }
+    }
+
     footer {
       padding: 25px 28px 34px;
       color: #81909d;
@@ -274,34 +316,34 @@
 
     <section id="team">
       <h2>Team</h2>
-      <img class="section-image" src="./images/team.png" width="800" alt="Qingquan Xiao Lab team">
+      <img class="section-image" src="./images/team.jpg" width="800" alt="Qingquan Xiao Lab team">
       <p class="image-note">Our team currently consists of one postdoctoral researcher, two Ph.D. students, and five graduate students.</p>
     </section>
 
     <section id="research">
       <h2>Research Interests</h2>
-      <img class="section-image" src="./images/research-interests.jpg" width="800" alt="Research interests">
+      <img class="section-image" src="./images/research-interests.png" width="800" alt="Research interests">
     </section>
 
     <section id="selected-publications">
       <h2>Selected Publications</h2>
       <p class="publication-note"># denotes first or co-first authors.</p>
-      <img class="section-image" src="./images/selected-publications.jpg" width="800" alt="Selected publications">
+      <img class="section-image" src="./images/selected-publications.png" width="800" alt="Selected publications">
     </section>
 
     <section id="other-publications">
       <h2>Other Publications</h2>
-      <img class="section-image" src="./images/other-publications.jpg" width="800" alt="Other publications">
+      <img class="section-image" src="./images/other-publications.png" width="800" alt="Other publications">
     </section>
 
     <section id="patents">
       <h2>Patents</h2>
-      <img class="section-image" src="./images/patents.jpg" width="800" alt="Patents">
+      <img class="section-image" src="./images/patents.png" width="800" alt="Patents">
     </section>
 
     <section id="presentations">
       <h2>Conference Presentations</h2>
-      <img class="section-image" src="./images/conference-presentations.jpg" width="800" alt="Conference presentations">
+      <img class="section-image" src="./images/conference-presentations.png" width="800" alt="Conference presentations">
     </section>
   </main>
 
@@ -326,6 +368,13 @@
   </main>
 
   <footer>
+    <div class="footer-qr">
+      <p class="footer-qr-title">Follow Us</p>
+      <img src="./images/QR.jpeg"
+           alt="WeChat official account QR code for The Qingquan Xiao Lab"
+           width="132" height="132">
+      <p class="footer-qr-note">Scan to follow our WeChat account</p>
+    </div>
     © <span id="year">2026</span> The Qingquan Xiao Lab · Zhejiang University
   </footer>
   <style>
