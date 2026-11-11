@@ -8,11 +8,11 @@ Dr. Xiao was selected for the Shanghai Postdoctoral Excellence Program, and his 
 ## Email: qqxiao@@zju.edu.cn
 ## Website: http://www.imedlab.net/NewsDetail.aspx?ID=860
 
-#Team
+# Team
 
 Our team currently consists of one postdoctoral researcher, two Ph.D. students, and five graduate students.
 
-## Research Interests
+# Research Interests
 
 # Selected Publications (# denotes first or co-first authors)
 
@@ -28,8 +28,8 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 We welcome highly motivated individuals interested in AI for Science, nucleic acid delivery, genome editing, therapeutics, and drug discovery to join our team.
 
 ======================================
-**Disclaimer
+## Disclaimer
 The information on this website, including laboratory descriptions, personal profiles, research activities, and scientific achievements, is provided for informational and academic purposes only. It does not constitute medical, healthcare, diagnostic, therapeutic, or investment advice.
 Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.
-While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.******
+While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.
 ======================================
