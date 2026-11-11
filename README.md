@@ -30,7 +30,8 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 
 ---
 
-# Selected Publications *# denotes first or co-first authors.*
+# Selected Publications
+*# denotes first or co-first authors.*
 
 ![Selected Publications](https://mmbiz.qpic.cn/mmbiz_png/1QDn4PSnJ6uyj5ePpyAmsF5bJmudgpfXI9fcU38bIjJ3VvTjW1Gwn7KrT3YicjnTGxwpuFzRribtfoGM29IwIbQaeRP57cgMOJNTSEtx7mTh4/640?wx_fmt=png&from=appmsg)
 
@@ -67,3 +68,11 @@ The information on this website, including laboratory descriptions, personal pro
 Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.
 
 While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.
+
+<div style="color: #6FA8DC;">
+
+<h1>Disclaimer</h1>
+
+<p>The information on this website, including laboratory descriptions, personal profiles, research activities, and scientific achievements, is provided for informational and academic purposes only.</p>
+
+</div>
