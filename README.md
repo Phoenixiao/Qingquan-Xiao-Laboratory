@@ -20,7 +20,7 @@ Dr. Xiao was selected for the Shanghai Postdoctoral Excellence Program, and his 
 # Team
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1QDn4PSnJ6uIYHLIOIhHTicO1YcRu0v0tqtCBGXWybTepk1NBuTsFu6CwD4vmdEoHnHTxicsthkWKcOxYeRbXbwib791mbicbTygj5zCw249nzM/640?wx_fmt=jpeg" width="700" alt="Team">
+  <img src="./images/team.jpg" width="700" alt="Team">
 </p>
 
 Our team currently consists of one postdoctoral researcher, two Ph.D. students, and five graduate students.
@@ -30,7 +30,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Research Interests
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/mmbiz_png/1QDn4PSnJ6sHAOOdNdsjK8FFWKasUVfDBSNCbzAgxOWPL5ibL09pYUJibWfnPqldnchYy5mNiaM8x12NicqkjZbxU6OMTtHLb6KNKJgg0IGx3UU/640?wx_fmt=png&from=appmsg" width="800" alt="Research Interests">
+  <img src="./images/research-interests.png" width="800" alt="Research Interests">
 </p>
 
 ---
@@ -40,7 +40,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 *# denotes first or co-first authors.*
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/mmbiz_png/1QDn4PSnJ6uyj5ePpyAmsF5bJmudgpfXI9fcU38bIjJ3VvTjW1Gwn7KrT3YicjnTGxwpuFzRribtfoGM29IwIbQaeRP57cgMOJNTSEtx7mTh4/640?wx_fmt=png&from=appmsg" width="800" alt="Selected Publications">
+  <img src="./images/selected-publications.png" width="800" alt="Selected Publications">
 </p>
 
 ---
@@ -48,7 +48,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Other Publications
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/mmbiz_png/1QDn4PSnJ6sT6ib9p3l8ibA5nficFlZYxg9ODianeAJv1djKWVRSvxFD4icMvaYUF1XMH8Jbs62ybQWP3vJX5tJqpicQN2WIILGX2b1yltViaf44AQ/640?wx_fmt=png&from=appmsg" width="800" alt="Other Publications">
+  <img src="./images/other-publications.png" width="800" alt="Other Publications">
 </p>
 
 ---
@@ -56,7 +56,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Patents
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/mmbiz_png/1QDn4PSnJ6uVmxLczmSLA4ygDI9edZzS9AzDYtK8okzckP2P8ja2TjouggickRq5Uml1127RxA0HjceLffM7XceZrfY2rnzj9fagPnpsJ7Dg/640?wx_fmt=png&from=appmsg" width="800" alt="Patents">
+  <img src="./images/patents.png" width="800" alt="Patents">
 </p>
 
 ---
@@ -64,7 +64,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Conference Presentations
 
 <p align="left">
-  <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/1QDn4PSnJ6vzZ7GXlnz8sLnibqtH9QMzgonToqvYCYdX8M3q0we0HP8mkHGib9NBUXDZicnibrXSeVCEPueibOOojqotmbVNTwFzGUia77qI6R9ia4/640?wx_fmt=png&from=appmsg" width="800" alt="Conference Presentations">
+  <img src="./images/conference-presentations.png" width="800" alt="Conference Presentations">
 </p>
 
 ---
@@ -82,3 +82,4 @@ The information on this website, including laboratory descriptions, personal pro
 Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.
 
 While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.
+
