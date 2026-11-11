@@ -329,28 +329,31 @@
     © <span id="year">2026</span> The Qingquan Xiao Lab · Zhejiang University
   </footer>
   <style>
-  /* Prevent image dragging and selection */
-  img {
-    -webkit-user-drag: none;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-</style>
-
-<script>
-  // Disable right-click on images
-  document.addEventListener('contextmenu', function(e) {
-    if (e.target.tagName === 'IMG') {
-      e.preventDefault();
+    /* Discourage casual saving or dragging of displayed images */
+    img {
+      -webkit-user-drag: none;
+      user-drag: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
-  });
+  </style>
 
-  // Disable image dragging
-  document.addEventListener('dragstart', function(e) {
-    if (e.target.tagName === 'IMG') {
-      e.preventDefault();
-    }
-  });
-</script>
+  <script>
+    // Disable the context menu on images
+    document.addEventListener('contextmenu', function (event) {
+      if (event.target.closest && event.target.closest('img')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+
+    // Disable dragging images
+    document.addEventListener('dragstart', function (event) {
+      if (event.target.closest && event.target.closest('img')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+  </script>
 </body>
 </html>
