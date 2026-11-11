@@ -20,7 +20,7 @@ Dr. Xiao was selected for the Shanghai Postdoctoral Excellence Program, and his 
 # Team
 
 <p align="left">
-  <img src="./images/team.jpg" width="700" alt="Team">
+  <img src="./images/team.jpg" width="800" alt="Team">
 </p>
 
 Our team currently consists of one postdoctoral researcher, two Ph.D. students, and five graduate students.
