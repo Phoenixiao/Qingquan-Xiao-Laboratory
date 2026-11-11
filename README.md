@@ -12,7 +12,7 @@ Dr. Xiao was selected for the Shanghai Postdoctoral Excellence Program, and his 
 
 **Email:** qqxiao@@zju.edu.cn
 
-**Website:** [Gu iMedication Lab](http://www.imedlab.net/NewsDetail.aspx?ID=860)
+**Website:** [Qingquan Xiao](http://www.imedlab.net/NewsDetail.aspx?ID=860)
 
 ---
 
@@ -69,4 +69,3 @@ Information about genome editing technologies, gene therapies, and related resea
 
 While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.
 
-</div>
