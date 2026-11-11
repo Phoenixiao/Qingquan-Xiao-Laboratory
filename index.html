@@ -5,18 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="The Qingquan Xiao Lab at Zhejiang University develops next-generation genome editing tools and gene therapies.">
   <meta name="theme-color" content="#173b5e">
-  <link rel="canonical" href="https://phoenixiao.github.io/Qingquan-Xiao-Laboratory">
-  <script>
-    // Use the shorter canonical hostname required by the counter service.
-    if (window.location.hostname === "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory") {
-      window.location.replace(
-        "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory" +
-        window.location.pathname +
-        window.location.search +
-        window.location.hash
-      );
-    }
-  </script>
   <title>The Qingquan Xiao Lab | Zhejiang University</title>
   <style>
     :root {
@@ -107,36 +95,9 @@
     }
 
     .hero-inner {
-      position: relative;
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 66px 28px 58px;
-    }
-
-    /* China Standard Time */
-    .hero-stats {
-      position: absolute;
-      top: 85px; /* 调整了 top 值，让时间与主标题对齐更佳 */
-      right: 28px;
-      z-index: 1;
-      min-width: 190px;
-      color: var(--muted);
-      text-align: right;
-      line-height: 1.55;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .hero-stats-date,
-    .hero-stats-time {
-      font-size: 12px;
-      letter-spacing: .02em;
-      white-space: nowrap;
-    }
-
-    .hero-stats-time {
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 600;
     }
 
     .eyebrow {
@@ -306,8 +267,7 @@
         padding-bottom: 13px;
       }
       .nav { justify-content: flex-start; gap: 5px 15px; }
-      .hero-inner { padding-top: 104px; padding-bottom: 42px; }
-      .hero-stats { top: 24px; right: 20px; }
+      .hero-inner { padding-top: 48px; padding-bottom: 42px; }
       section { padding: 40px 0; }
       h2 { font-size: 23px; }
     }
@@ -315,7 +275,6 @@
     @media (max-width: 420px) {
       main { padding: 0 20px; }
       .header-inner, .hero-inner { padding-left: 20px; padding-right: 20px; }
-      .hero-stats { right: 20px; }
       .join-section { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
       .brand { font-size: 16px; }
       .nav a { font-size: 12px; }
@@ -335,17 +294,13 @@
         <a href="#patents">Patents</a>
         <a href="#presentations">Presentations</a>
         <a href="#join-us">Join Us</a>
-        <a class="language-switch" href="./index-zh.html" lang="zh" aria-label="切换到中文版">中文</a>
+        <a class="language-switch" href="./index-zh.html" lang="zh" aria-label="切换到中文版">CN</a>
       </nav>
     </div>
   </header>
 
   <div class="hero" id="home">
     <div class="hero-inner">
-      <div class="hero-stats" aria-label="China Standard Time">
-        <div class="hero-stats-date" id="china-date">---- -- --</div>
-        <div class="hero-stats-time" id="china-time">--:--:--</div>
-      </div>
       <p class="eyebrow">Zhejiang University</p>
       <h1>The Qingquan Xiao Lab</h1>
       <p class="hero-subtitle">Developing next-generation genome editing tools and gene therapies.</p>
@@ -454,39 +409,6 @@
   </style>
 
   <script>
-    // Display the current date and time in China Standard Time (UTC+8).
-    (function () {
-      const dateElement = document.getElementById("china-date");
-      const timeElement = document.getElementById("china-time");
-
-      function updateChinaClock() {
-        const now = new Date();
-        const parts = new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Asia/Shanghai",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hourCycle: "h23"
-        }).formatToParts(now);
-
-        const values = {};
-        parts.forEach(function (part) {
-          if (part.type !== "literal") values[part.type] = part.value;
-        });
-
-        dateElement.textContent =
-          values.year + "-" + values.month + "-" + values.day;
-        timeElement.textContent =
-          values.hour + ":" + values.minute + ":" + values.second;
-      }
-
-      updateChinaClock();
-      window.setInterval(updateChinaClock, 1000);
-    })();
-
     // Disable the context menu on images
     document.addEventListener('contextmenu', function (event) {
       if (event.target.closest && event.target.closest('img')) {
