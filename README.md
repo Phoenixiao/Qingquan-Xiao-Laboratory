@@ -30,7 +30,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Research Interests
 
 <p align="left">
-  <img src="./images/research-interests.png" width="800" alt="Research Interests">
+  <img src="./images/research-interests.jpg" width="800" alt="Research Interests">
 </p>
 
 ---
@@ -40,7 +40,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 *# denotes first or co-first authors.*
 
 <p align="left">
-  <img src="./images/selected-publications.png" width="800" alt="Selected Publications">
+  <img src="./images/selected-publications.jpg" width="800" alt="Selected Publications">
 </p>
 
 ---
@@ -48,7 +48,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Other Publications
 
 <p align="left">
-  <img src="./images/other-publications.png" width="800" alt="Other Publications">
+  <img src="./images/other-publications.jpg" width="800" alt="Other Publications">
 </p>
 
 ---
@@ -56,7 +56,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Patents
 
 <p align="left">
-  <img src="./images/patents.png" width="800" alt="Patents">
+  <img src="./images/patents.jpg" width="800" alt="Patents">
 </p>
 
 ---
@@ -64,7 +64,7 @@ Our team currently consists of one postdoctoral researcher, two Ph.D. students, 
 # Conference Presentations
 
 <p align="left">
-  <img src="./images/conference-presentations.png" width="800" alt="Conference Presentations">
+  <img src="./images/conference-presentations.jpg" width="800" alt="Conference Presentations">
 </p>
 
 ---
