@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="The Qingquan Xiao Lab at Zhejiang University develops next-generation genome editing tools and gene therapies.">
   <meta name="theme-color" content="#173b5e">
+
   <title>The Qingquan Xiao Lab | Zhejiang University</title>
+
   <style>
     :root {
       --navy: #173b5e;
@@ -18,7 +21,9 @@
       --max-width: 1080px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html {
       scroll-behavior: smooth;
@@ -29,14 +34,21 @@
       margin: 0;
       color: var(--ink);
       background: var(--paper);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Arial, sans-serif;
       font-size: 16px;
       line-height: 1.75;
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
 
     .site-header {
       position: sticky;
@@ -90,14 +102,46 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #f4f8fb 0%, #ffffff 72%);
+      background: linear-gradient(
+        135deg, #f4f8fb 0%, #ffffff 72%
+      );
       border-bottom: 1px solid var(--line);
     }
 
     .hero-inner {
+      position: relative;
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 66px 28px 58px;
+    }
+
+    /* Date, weekday and China Standard Time */
+
+    .hero-stats {
+      position: absolute;
+      top: 108px;
+      right: 28px;
+      z-index: 1;
+      min-width: 190px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.55;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-stats-date,
+    .hero-stats-weekday {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .hero-stats-time {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .eyebrow {
@@ -153,10 +197,17 @@
       border-radius: 2px;
     }
 
-    p { margin: 0 0 17px; }
-    p:last-child { margin-bottom: 0; }
+    p {
+      margin: 0 0 17px;
+    }
 
-    .profile-copy { max-width: 900px; }
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .profile-copy {
+      max-width: 900px;
+    }
 
     .contact {
       display: flex;
@@ -167,7 +218,9 @@
       font-size: 14px;
     }
 
-    .contact strong { color: var(--ink); }
+    .contact strong {
+      color: var(--ink);
+    }
 
     .section-image {
       display: block;
@@ -209,7 +262,6 @@
       line-height: 1.8;
     }
 
-
     .footer-qr {
       display: flex;
       flex-direction: column;
@@ -244,13 +296,6 @@
       line-height: 1.5;
     }
 
-    @media (max-width: 420px) {
-      .footer-qr img {
-        width: 124px;
-        height: 124px;
-      }
-    }
-
     footer {
       padding: 25px 28px 34px;
       color: #81909d;
@@ -266,135 +311,375 @@
         padding-top: 14px;
         padding-bottom: 13px;
       }
-      .nav { justify-content: flex-start; gap: 5px 15px; }
-      .hero-inner { padding-top: 48px; padding-bottom: 42px; }
-      section { padding: 40px 0; }
-      h2 { font-size: 23px; }
+
+      .nav {
+        justify-content: flex-start;
+        gap: 5px 15px;
+      }
+
+      .hero-inner {
+        padding-top: 104px;
+        padding-bottom: 42px;
+      }
+
+      .hero-stats {
+        top: 14px;
+        right: 20px;
+      }
+
+      section {
+        padding: 40px 0;
+      }
+
+      h2 {
+        font-size: 23px;
+      }
     }
 
     @media (max-width: 420px) {
-      main { padding: 0 20px; }
-      .header-inner, .hero-inner { padding-left: 20px; padding-right: 20px; }
-      .join-section { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
-      .brand { font-size: 16px; }
-      .nav a { font-size: 12px; }
+      main {
+        padding: 0 20px;
+      }
+
+      .header-inner,
+      .hero-inner {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .hero-stats {
+        right: 20px;
+      }
+
+      .join-section {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .nav a {
+        font-size: 12px;
+      }
+
+      .footer-qr img {
+        width: 124px;
+        height: 124px;
+      }
     }
   </style>
 </head>
+
 <body>
+
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="#home">The Qingquan Xiao Lab</a>
+
+      <a class="brand" href="#home">
+        The Qingquan Xiao Lab
+      </a>
+
       <nav class="nav" aria-label="Main navigation">
         <a href="#pi">PI</a>
         <a href="#team">Team</a>
         <a href="#research">Research</a>
-        <a href="#selected-publications">Selected Publications</a>
-        <a href="#other-publications">Other Publications</a>
+        <a href="#selected-publications">
+          Selected Publications
+        </a>
+        <a href="#other-publications">
+          Other Publications
+        </a>
         <a href="#patents">Patents</a>
         <a href="#presentations">Presentations</a>
         <a href="#join-us">Join Us</a>
-        <a class="language-switch" href="./index-zh.html" lang="zh" aria-label="切换到中文版">CN</a>
+
+        <a class="language-switch"
+           href="./index-zh.html"
+           lang="zh"
+           aria-label="Switch to Chinese version">
+          CN
+        </a>
       </nav>
+
     </div>
   </header>
 
+
   <div class="hero" id="home">
+
     <div class="hero-inner">
+
+      <!-- Date, weekday and time -->
+
+      <div class="hero-stats"
+           aria-label="Current date, weekday and China Standard Time">
+
+        <div class="hero-stats-date" id="china-date">
+          ---- -- --
+        </div>
+
+        <div class="hero-stats-weekday" id="china-weekday">
+          ---
+        </div>
+
+        <div class="hero-stats-time" id="china-time">
+          --:--:--
+        </div>
+
+      </div>
+
       <p class="eyebrow">Jinhua Institute of Zhejiang University</p>
+
       <h1>The Qingquan Xiao Lab</h1>
-      <p class="hero-subtitle">Developing next-generation genome editing tools and gene therapies.</p>
+
+      <p class="hero-subtitle">
+        Developing next-generation genome editing tools and gene therapies.
+      </p>
+
     </div>
   </div>
 
+
   <main>
+
     <section id="pi">
+
       <h2>Principal Investigator</h2>
+
       <div class="profile-copy">
-        <p>Qingquan Xiao, Ph.D., is a Principal Investigator at the Jinhua Institute of Zhejiang University and the School of Pharmacy, Zhejiang University, and a member of Gu iMedication Lab. He leads an independent research group focused on developing next-generation genome editing tools and gene therapies.</p>
 
-        <p>Prior to joining Zhejiang University, Dr. Xiao was a postdoctoral fellow at the Center for Excellence in Brain Science and Intelligence Technology (Institute of Neuroscience), Chinese Academy of Sciences. He received his Ph.D. in Neurobiology from the University of Chinese Academy of Sciences, where he conducted his doctoral research in the Non-human Primate Disease Models Laboratory, and earned his bachelor's degree in Biology from Sichuan University.</p>
+        <p>
+          Qingquan Xiao, Ph.D., is a Principal Investigator at the
+          Jinhua Institute of Zhejiang University and the School of
+          Pharmacy, Zhejiang University, and a member of Gu iMedication
+          Lab. He leads an independent research group focused on
+          developing next-generation genome editing tools and gene therapies.
+        </p>
 
-        <p>Dr. Xiao was selected for the Shanghai Postdoctoral Excellence Program, and his work has been published in <em>Nature Biotechnology</em>, <em>Nature Methods</em>, <em>Nature Chemical Biology</em>, <em>Science Translational Medicine</em>, <em>Advanced Science</em>, <em>Journal of Clinical Investigation</em>, and <em>Cell Discovery</em>, with contributions as a first, co-first, or co-corresponding author. Dr. Xiao also serves as a peer reviewer for scientific journals and academic publishers, evaluating manuscripts and book chapters.</p>
+        <p>
+          Prior to joining Zhejiang University, Dr. Xiao was a
+          postdoctoral fellow at the Center for Excellence in Brain
+          Science and Intelligence Technology (Institute of Neuroscience),
+          Chinese Academy of Sciences. He received his Ph.D. in
+          Neurobiology from the University of Chinese Academy of Sciences,
+          where he conducted his doctoral research in the Non-human
+          Primate Disease Models Laboratory, and earned his bachelor's
+          degree in Biology from Sichuan University.
+        </p>
+
+        <p>
+          Dr. Xiao was selected for the Shanghai Postdoctoral Excellence
+          Program, and his work has been published in
+          <em>Nature Biotechnology</em>,
+          <em>Nature Methods</em>,
+          <em>Nature Chemical Biology</em>,
+          <em>Science Translational Medicine</em>,
+          <em>Advanced Science</em>,
+          <em>Journal of Clinical Investigation</em>,
+          and <em>Cell Discovery</em>, with contributions as a first,
+          co-first, or co-corresponding author. Dr. Xiao also serves as
+          a peer reviewer for scientific journals and academic publishers,
+          evaluating manuscripts and book chapters.
+        </p>
 
         <div class="contact">
-          <span><strong>Email:</strong> qqxiao@@zju.edu.cn</span>
-          <span><strong>Website:</strong> <a href="http://www.imedlab.net/NewsDetail.aspx?ID=860" target="_blank" rel="noopener noreferrer">Qingquan Xiao</a></span>
+
+          <span>
+            <strong>Email:</strong>
+            qqxiao@zju.edu.cn
+          </span>
+
+          <span>
+            <strong>Website:</strong>
+            <a href="http://www.imedlab.net/NewsDetail.aspx?ID=860"
+               target="_blank"
+               rel="noopener noreferrer">
+              Qingquan Xiao
+            </a>
+          </span>
+
         </div>
       </div>
     </section>
 
+
     <section id="team">
+
       <h2>Team</h2>
-      <img class="section-image" src="./images/team.png" width="800" alt="Qingquan Xiao Lab team">
-      <p class="image-note">Our team currently consists of one postdoctoral researcher, two Ph.D. students, and five graduate students.</p>
+
+      <img class="section-image"
+           src="./images/team.png"
+           width="800"
+           alt="Qingquan Xiao Lab team">
+
+      <p class="image-note">
+        Our team currently consists of one postdoctoral researcher,
+        two Ph.D. students, and five graduate students.
+      </p>
+
     </section>
+
 
     <section id="research">
+
       <h2>Research Interests</h2>
-      <img class="section-image" src="./images/research-interests.jpg" width="800" alt="Research interests">
+
+      <img class="section-image"
+           src="./images/research-interests.jpg"
+           width="800"
+           alt="Research interests">
+
     </section>
+
 
     <section id="selected-publications">
+
       <h2>Selected Publications</h2>
-      <p class="publication-note"># denotes first or co-first authors.</p>
-      <img class="section-image" src="./images/selected-publications.jpg" width="800" alt="Selected publications">
+
+      <p class="publication-note">
+        # denotes first or co-first authors.
+      </p>
+
+      <img class="section-image"
+           src="./images/selected-publications.jpg"
+           width="800"
+           alt="Selected publications">
+
     </section>
+
 
     <section id="other-publications">
+
       <h2>Other Publications</h2>
-      <img class="section-image" src="./images/other-publications.jpg" width="800" alt="Other publications">
+
+      <img class="section-image"
+           src="./images/other-publications.jpg"
+           width="800"
+           alt="Other publications">
+
     </section>
+
 
     <section id="patents">
+
       <h2>Patents</h2>
-      <img class="section-image" src="./images/patents.jpg" width="800" alt="Patents">
+
+      <img class="section-image"
+           src="./images/patents.jpg"
+           width="800"
+           alt="Patents">
+
     </section>
+
 
     <section id="presentations">
+
       <h2>Conference Presentations</h2>
-      <img class="section-image" src="./images/conference-presentations.jpg" width="800" alt="Conference presentations">
+
+      <img class="section-image"
+           src="./images/conference-presentations.jpg"
+           width="800"
+           alt="Conference presentations">
+
     </section>
+
   </main>
+
 
   <section class="join-section" id="join-us">
+
     <div class="join-inner">
+
       <h2>Join Us</h2>
-      <p>We welcome highly motivated individuals interested in AI for Science, nucleic acid delivery, genome editing, therapeutics, and drug discovery to join our team.</p>
+
+      <p>
+        We welcome highly motivated individuals interested in AI for
+        Science, nucleic acid delivery, genome editing, therapeutics,
+        and drug discovery to join our team.
+      </p>
+
     </div>
+
   </section>
 
+
   <main>
+
     <section id="disclaimer">
+
       <h2>Disclaimer</h2>
+
       <div class="disclaimer">
-        <p>The information on this website, including laboratory descriptions, personal profiles, research activities, and scientific achievements, is provided for informational and academic purposes only. It does not constitute medical, healthcare, diagnostic, therapeutic, or investment advice.</p>
 
-        <p>Information about genome editing technologies, gene therapies, and related research reflects ongoing scientific and technological developments and should not be interpreted as evidence of clinical validation, regulatory approval, or readiness for clinical application. Nothing on this website should be relied upon as a substitute for professional advice or as the basis for medical or investment decisions.</p>
+        <p>
+          The information on this website, including laboratory
+          descriptions, personal profiles, research activities, and
+          scientific achievements, is provided for informational and
+          academic purposes only. It does not constitute medical,
+          healthcare, diagnostic, therapeutic, or investment advice.
+        </p>
 
-        <p>While we make reasonable efforts to ensure the accuracy and completeness of the information presented, we make no representations or warranties in this regard. We reserve the right to update, revise, or remove website content at any time without prior notice.</p>
+        <p>
+          Information about genome editing technologies, gene therapies,
+          and related research reflects ongoing scientific and
+          technological developments and should not be interpreted as
+          evidence of clinical validation, regulatory approval, or
+          readiness for clinical application. Nothing on this website
+          should be relied upon as a substitute for professional advice
+          or as the basis for medical or investment decisions.
+        </p>
+
+        <p>
+          While we make reasonable efforts to ensure the accuracy and
+          completeness of the information presented, we make no
+          representations or warranties in this regard. We reserve the
+          right to update, revise, or remove website content at any
+          time without prior notice.
+        </p>
+
       </div>
     </section>
+
   </main>
 
+
   <footer>
+
     <div class="footer-qr">
+
       <p class="footer-qr-title">Follow Us</p>
+
       <img src="./images/QR.jpeg"
            alt="WeChat official account QR code for The Qingquan Xiao Lab"
-           width="132" height="132">
-      <p class="footer-qr-note">Scan to follow our WeChat account</p>
+           width="132"
+           height="132">
+
+      <p class="footer-qr-note">
+        Scan to follow our WeChat account
+      </p>
+
     </div>
-    © <span id="year">2026</span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University
+
+    © <span id="year">2026</span>
+    The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University
+
   </footer>
+
+
   <style>
     /* Disable text selection across the website */
+
     body {
       -webkit-user-select: none;
       user-select: none;
     }
 
     /* Disable image selection and dragging */
+
     img {
       -webkit-user-drag: none;
       user-drag: none;
@@ -403,27 +688,136 @@
     }
 
     /* Prevent selected text from being highlighted */
+
     ::selection {
       background: transparent;
     }
   </style>
 
+
   <script>
-    // Disable the context menu on images
-    document.addEventListener('contextmenu', function (event) {
-      if (event.target.closest && event.target.closest('img')) {
+
+    // Display date, weekday and time in China Standard Time (UTC+8).
+
+    (function () {
+
+      const dateElement =
+        document.getElementById("china-date");
+
+      const weekdayElement =
+        document.getElementById("china-weekday");
+
+      const timeElement =
+        document.getElementById("china-time");
+
+
+      function updateChinaClock() {
+
+        const now = new Date();
+
+
+        // Date: YYYY-MM-DD
+
+        const dateParts =
+          new Intl.DateTimeFormat("en-CA", {
+
+            timeZone: "Asia/Shanghai",
+
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+
+          }).formatToParts(now);
+
+
+        const dateValues = {};
+
+        dateParts.forEach(function (part) {
+
+          if (part.type !== "literal") {
+            dateValues[part.type] = part.value;
+          }
+
+        });
+
+
+        dateElement.textContent =
+          dateValues.year + "-" +
+          dateValues.month + "-" +
+          dateValues.day;
+
+
+        // Weekday: Monday to Sunday
+
+        weekdayElement.textContent =
+          new Intl.DateTimeFormat("en-US", {
+
+            timeZone: "Asia/Shanghai",
+            weekday: "long"
+
+          }).format(now);
+
+
+        // Time: 24-hour format HH:MM:SS
+
+        timeElement.textContent =
+          new Intl.DateTimeFormat("en-GB", {
+
+            timeZone: "Asia/Shanghai",
+
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+
+            hourCycle: "h23"
+
+          }).format(now);
+
+      }
+
+
+      // Update immediately.
+
+      updateChinaClock();
+
+
+      // Update every second.
+
+      window.setInterval(updateChinaClock, 1000);
+
+    })();
+
+
+    // Disable the context menu on images.
+
+    document.addEventListener("contextmenu", function (event) {
+
+      if (event.target.closest &&
+          event.target.closest("img")) {
+
         event.preventDefault();
         event.stopPropagation();
+
       }
+
     }, true);
 
-    // Disable dragging images
-    document.addEventListener('dragstart', function (event) {
-      if (event.target.closest && event.target.closest('img')) {
+
+    // Disable dragging images.
+
+    document.addEventListener("dragstart", function (event) {
+
+      if (event.target.closest &&
+          event.target.closest("img")) {
+
         event.preventDefault();
         event.stopPropagation();
+
       }
+
     }, true);
+
   </script>
+
 </body>
 </html>
