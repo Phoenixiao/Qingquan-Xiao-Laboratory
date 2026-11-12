@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -6,6 +7,7 @@
   <meta name="description" content="浙江大学肖庆全实验室，致力于新一代基因编辑工具与基因治疗技术的开发。">
   <meta name="theme-color" content="#173b5e">
   <title>肖庆全实验室 | 浙江大学</title>
+
   <style>
     :root {
       --navy: #173b5e;
@@ -18,7 +20,9 @@
       --max-width: 1080px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html {
       scroll-behavior: smooth;
@@ -29,14 +33,21 @@
       margin: 0;
       color: var(--ink);
       background: var(--paper);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       font-size: 16px;
       line-height: 1.75;
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
 
     .site-header {
       position: sticky;
@@ -90,14 +101,46 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #f4f8fb 0%, #ffffff 72%);
+      background: linear-gradient(
+        135deg, #f4f8fb 0%, #ffffff 72%
+      );
       border-bottom: 1px solid var(--line);
     }
 
     .hero-inner {
+      position: relative;
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 66px 28px 58px;
+    }
+
+    /* Date, weekday and China Standard Time */
+
+    .hero-stats {
+      position: absolute;
+      top: 108px;
+      right: 28px;
+      z-index: 1;
+      min-width: 190px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.55;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-stats-date,
+    .hero-stats-weekday {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .hero-stats-time {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .eyebrow {
@@ -153,10 +196,17 @@
       border-radius: 2px;
     }
 
-    p { margin: 0 0 17px; }
-    p:last-child { margin-bottom: 0; }
+    p {
+      margin: 0 0 17px;
+    }
 
-    .profile-copy { max-width: 900px; }
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .profile-copy {
+      max-width: 900px;
+    }
 
     .contact {
       display: flex;
@@ -167,7 +217,9 @@
       font-size: 14px;
     }
 
-    .contact strong { color: var(--ink); }
+    .contact strong {
+      color: var(--ink);
+    }
 
     .section-image {
       display: block;
@@ -208,7 +260,6 @@
       font-size: 14px;
       line-height: 1.8;
     }
-
 
     .footer-qr {
       display: flex;
@@ -259,6 +310,7 @@
     }
 
     @media (max-width: 760px) {
+
       .header-inner {
         align-items: flex-start;
         flex-direction: column;
@@ -266,135 +318,369 @@
         padding-top: 14px;
         padding-bottom: 13px;
       }
-      .nav { justify-content: flex-start; gap: 5px 15px; }
-      .hero-inner { padding-top: 48px; padding-bottom: 42px; }
-      section { padding: 40px 0; }
-      h2 { font-size: 23px; }
+
+      .nav {
+        justify-content: flex-start;
+        gap: 5px 15px;
+      }
+
+      .hero-inner {
+        padding-top: 104px;
+        padding-bottom: 42px;
+      }
+
+      .hero-stats {
+        top: 14px;
+        right: 20px;
+      }
+
+      section {
+        padding: 40px 0;
+      }
+
+      h2 {
+        font-size: 23px;
+      }
     }
 
     @media (max-width: 420px) {
-      main { padding: 0 20px; }
-      .header-inner, .hero-inner { padding-left: 20px; padding-right: 20px; }
-      .join-section { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
-      .brand { font-size: 16px; }
-      .nav a { font-size: 12px; }
+
+      main {
+        padding: 0 20px;
+      }
+
+      .header-inner,
+      .hero-inner {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .hero-stats {
+        right: 20px;
+      }
+
+      .join-section {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .nav a {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
+
 <body>
+
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="#home">肖庆全实验室</a>
+
+      <a class="brand" href="#home">
+        肖庆全实验室
+      </a>
+
       <nav class="nav" aria-label="主导航">
+
         <a href="#pi">课题组负责人</a>
         <a href="#team">团队成员</a>
         <a href="#research">研究方向</a>
-        <a href="#selected-publications">代表性论文</a>
-        <a href="#other-publications">其他论文</a>
+
+        <a href="#selected-publications">
+          代表性论文
+        </a>
+
+        <a href="#other-publications">
+          其他论文
+        </a>
+
         <a href="#patents">专利</a>
         <a href="#presentations">学术报告</a>
         <a href="#join-us">加入我们</a>
-        <a class="language-switch" href="./index.html" lang="en" aria-label="Switch to English">EN</a>
+
+        <a class="language-switch"
+           href="./index.html"
+           lang="en"
+           aria-label="Switch to English">
+          EN
+        </a>
+
       </nav>
     </div>
   </header>
 
+
   <div class="hero" id="home">
+
     <div class="hero-inner">
-      <p class="eyebrow">浙江大学金华研究院</p>
+
+      <!-- Date, weekday and time -->
+
+      <div class="hero-stats"
+           aria-label="北京时间、日期和星期">
+
+        <div class="hero-stats-date" id="china-date">
+          ---- -- --
+        </div>
+
+        <div class="hero-stats-weekday" id="china-weekday">
+          ---
+        </div>
+
+        <div class="hero-stats-time" id="china-time">
+          --:--:--
+        </div>
+
+      </div>
+
+      <p class="eyebrow">
+        浙江大学金华研究院
+      </p>
+
       <h1>肖庆全实验室</h1>
-      <p class="hero-subtitle">致力于新一代基因编辑工具与基因治疗技术的开发。</p>
+
+      <p class="hero-subtitle">
+        致力于新一代基因编辑工具与基因治疗技术的开发。
+      </p>
+
     </div>
   </div>
 
+
   <main>
+
     <section id="pi">
+
       <h2>课题组负责人</h2>
+
       <div class="profile-copy">
-        <p>肖庆全博士现任浙江大学金华研究院、浙江大学药学院研究员，并为 Gu iMedication Lab 成员。他带领独立研究团队，致力于新一代基因编辑工具与基因治疗技术的开发。</p>
 
-        <p>加入浙江大学前，肖庆全博士曾在中国科学院脑科学与智能技术卓越创新中心（神经科学研究所）从事博士后研究。他于中国科学院大学获得神经生物学博士学位，博士期间在非人灵长类疾病模型实验室开展研究，并于四川大学获得生物学学士学位。</p>
+        <p>
+          肖庆全博士现任浙江大学金华研究院、浙江大学药学院研究员，
+          并为 Gu iMedication Lab 成员。他带领独立研究团队，
+          致力于新一代基因编辑工具与基因治疗技术的开发。
+        </p>
 
-        <p>肖庆全博士入选上海市"超级博士后"激励计划。相关研究成果以第一作者、共同第一作者或共同通讯作者身份发表论文发表于 <em>Nature Biotechnology</em>、<em>Nature Methods</em>、<em>Nature Chemical Biology</em>、<em>Science Translational Medicine</em>、<em>Advanced Science</em>、<em>Journal of Clinical Investigation</em> 和 <em>Cell Discovery</em> 等学术期刊。此外，他还担任多种学术期刊及学术出版社的同行评审专家，参与论文和书籍章节的评审工作。</p>
+        <p>
+          加入浙江大学前，肖庆全博士曾在中国科学院脑科学与智能技术
+          卓越创新中心（神经科学研究所）从事博士后研究。
+          他于中国科学院大学获得神经生物学博士学位，
+          博士期间在非人灵长类疾病模型实验室开展研究，
+          并于四川大学获得生物学学士学位。
+        </p>
+
+        <p>
+          肖庆全博士入选上海市"超级博士后"激励计划。
+          相关研究成果以第一作者、共同第一作者或共同通讯作者身份
+          发表论文发表于 <em>Nature Biotechnology</em>、
+          <em>Nature Methods</em>、
+          <em>Nature Chemical Biology</em>、
+          <em>Science Translational Medicine</em>、
+          <em>Advanced Science</em>、
+          <em>Journal of Clinical Investigation</em> 和
+          <em>Cell Discovery</em> 等学术期刊。
+          此外，他还担任多种学术期刊及学术出版社的同行评审专家，
+          参与论文和书籍章节的评审工作。
+        </p>
 
         <div class="contact">
-          <span><strong>电子邮箱：</strong> qqxiao@@zju.edu.cn</span>
-          <span><strong>个人主页：</strong> <a href="http://cn.imedlab.net/NewsDetail.aspx?ID=603" target="_blank" rel="noopener noreferrer">肖庆全</a></span>
+
+          <span>
+            <strong>电子邮箱：</strong>
+            qqxiao@zju.edu.cn
+          </span>
+
+          <span>
+            <strong>个人主页：</strong>
+
+            <a href="http://cn.imedlab.net/NewsDetail.aspx?ID=603"
+               target="_blank"
+               rel="noopener noreferrer">
+              肖庆全
+            </a>
+          </span>
+
         </div>
+
       </div>
     </section>
+
 
     <section id="team">
+
       <h2>团队成员</h2>
-      <img class="section-image" src="./images/team.png" width="800" alt="肖庆全实验室团队">
-      <p class="image-note">目前，团队由1名博士后、2名博士研究生和5名硕士研究生组成。</p>
+
+      <img class="section-image"
+           src="./images/team.png"
+           width="800"
+           alt="肖庆全实验室团队">
+
+      <p class="image-note">
+        目前，团队由1名博士后、2名博士研究生和5名硕士研究生组成。
+      </p>
+
     </section>
+
 
     <section id="research">
+
       <h2>研究方向</h2>
-      <img class="section-image" src="./images/research-interests.jpg" width="800" alt="研究方向">
+
+      <img class="section-image"
+           src="./images/research-interests.jpg"
+           width="800"
+           alt="研究方向">
+
     </section>
+
 
     <section id="selected-publications">
+
       <h2>代表性论文</h2>
-      <p class="publication-note"># 表示共同第一作者或第一作者。</p>
-      <img class="section-image" src="./images/selected-publications.jpg" width="800" alt="代表性论文">
+
+      <p class="publication-note">
+        # 表示共同第一作者或第一作者。
+      </p>
+
+      <img class="section-image"
+           src="./images/selected-publications.jpg"
+           width="800"
+           alt="代表性论文">
+
     </section>
+
 
     <section id="other-publications">
+
       <h2>其他论文</h2>
-      <img class="section-image" src="./images/other-publications.jpg" width="800" alt="其他论文">
+
+      <img class="section-image"
+           src="./images/other-publications.jpg"
+           width="800"
+           alt="其他论文">
+
     </section>
+
 
     <section id="patents">
+
       <h2>专利</h2>
-      <img class="section-image" src="./images/patents.jpg" width="800" alt="专利">
+
+      <img class="section-image"
+           src="./images/patents.jpg"
+           width="800"
+           alt="专利">
+
     </section>
+
 
     <section id="presentations">
+
       <h2>学术报告</h2>
-      <img class="section-image" src="./images/conference-presentations.jpg" width="800" alt="学术报告">
+
+      <img class="section-image"
+           src="./images/conference-presentations.jpg"
+           width="800"
+           alt="学术报告">
+
     </section>
+
   </main>
+
 
   <section class="join-section" id="join-us">
+
     <div class="join-inner">
+
       <h2>加入我们</h2>
-      <p>We welcome highly motivated individuals interested in AI for Science, nucleic acid delivery, genome editing, therapeutics, and drug discovery to join our team.</p>
+
+      <p>
+        We welcome highly motivated individuals interested in AI for Science,
+        nucleic acid delivery, genome editing, therapeutics, and drug discovery
+        to join our team.
+      </p>
+
     </div>
+
   </section>
 
+
   <main>
+
     <section id="disclaimer">
+
       <h2>免责声明</h2>
+
       <div class="disclaimer">
-        <p>本网站所提供的实验室介绍、个人简介、科研活动及研究成果等内容，仅供信息参考与学术交流之用，不构成任何形式的医疗、诊断、治疗或投资建议。</p>
 
-        <p>本网站涉及的基因编辑技术、基因治疗及相关研究内容，反映的是相关领域持续发展的科学研究进展，不应据此认定相关技术已通过临床验证、获得监管部门批准或具备临床应用条件。本网站所载信息不能替代专业医疗意见，亦不应作为作出医疗或投资决策的依据。</p>
+        <p>
+          本网站所提供的实验室介绍、个人简介、科研活动及研究成果等内容，
+          仅供信息参考与学术交流之用，不构成任何形式的医疗、诊断、
+          治疗或投资建议。
+        </p>
 
-        <p>我们将尽合理努力确保本网站所载信息的准确性和完整性，但不对相关信息的准确性、完整性或时效性作出任何明示或默示的保证。我们保留随时更新、修改或删除网站内容的权利，恕不另行通知。</p>
+        <p>
+          本网站涉及的基因编辑技术、基因治疗及相关研究内容，
+          反映的是相关领域持续发展的科学研究进展，
+          不应据此认定相关技术已通过临床验证、获得监管部门批准
+          或具备临床应用条件。本网站所载信息不能替代专业医疗意见，
+          亦不应作为作出医疗或投资决策的依据。
+        </p>
+
+        <p>
+          我们将尽合理努力确保本网站所载信息的准确性和完整性，
+          但不对相关信息的准确性、完整性或时效性作出任何明示或默示的保证。
+          我们保留随时更新、修改或删除网站内容的权利，恕不另行通知。
+        </p>
+
       </div>
     </section>
+
   </main>
 
+
   <footer>
+
     <div class="footer-qr">
-      <p class="footer-qr-title">关注我们</p>
+
+      <p class="footer-qr-title">
+        关注我们
+      </p>
+
       <img src="./images/QR.jpeg"
            alt="WeChat official account QR code for The Qingquan Xiao Lab"
-           width="132" height="132">
-      <p class="footer-qr-note">扫描二维码，关注我们的微信公众号</p>
+           width="132"
+           height="132">
+
+      <p class="footer-qr-note">
+        扫描二维码，关注我们的微信公众号
+      </p>
+
     </div>
-    © <span id="year">2026</span> 肖庆全实验室 · 浙江大学金华研究院
+
+    © <span id="year">2026</span>
+    肖庆全实验室 · 浙江大学金华研究院
+
   </footer>
+
+
   <style>
+
     /* Disable text selection across the website */
+
     body {
       -webkit-user-select: none;
       user-select: none;
     }
 
     /* Disable image selection and dragging */
+
     img {
       -webkit-user-drag: none;
       user-drag: none;
@@ -403,27 +689,134 @@
     }
 
     /* Prevent selected text from being highlighted */
+
     ::selection {
       background: transparent;
     }
+
   </style>
 
+
   <script>
-    // Disable the context menu on images
-    document.addEventListener('contextmenu', function (event) {
-      if (event.target.closest && event.target.closest('img')) {
+
+    // Display date, weekday and time in China Standard Time (UTC+8).
+
+    (function () {
+
+      const dateElement =
+        document.getElementById("china-date");
+
+      const weekdayElement =
+        document.getElementById("china-weekday");
+
+      const timeElement =
+        document.getElementById("china-time");
+
+
+      function updateChinaClock() {
+
+        const now = new Date();
+
+
+        // Date: YYYY-MM-DD
+
+        const dateParts =
+          new Intl.DateTimeFormat("en-CA", {
+
+            timeZone: "Asia/Shanghai",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+
+          }).formatToParts(now);
+
+
+        const dateValues = {};
+
+        dateParts.forEach(function (part) {
+
+          if (part.type !== "literal") {
+            dateValues[part.type] = part.value;
+          }
+
+        });
+
+
+        dateElement.textContent =
+          dateValues.year + "-" +
+          dateValues.month + "-" +
+          dateValues.day;
+
+
+        // Weekday: Monday to Sunday
+
+        weekdayElement.textContent =
+          new Intl.DateTimeFormat("en-US", {
+
+            timeZone: "Asia/Shanghai",
+            weekday: "long"
+
+          }).format(now);
+
+
+        // Time: 24-hour format HH:MM:SS
+
+        timeElement.textContent =
+          new Intl.DateTimeFormat("en-GB", {
+
+            timeZone: "Asia/Shanghai",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hourCycle: "h23"
+
+          }).format(now);
+
+      }
+
+
+      // Initial update
+
+      updateChinaClock();
+
+
+      // Update every second
+
+      window.setInterval(updateChinaClock, 1000);
+
+    })();
+
+
+    // Disable the context menu on images.
+
+    document.addEventListener("contextmenu", function (event) {
+
+      if (event.target.closest &&
+          event.target.closest("img")) {
+
         event.preventDefault();
         event.stopPropagation();
+
       }
+
     }, true);
 
-    // Disable dragging images
-    document.addEventListener('dragstart', function (event) {
-      if (event.target.closest && event.target.closest('img')) {
+
+    // Disable dragging images.
+
+    document.addEventListener("dragstart", function (event) {
+
+      if (event.target.closest &&
+          event.target.closest("img")) {
+
         event.preventDefault();
         event.stopPropagation();
+
       }
+
     }, true);
+
   </script>
+
 </body>
 </html>
