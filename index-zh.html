@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -7,816 +6,177 @@
   <meta name="description" content="浙江大学肖庆全实验室，致力于新一代基因编辑工具与基因治疗技术的开发。">
   <meta name="theme-color" content="#173b5e">
   <title>肖庆全实验室 | 浙江大学</title>
-
   <style>
-    :root {
-      --navy: #173b5e;
-      --blue: #2d648d;
-      --ink: #263442;
-      --muted: #647484;
-      --line: #e3e9ef;
-      --paper: #ffffff;
-      --wash: #f5f8fb;
-      --max-width: 1080px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 88px;
-    }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--paper);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.75;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      color: var(--blue);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(255,255,255,.96);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(12px);
-    }
-
-    .header-inner {
-      max-width: var(--max-width);
-      min-height: 68px;
-      margin: 0 auto;
-      padding: 0 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .brand {
-      color: var(--navy);
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      white-space: nowrap;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 7px 20px;
-    }
-
-    .nav a {
-      color: #536474;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .nav a.language-switch {
-      display: inline-block;
-      padding: 4px 10px;
-      color: var(--navy);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      font-weight: 700;
-    }
-
-    .hero {
-      background: linear-gradient(
-        135deg, #f4f8fb 0%, #ffffff 72%
-      );
-      border-bottom: 1px solid var(--line);
-    }
-
-    .hero-inner {
-      position: relative;
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 66px 28px 58px;
-    }
-
-    /* Date, weekday and China Standard Time */
-
-    .hero-stats {
-      position: absolute;
-      top: 108px;
-      right: 28px;
-      z-index: 1;
-      min-width: 190px;
-      color: var(--muted);
-      text-align: right;
-      line-height: 1.55;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .hero-stats-date,
-    .hero-stats-weekday {
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: .02em;
-      white-space: nowrap;
-    }
-
-    .hero-stats-time {
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .eyebrow {
-      margin: 0 0 12px;
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      color: var(--navy);
-      font-size: clamp(34px, 5vw, 54px);
-      line-height: 1.13;
-      letter-spacing: -.04em;
-    }
-
-    .hero-subtitle {
-      max-width: 720px;
-      margin: 18px 0 0;
-      color: var(--muted);
-      font-size: 18px;
-    }
-
-    main {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 28px;
-    }
-
-    section {
-      padding: 54px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    h2 {
-      margin: 0 0 22px;
-      color: var(--navy);
-      font-size: 25px;
-      line-height: 1.3;
-      letter-spacing: -.025em;
-    }
-
-    h2::after {
-      content: "";
-      display: block;
-      width: 42px;
-      height: 3px;
-      margin-top: 12px;
-      background: var(--blue);
-      border-radius: 2px;
-    }
-
-    p {
-      margin: 0 0 17px;
-    }
-
-    p:last-child {
-      margin-bottom: 0;
-    }
-
-    .profile-copy {
-      max-width: 900px;
-    }
-
-    .contact {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 28px;
-      margin-top: 22px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .contact strong {
-      color: var(--ink);
-    }
-
-    .section-image {
-      display: block;
-      width: 100%;
-      max-width: 800px;
-      height: auto;
-      margin: 0;
-      object-fit: contain;
-    }
-
-    .image-note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .publication-note {
-      margin: -8px 0 20px;
-      color: var(--muted);
-      font-size: 14px;
-      font-style: italic;
-    }
-
-    .join-section {
-      margin: 0 -28px;
-      padding: 48px 28px;
-      background: var(--wash);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .join-inner {
-      max-width: calc(var(--max-width) - 56px);
-      margin: 0 auto;
-    }
-
-    .disclaimer {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .footer-qr {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 0 22px;
-    }
-
-    .footer-qr img {
-      display: block;
-      width: 132px;
-      height: 132px;
-      object-fit: contain;
-      padding: 5px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-    }
-
-    .footer-qr-title {
-      margin: 0;
-      color: var(--navy);
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.4;
-    }
-
-    .footer-qr-note {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 420px) {
-      .footer-qr img {
-        width: 124px;
-        height: 124px;
-      }
-    }
-
-    footer {
-      padding: 25px 28px 34px;
-      color: #81909d;
-      text-align: center;
-      font-size: 12px;
-    }
-
-    @media (max-width: 760px) {
-
-      .header-inner {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-        padding-top: 14px;
-        padding-bottom: 13px;
-      }
-
-      .nav {
-        justify-content: flex-start;
-        gap: 5px 15px;
-      }
-
-      .hero-inner {
-        padding-top: 104px;
-        padding-bottom: 42px;
-      }
-
-      .hero-stats {
-        top: 14px;
-        right: 20px;
-      }
-
-      section {
-        padding: 40px 0;
-      }
-
-      h2 {
-        font-size: 23px;
-      }
-    }
-
-    @media (max-width: 420px) {
-
-      main {
-        padding: 0 20px;
-      }
-
-      .header-inner,
-      .hero-inner {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      .hero-stats {
-        right: 20px;
-      }
-
-      .join-section {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      .brand {
-        font-size: 16px;
-      }
-
-      .nav a {
-        font-size: 12px;
-      }
-    }
+    :root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--paper:#fff;--wash:#f5f8fb;--max-width:1080px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:88px}
+    body{margin:0;color:var(--ink);background:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+    a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+    .site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+    .header-inner{max-width:var(--max-width);min-height:68px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+    .nav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px 20px}
+    .nav a{color:#536474;font-size:13px;font-weight:600}.nav a.language-switch{display:inline-block;padding:4px 10px;color:var(--navy);border:1px solid var(--line);border-radius:16px;font-weight:700}
+    .hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}
+    .hero-inner{position:relative;max-width:var(--max-width);margin:0 auto;padding:66px 28px 58px}
+    .hero-stats{position:absolute;top:108px;right:28px;z-index:1;min-width:190px;color:var(--muted);text-align:right;line-height:1.55;font-variant-numeric:tabular-nums}
+    .hero-stats-date,.hero-stats-weekday{color:var(--muted);font-size:12px;letter-spacing:.02em;white-space:nowrap}
+    .hero-stats-time{color:var(--ink);font-size:13px;font-weight:600;white-space:nowrap}
+    .eyebrow{margin:0 0 12px;color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.14em}
+    h1{margin:0;color:var(--navy);font-size:clamp(34px,5vw,54px);line-height:1.13;letter-spacing:-.04em}
+    .hero-subtitle{max-width:720px;margin:18px 0 0;color:var(--muted);font-size:18px}
+    main{max-width:var(--max-width);margin:0 auto;padding:0 28px}
+    section{padding:54px 0;border-bottom:1px solid var(--line)}
+    h2{margin:0 0 22px;color:var(--navy);font-size:25px;line-height:1.3;letter-spacing:-.025em}
+    h2:after{content:"";display:block;width:42px;height:3px;margin-top:12px;background:var(--blue);border-radius:2px}
+    p{margin:0 0 17px}p:last-child{margin-bottom:0}
+    .profile-copy{max-width:900px}.contact{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:22px;color:var(--muted);font-size:14px}.contact strong{color:var(--ink)}
+    .section-image{display:block;width:100%;max-width:800px;height:auto;margin:0;object-fit:contain}
+    .image-note{margin-top:14px;color:var(--muted);font-size:14px}
+    .publication-note{margin:-8px 0 20px;color:var(--muted);font-size:14px;font-style:italic}
+    .research-list,.publication-list,.patent-list,.talk-list{padding-left:25px;margin:0;max-width:1000px}
+    .research-list li,.publication-list li,.patent-list li,.talk-list li{padding-left:5px;margin:0 0 13px}
+    .research-list li::marker{color:var(--blue)}
+    .publication-list li,.patent-list li,.talk-list li{padding-bottom:4px}
+    .publication-list em{font-style:italic}.publication-list a{overflow-wrap:anywhere}
+    .join-section{margin:0 -28px;padding:48px 28px;background:var(--wash);border-bottom:1px solid var(--line)}
+    .join-inner{max-width:calc(var(--max-width) - 56px);margin:0 auto}
+    .disclaimer{color:var(--muted);font-size:14px;line-height:1.8}
+    .footer-qr{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0 22px}
+    .footer-qr img{display:block;width:132px;height:132px;object-fit:contain;padding:5px;background:#fff;border:1px solid var(--line);border-radius:6px}
+    .footer-qr-title{margin:0;color:var(--navy);font-size:14px;font-weight:600;line-height:1.4}
+    .footer-qr-note{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+    footer{padding:25px 28px 34px;color:#81909d;text-align:center;font-size:12px}
+    body{-webkit-user-select:none;user-select:none}img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}::selection{background:transparent}
+    @media(max-width:760px){.header-inner{align-items:flex-start;flex-direction:column;gap:8px;padding-top:14px;padding-bottom:13px}.nav{justify-content:flex-start;gap:5px 15px}.hero-inner{padding-top:104px;padding-bottom:42px}.hero-stats{top:14px;right:20px}section{padding:40px 0}h2{font-size:23px}}
+    @media(max-width:420px){main{padding:0 20px}.header-inner,.hero-inner{padding-left:20px;padding-right:20px}.hero-stats{right:20px}.join-section{margin-left:-20px;margin-right:-20px;padding-left:20px;padding-right:20px}.brand{font-size:16px}.nav a{font-size:12px}.footer-qr img{width:124px;height:124px}}
   </style>
 </head>
-
 <body>
+<header class="site-header"><div class="header-inner">
+  <a class="brand" href="#home">肖庆全实验室</a>
+  <nav class="nav" aria-label="主导航">
+    <a href="#pi">课题组负责人</a><a href="#team">团队成员</a><a href="#research">研究方向</a>
+    <a href="#selected-publications">代表性论文</a><a href="#other-publications">其他论文</a>
+    <a href="#patents">专利</a><a href="#presentations">学术报告</a><a href="#join-us">加入我们</a>
+    <a class="language-switch" href="./index.html" lang="en" aria-label="Switch to English">EN</a>
+  </nav>
+</div></header>
 
-  <header class="site-header">
-    <div class="header-inner">
-
-      <a class="brand" href="#home">
-        肖庆全实验室
-      </a>
-
-      <nav class="nav" aria-label="主导航">
-
-        <a href="#pi">课题组负责人</a>
-        <a href="#team">团队成员</a>
-        <a href="#research">研究方向</a>
-
-        <a href="#selected-publications">
-          代表性论文
-        </a>
-
-        <a href="#other-publications">
-          其他论文
-        </a>
-
-        <a href="#patents">专利</a>
-        <a href="#presentations">学术报告</a>
-        <a href="#join-us">加入我们</a>
-
-        <a class="language-switch"
-           href="./index.html"
-           lang="en"
-           aria-label="Switch to English">
-          EN
-        </a>
-
-      </nav>
-    </div>
-  </header>
-
-
-  <div class="hero" id="home">
-
-    <div class="hero-inner">
-
-      <!-- Date, weekday and time -->
-
-      <div class="hero-stats"
-           aria-label="北京时间、日期和星期">
-
-        <div class="hero-stats-date" id="china-date">
-          ---- -- --
-        </div>
-
-        <div class="hero-stats-weekday" id="china-weekday">
-          ---
-        </div>
-
-        <div class="hero-stats-time" id="china-time">
-          --:--:--
-        </div>
-
-      </div>
-
-      <p class="eyebrow">
-        浙江大学金华研究院
-      </p>
-
-      <h1>肖庆全实验室</h1>
-
-      <p class="hero-subtitle">
-        致力于新一代基因编辑工具与基因治疗技术的开发。
-      </p>
-
-    </div>
+<div class="hero" id="home"><div class="hero-inner">
+  <div class="hero-stats" aria-label="北京时间、日期和星期">
+    <div class="hero-stats-date" id="china-date">---- -- --</div>
+    <div class="hero-stats-weekday" id="china-weekday">---</div>
+    <div class="hero-stats-time" id="china-time">--:--:--</div>
   </div>
-
-
-  <main>
-
-    <section id="pi">
-
-      <h2>课题组负责人</h2>
-
-      <div class="profile-copy">
-
-        <p>
-          肖庆全博士现任浙江大学金华研究院、浙江大学药学院研究员，
-          并为 Gu iMedication Lab 成员。他带领独立研究团队，
-          致力于新一代基因编辑工具与基因治疗技术的开发。
-        </p>
-
-        <p>
-          加入浙江大学前，肖庆全博士曾在中国科学院脑科学与智能技术
-          卓越创新中心（神经科学研究所）从事博士后研究。
-          他于中国科学院大学获得神经生物学博士学位，
-          博士期间在非人灵长类疾病模型实验室开展研究，
-          并于四川大学获得生物学学士学位。
-        </p>
-
-        <p>
-          肖庆全博士入选上海市"超级博士后"激励计划。
-          相关研究成果以第一作者、共同第一作者或共同通讯作者身份
-          发表论文发表于 <em>Nature Biotechnology</em>、
-          <em>Nature Methods</em>、
-          <em>Nature Chemical Biology</em>、
-          <em>Science Translational Medicine</em>、
-          <em>Advanced Science</em>、
-          <em>Journal of Clinical Investigation</em> 和
-          <em>Cell Discovery</em> 等学术期刊。
-          此外，他还担任多种学术期刊及学术出版社的同行评审专家，
-          参与论文和书籍章节的评审工作。
-        </p>
-
-        <div class="contact">
-
-          <span>
-            <strong>电子邮箱：</strong>
-            qqxiao@zju.edu.cn
-          </span>
-
-          <span>
-            <strong>个人主页：</strong>
-
-            <a href="http://cn.imedlab.net/NewsDetail.aspx?ID=603"
-               target="_blank"
-               rel="noopener noreferrer">
-              肖庆全
-            </a>
-          </span>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <section id="team">
-
-      <h2>团队成员</h2>
-
-      <img class="section-image"
-           src="./images/team.png"
-           width="800"
-           alt="肖庆全实验室团队">
-
-      <p class="image-note">
-        目前，团队由1名博士后、2名博士研究生和5名硕士研究生组成。
-      </p>
-
-    </section>
-
-
-    <section id="research">
-
-      <h2>研究方向</h2>
-
-      <img class="section-image"
-           src="./images/research-interests.jpg"
-           width="800"
-           alt="研究方向">
-
-    </section>
-
-
-    <section id="selected-publications">
-
-      <h2>代表性论文</h2>
-
-      <p class="publication-note">
-        # 表示共同第一作者或第一作者。
-      </p>
-
-      <img class="section-image"
-           src="./images/selected-publications.jpg"
-           width="800"
-           alt="代表性论文">
-
-    </section>
-
-
-    <section id="other-publications">
-
-      <h2>其他论文</h2>
-
-      <img class="section-image"
-           src="./images/other-publications.jpg"
-           width="800"
-           alt="其他论文">
-
-    </section>
-
-
-    <section id="patents">
-
-      <h2>专利</h2>
-
-      <img class="section-image"
-           src="./images/patents.jpg"
-           width="800"
-           alt="专利">
-
-    </section>
-
-
-    <section id="presentations">
-
-      <h2>学术报告</h2>
-
-      <img class="section-image"
-           src="./images/conference-presentations.jpg"
-           width="800"
-           alt="学术报告">
-
-    </section>
-
-  </main>
-
-
-  <section class="join-section" id="join-us">
-
-    <div class="join-inner">
-
-      <h2>加入我们</h2>
-
-      <p>
-        We welcome highly motivated individuals interested in AI for Science,
-        nucleic acid delivery, genome editing, therapeutics, and drug discovery
-        to join our team.
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <main>
-
-    <section id="disclaimer">
-
-      <h2>免责声明</h2>
-
-      <div class="disclaimer">
-
-        <p>
-          本网站所提供的实验室介绍、个人简介、科研活动及研究成果等内容，
-          仅供信息参考与学术交流之用，不构成任何形式的医疗、诊断、
-          治疗或投资建议。
-        </p>
-
-        <p>
-          本网站涉及的基因编辑技术、基因治疗及相关研究内容，
-          反映的是相关领域持续发展的科学研究进展，
-          不应据此认定相关技术已通过临床验证、获得监管部门批准
-          或具备临床应用条件。本网站所载信息不能替代专业医疗意见，
-          亦不应作为作出医疗或投资决策的依据。
-        </p>
-
-        <p>
-          我们将尽合理努力确保本网站所载信息的准确性和完整性，
-          但不对相关信息的准确性、完整性或时效性作出任何明示或默示的保证。
-          我们保留随时更新、修改或删除网站内容的权利，恕不另行通知。
-        </p>
-
-      </div>
-    </section>
-
-  </main>
-
-
-  <footer>
-
-    <div class="footer-qr">
-
-      <p class="footer-qr-title">
-        关注我们
-      </p>
-
-      <img src="./images/QR.jpeg"
-           alt="WeChat official account QR code for The Qingquan Xiao Lab"
-           width="132"
-           height="132">
-
-      <p class="footer-qr-note">
-        扫描二维码，关注我们的微信公众号
-      </p>
-
-    </div>
-
-    © <span id="year">2026</span>
-    肖庆全实验室 · 浙江大学金华研究院
-
-  </footer>
-
-
-  <style>
-
-    /* Disable text selection across the website */
-
-    body {
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    /* Disable image selection and dragging */
-
-    img {
-      -webkit-user-drag: none;
-      user-drag: none;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    /* Prevent selected text from being highlighted */
-
-    ::selection {
-      background: transparent;
-    }
-
-  </style>
-
-
-  <script>
-
-    // Display date, weekday and time in China Standard Time (UTC+8).
-
-    (function () {
-
-      const dateElement =
-        document.getElementById("china-date");
-
-      const weekdayElement =
-        document.getElementById("china-weekday");
-
-      const timeElement =
-        document.getElementById("china-time");
-
-
-      function updateChinaClock() {
-
-        const now = new Date();
-
-
-        // Date: YYYY-MM-DD
-
-        const dateParts =
-          new Intl.DateTimeFormat("en-CA", {
-
-            timeZone: "Asia/Shanghai",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-
-          }).formatToParts(now);
-
-
-        const dateValues = {};
-
-        dateParts.forEach(function (part) {
-
-          if (part.type !== "literal") {
-            dateValues[part.type] = part.value;
-          }
-
-        });
-
-
-        dateElement.textContent =
-          dateValues.year + "-" +
-          dateValues.month + "-" +
-          dateValues.day;
-
-
-        // Weekday: Monday to Sunday
-
-        weekdayElement.textContent =
-          new Intl.DateTimeFormat("zh-CN", {
-
-            timeZone: "Asia/Shanghai",
-            weekday: "long"
-
-          }).format(now);
-
-
-        // Time: 24-hour format HH:MM:SS
-
-        timeElement.textContent =
-          new Intl.DateTimeFormat("en-GB", {
-
-            timeZone: "Asia/Shanghai",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hourCycle: "h23"
-
-          }).format(now);
-
-      }
-
-
-      // Initial update
-
-      updateChinaClock();
-
-
-      // Update every second
-
-      window.setInterval(updateChinaClock, 1000);
-
-    })();
-
-
-    // Disable the context menu on images.
-
-    document.addEventListener("contextmenu", function (event) {
-
-      if (event.target.closest &&
-          event.target.closest("img")) {
-
-        event.preventDefault();
-        event.stopPropagation();
-
-      }
-
-    }, true);
-
-
-    // Disable dragging images.
-
-    document.addEventListener("dragstart", function (event) {
-
-      if (event.target.closest &&
-          event.target.closest("img")) {
-
-        event.preventDefault();
-        event.stopPropagation();
-
-      }
-
-    }, true);
-
-  </script>
-
+  <p class="eyebrow">浙江大学金华研究院</p>
+  <h1>肖庆全实验室</h1>
+  <p class="hero-subtitle">致力于新一代基因编辑工具与基因治疗技术的开发。</p>
+</div></div>
+
+<main>
+<section id="pi"><h2>课题组负责人</h2><div class="profile-copy">
+  <p>肖庆全博士现任浙江大学金华研究院、浙江大学药学院研究员，并为 Gu iMedication Lab 成员。他带领独立研究团队，致力于新一代基因编辑工具与基因治疗技术的开发。</p>
+  <p>加入浙江大学前，肖庆全博士曾在中国科学院脑科学与智能技术卓越创新中心（神经科学研究所）从事博士后研究。他于中国科学院大学获得神经生物学博士学位，博士期间在非人灵长类疾病模型实验室开展研究，并于四川大学获得生物学学士学位。</p>
+  <p>肖庆全博士入选上海市“超级博士后”激励计划。相关研究成果以第一作者、共同第一作者或共同通讯作者身份发表论文发表于 <em>Nature Biotechnology</em>、<em>Nature Methods</em>、<em>Nature Chemical Biology</em>、<em>Science Translational Medicine</em>、<em>Advanced Science</em>、<em>Journal of Clinical Investigation</em> 和 <em>Cell Discovery</em> 等学术期刊。此外，他还担任多种学术期刊及学术出版社的同行评审专家，参与论文和书籍章节的评审工作。</p>
+  <div class="contact"><span><strong>电子邮箱：</strong>qqxiao@zju.edu.cn</span><span><strong>个人主页：</strong><a href="http://cn.imedlab.net/NewsDetail.aspx?ID=603" target="_blank" rel="noopener noreferrer">肖庆全</a></span></div>
+</div></section>
+
+<section id="team"><h2>团队成员</h2>
+  <img class="section-image" src="./images/team.png" width="800" alt="肖庆全实验室团队">
+  <p class="image-note">目前，团队由1名博士后、2名博士研究生和5名硕士研究生组成。</p>
+</section>
+
+<section id="research"><h2>研究方向</h2>
+  <ul class="research-list">
+    <li><strong>基因组工程：</strong>开发新一代基因编辑工具。</li>
+    <li><strong>转化基因与细胞治疗：</strong>开发用于基因治疗和细胞治疗的精准基因编辑策略。</li>
+    <li><strong>疾病模型与发育生物学：</strong>构建动物模型以研究疾病的发生机制与进展，并应用基因编辑技术进行谱系示踪，研究动物发育过程。</li>
+  </ul>
+</section>
+
+<section id="selected-publications"><h2>代表性论文</h2>
+  <p class="publication-note"># 表示共同第一作者；* 表示共同通讯作者。</p>
+  <ol class="publication-list">
+    <li><strong>Xiao, Q.</strong><sup>#,*</sup>, Tian, Z.<sup>#</sup>, Weng, L.<sup>#</sup>, Xu, K.<sup>#</sup>, Han, D.<sup>#</sup>, Wu, Z., Li, J., Li, S., Zhang, Q., Zhao, X., Li, G.<sup>*</sup>, Wei, Y.<sup>*</sup>, &amp; Gu, Z.<sup>*</sup> (2026). Compact 9dBEs Enable Efficient and Precise Genome Editing in Mammalian Cells and In Vivo. <strong><em>Advanced Science</em></strong>, 13, e77279. <a href="https://doi.org/10.1002/advs.77279" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/advs.77279</a></li>
+    <li><strong>Xiao, Q.</strong><sup>#</sup>, Li, G.<sup>#</sup>, Han, D.<sup>#</sup>, Wang, H.<sup>#</sup>, Yao, M.<sup>#</sup>, Ma, T., Zhou, J., Zhang, Y., Zhang, X., He, B., Yuan, Y., Shi, L., Li, T.<sup>*</sup>, Yang, H.<sup>*</sup>, Huang, J.<sup>*</sup>, &amp; Zhang, H.<sup>*</sup> (2024). Engineered IscB-ωRNA system with expanded target range for base editing. <strong><em>Nature Chemical Biology</em></strong>, 21(1), 100–108. <a href="https://doi.org/10.1038/s41589-024-01706-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41589-024-01706-1</a></li>
+    <li><strong>Xiao, Q.</strong><sup>#</sup>, Xu, Z.<sup>#</sup>, Xue, Y.<sup>#</sup>, Xu, C.<sup>#</sup>, Han, L., Liu, Y., Wang, F., Zhang, R., Han, S., Wang, X., Li, G. L., Li, H.<sup>*</sup>, Yang, H.<sup>*</sup>, &amp; Shu, Y.<sup>*</sup> (2022). Rescue of autosomal dominant hearing loss by in vivo delivery of mini dCas13X-derived RNA base editor. <strong><em>Science Translational Medicine</em></strong>, 14(654), eabn0449. <a href="https://doi.org/10.1126/scitranslmed.abn0449" target="_blank" rel="noopener noreferrer">https://doi.org/10.1126/scitranslmed.abn0449</a></li>
+    <li>Han, D.<sup>#</sup>, <strong>Xiao, Q.</strong><sup>#</sup>, Wang, Y.<sup>#</sup>, Zhang, H.<sup>#</sup>, Dong, X., Li, G., Kong, X., Wang, S., Song, J., Zhang, W., Zhou, J., Bi, L., Yuan, Y., Shi, L., Zhong, N., Yang, H.<sup>*</sup>, &amp; Zhou, Y.<sup>*</sup> (2023). Development of miniature base editors using engineered IscB nickase. <strong><em>Nature Methods</em></strong>, 20(7), 1029–1036. <a href="https://doi.org/10.1038/s41592-023-01898-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41592-023-01898-9</a></li>
+    <li>Tong, H.<sup>#</sup>, Huang, J.<sup>#,*</sup>, <strong>Xiao, Q.</strong><sup>#</sup>, He, B.<sup>#</sup>, Dong, X.<sup>#</sup>, Liu, Y.<sup>#</sup>, Yang, X., Han, D., Wang, Z., Wang, X., Ying, W., Zhang, R., Wei, Y., Xu, C., Zhou, Y., Li, Y., Cai, M., Wang, Q., Xue, M., Li, G., Fang K., Zhang H.<sup>*</sup> &amp; Yang H.<sup>*</sup> (2022). High-fidelity Cas13 variants for targeted RNA degradation with minimal collateral effects. <strong><em>Nature Biotechnology</em></strong>, 41(1), 108–119. <a href="https://doi.org/10.1038/s41587-022-01419-7" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41587-022-01419-7</a></li>
+    <li>Xu, C.<sup>#</sup>, Zhou, Y.<sup>#,*</sup>, <strong>Xiao, Q.</strong><sup>#</sup>, He, B.<sup>#</sup>, Geng, G.<sup>#</sup>, Wang, Z., Cao, B., Dong, X., Bai, W., Wang, Y., Wang, X., Zhou, D., Yuan, T., Huo, X., Lai, J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2021). Programmable RNA editing with compact CRISPR-Cas13 systems from uncultivated microbes. <strong><em>Nature Methods</em></strong>, 18(5), 499–506. <a href="https://doi.org/10.1038/s41592-021-01124-4" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41592-021-01124-4</a></li>
+    <li>Li, G.<sup>#</sup>, Jin, M.<sup>#</sup>, Li, Z.<sup>#</sup>, <strong>Xiao, Q.</strong><sup>#</sup>, Lin, J.<sup>#</sup>, Yang, D.<sup>#</sup>, Liu, Y., Wang, X., Xie, L., Ying, W., Wang, H., Zuo, E., Shi, L., Wang, N.<sup>*</sup>, Chen, W.<sup>*</sup>, Xu, C.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2023). Mini-dCas13X-mediated RNA editing restores dystrophin expression in a humanized mouse model of Duchenne muscular dystrophy. <strong><em>The Journal of Clinical Investigation</em></strong>, 133(3), e162809. <a href="https://doi.org/10.1172/JCI162809" target="_blank" rel="noopener noreferrer">https://doi.org/10.1172/JCI162809</a></li>
+    <li>Hu, X.<sup>#</sup>, Wang, J.<sup>#</sup>, Yao, X.<sup>#</sup>, <strong>Xiao, Q.</strong><sup>#</sup>, Xue, Y., Wang, S., Shi, L., Shu, Y.<sup>*</sup>, Li, H.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2019). Screened AAV variants permit efficient transduction access to supporting cells and hair cells. <strong><em>Cell Discovery</em></strong>, 5, 49. <a href="https://doi.org/10.1038/s41421-019-0115-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41421-019-0115-9</a></li>
+  </ol>
+</section>
+
+<section id="other-publications"><h2>其他论文</h2>
+  <p class="publication-note"># 表示共同第一作者；* 表示共同通讯作者。</p>
+  <ol class="publication-list">
+    <li>Guo R.<sup>#</sup>, Sun X.<sup>#</sup>, Wang F.<sup>#</sup>, Han D.<sup>#</sup>, Yang Q., Gao H., Li Z., Shao Z., Shi J., Yang R., Huo X., Yan J., Li G., <strong>Xiao Q.</strong>, Liu Y., Zhang S., Liu X., Zhou Y., Wang L.<sup>*</sup>, Hu C.<sup>*</sup>, Xu C.<sup>*</sup> (2024). Engineered IscB-ωRNA system with improved base editing efficiency for disease correction via single AAV delivery in mice. <strong><em>Cell Reports</em></strong>, 43(11), 114973.</li>
+    <li>Xue, Y.<sup>#</sup>, Tao, Y.<sup>#</sup>, Wang, X.<sup>#</sup>, Wang, X., Shu, Y., Liu, Y., Kang, W., Chen, S., Cheng, Z., Yan, B., Xie, Y., Bi, L., Jia, H., Li, J., <strong>Xiao Q.</strong>, Chen, L., Yao, X., Shi, L., Yang, H.<sup>*</sup>, &amp; Wu, H.<sup>*</sup> (2023). RNA base editing therapy cures hearing loss induced by OTOF gene mutation. <strong><em>Molecular Therapy</em></strong>, 31(12), 3520–3530.</li>
+    <li>Gao, N.<sup>#</sup>, Hu, J.<sup>#</sup>, He, B.<sup>#</sup>, Ji, Z.<sup>#</sup>, Hu, X.<sup>#</sup>, Huang, J., Wei, Y., Peng, J., Wei, Y., Zhou, Y., Shen, X., Li, H., Feng, X., <strong>Xiao Q.</strong>, Shi, L., Sun, Y., Zhou, C., Zhou, H.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2021). Endogenous promoter-driven sgRNA for monitoring the expression of low-abundance transcripts and lncRNAs. <strong><em>Nature Cell Biology</em></strong>, 23(1), 99–108.</li>
+    <li>Zhang, M.<sup>#</sup>, Zhou, C.<sup>#</sup>, Wei, Y.<sup>#</sup>, Xu, C.<sup>#</sup>, Pan, H., Ying, W., Sun, Y., Sun, Y., <strong>Xiao Q.</strong>, Yao, N., Zhong, W., Li, Y., Wu, K., Yuan, G., Mitalipov, S.<sup>*</sup>, Chen, Z. J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2019). Human cleaving embryos enable robust homozygotic nucleotide substitutions by base editors. <strong><em>Genome Biology</em></strong>, 20(1), 101.</li>
+    <li>Jin, M.<sup>#</sup>, Lin, J.<sup>#</sup>, Zhang, Y.<sup>#</sup>, <strong>Xiao Q.</strong>, Kong, X., Zhang, X., Shao, Z., Wang, Y., Yu, Y., Li, J., Chen, W. J., Li, G.<sup>*</sup>, Yang, H.<sup>*</sup>, &amp; Wang, N.<sup>*</sup> (2024). enOsCas12f1-mediated exon skipping for Duchenne muscular dystrophy therapy in humanized mouse model. <strong><em>Journal of Genetics and Genomics</em></strong>, 51(2), 256–259.</li>
+    <li>Yan, Z.<sup>#</sup>, Yao, Y.<sup>#</sup>, Li, L.<sup>#</sup>, Cai, L., Zhang, H., Zhang, S., <strong>Xiao Q.</strong>, Wang, X., Zuo, E.<sup>*</sup>, Xu, C.<sup>*</sup>, Wu, J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2023). Treatment of autosomal dominant retinitis pigmentosa caused by RHO-P23H mutation with high-fidelity Cas13X in mice. <strong><em>Molecular Therapy – Nucleic Acids</em></strong>, 33, 750–761.</li>
+  </ol>
+</section>
+
+<section id="patents"><h2>专利</h2>
+  <ol class="patent-list">
+    <li>一种Cas蛋白、融合蛋白、其相应的基因编辑系统及应用，<strong>肖庆全</strong>、顾臻、田之锦，ZL202610251120.1（中国），<strong>第一发明人</strong></li>
+    <li>TYPE VI-E AND TYPE VI-F CRISPR-CAS SYSTEM AND USES THEREOF. Hui Yang, Chunlong Xu, Yingsi Zhou, <strong>Qingquan Xiao</strong>. US Patent 16/864,982（美国），PCT，<strong>共同发明人</strong></li>
+    <li>VI-E型和VI-F型CRISPR-Cas系统及其用途，杨辉、胥春龙、周英思、<strong>肖庆全</strong>，ZL.202010390901.1（中国），<strong>共同发明人</strong></li>
+    <li>ISCB POLYPEPTIDES AND USES THEREOF. Hainan Zhang, <strong>Qingquan Xiao</strong>. 2025-07-17, WIPO, PCT/CN2025/072127（美国），<strong>共同发明人</strong></li>
+  </ol>
+</section>
+
+<section id="presentations"><h2>学术报告</h2>
+  <ol class="talk-list">
+    <li><strong>肖庆全</strong>；紧凑型DNA碱基编辑器的开发及应用，中国遗传学会基因组编辑分会第七届全国学术年会，湖南长沙，2026-10-15至2026-10-18（邀请报告）</li>
+    <li><strong>肖庆全</strong>；紧凑型基因编辑器的开发及其应用，首届智能医药前沿交叉研讨会暨2025年先进药物递释系统全国重点实验室学术年会，浙江杭州西溪宾馆，2025-11-24至2025-11-26（邀请报告）</li>
+    <li><strong>Xiao Q.</strong>, Han D., Wang H., Li G., Yuan Y., Zhou Y., Li T., Wang S., Yao X., Alvin Luk, Kong X., Zhang H. and Yang H. (2024). Engineered IscB-ωRNA System with Expanded Target Range for Base Editing. <strong><em>ASGCT</em></strong>, the 27th Annual Meeting. (Invited talk)</li>
+    <li>Li G., <strong>Xiao Q.</strong>, Han D., Wang H., Ma T., Zhou J., Zhang Y., Zhang X., Li T., Wang S., Yuan Y., Yao Y., Shi L., Zhou Y., Zhang H. and Yang H. (2024). Precise Correction of Duchenne Muscular Dystrophy by Compact Cytosine Base Editor-Induced Exon Skipping. <strong><em>ASGCT</em></strong>, the 27th Annual Meeting. (Poster)</li>
+  </ol>
+</section>
+</main>
+
+<section class="join-section" id="join-us"><div class="join-inner">
+  <h2>加入我们</h2>
+  <p>We welcome highly motivated individuals interested in AI for Science, nucleic acid delivery, genome editing, therapeutics, and drug discovery to join our team.</p>
+</div></section>
+
+<main><section id="disclaimer"><h2>免责声明</h2><div class="disclaimer">
+  <p>本网站所提供的实验室介绍、个人简介、科研活动及研究成果等内容，仅供信息参考与学术交流之用，不构成任何形式的医疗、诊断、治疗或投资建议。</p>
+  <p>本网站涉及的基因编辑技术、基因治疗及相关研究内容，反映的是相关领域持续发展的科学研究进展，不应据此认定相关技术已通过临床验证、获得监管部门批准或具备临床应用条件。本网站所载信息不能替代专业医疗意见，亦不应作为作出医疗或投资决策的依据。</p>
+  <p>我们将尽合理努力确保本网站所载信息的准确性和完整性，但不对相关信息的准确性、完整性或时效性作出任何明示或默示的保证。我们保留随时更新、修改或删除网站内容的权利，恕不另行通知。</p>
+</div></section></main>
+
+<footer>
+  <div class="footer-qr">
+    <p class="footer-qr-title">关注我们</p>
+    <img src="./images/QR.jpeg" alt="肖庆全实验室微信公众号二维码" width="132" height="132">
+    <p class="footer-qr-note">扫描二维码，关注我们的微信公众号</p>
+  </div>
+  © <span id="year">2026</span> 肖庆全实验室 · 浙江大学金华研究院
+</footer>
+
+<script>
+(function(){
+  const dateElement=document.getElementById("china-date");
+  const weekdayElement=document.getElementById("china-weekday");
+  const timeElement=document.getElementById("china-time");
+  function updateChinaClock(){
+    const now=new Date();
+    const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
+    const values={};parts.forEach(p=>{if(p.type!=="literal")values[p.type]=p.value;});
+    dateElement.textContent=values.year+"-"+values.month+"-"+values.day;
+    weekdayElement.textContent=new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",weekday:"long"}).format(now);
+    timeElement.textContent=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Shanghai",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).format(now);
+  }
+  updateChinaClock();window.setInterval(updateChinaClock,1000);
+})();
+document.addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest("img")){e.preventDefault();e.stopPropagation();}},true);
+document.addEventListener("dragstart",function(e){if(e.target.closest&&e.target.closest("img")){e.preventDefault();e.stopPropagation();}},true);
+</script>
 </body>
 </html>
