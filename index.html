@@ -209,6 +209,38 @@
       max-width: 900px;
     }
 
+    /* Text-only research interests */
+    .research-list {
+      max-width: 900px;
+    }
+
+    .research-list p {
+      position: relative;
+      margin: 0 0 18px;
+      padding-left: 20px;
+    }
+
+    .research-list p::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 0.78em;
+      width: 7px;
+      height: 7px;
+      background: var(--blue);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .research-list p:last-child {
+      margin-bottom: 0;
+    }
+
+    .research-list strong {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
     .contact {
       display: flex;
       flex-wrap: wrap;
@@ -242,6 +274,37 @@
       color: var(--muted);
       font-size: 14px;
       font-style: italic;
+    }
+
+    /* Numbered, text-only selected publications */
+    .publication-list {
+      max-width: 1000px;
+      margin: 0;
+      padding-left: 2.1em;
+    }
+
+    .publication-list li {
+      padding-left: 8px;
+      margin: 0 0 20px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .publication-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .publication-list li::marker {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .publication-list strong {
+      color: var(--ink);
+    }
+
+    .publication-list a {
+      overflow-wrap: anywhere;
     }
 
     .join-section {
@@ -528,10 +591,24 @@
 
       <h2>Research Interests</h2>
 
-      <img class="section-image"
-           src="./images/research-interests.jpg"
-           width="800"
-           alt="Research interests">
+      <div class="research-list">
+        <p>
+          <strong>Genome Engineering:</strong>
+          Development of next-generation genome editing tools.
+        </p>
+
+        <p>
+          <strong>Translational Gene &amp; Cell Therapies:</strong>
+          Developing precision genome editing strategies for gene and cell therapies.
+        </p>
+
+        <p>
+          <strong>Disease Modeling &amp; Developmental Biology:</strong>
+          Generating animal models to investigate disease pathogenesis and progression,
+          and applying genome editing technologies for lineage tracing to investigate
+          animal development.
+        </p>
+      </div>
 
     </section>
 
@@ -544,10 +621,63 @@
         # denotes first or co-first authors.
       </p>
 
-      <img class="section-image"
-           src="./images/selected-publications.jpg"
-           width="800"
-           alt="Selected publications">
+      <ol class="publication-list">
+        <li>
+          <strong>Xiao, Q.<sup>#,*</sup></strong>, Tian, Z.<sup>#</sup>, Weng, L.<sup>#</sup>, Xu, K.<sup>#</sup>, Han, D.<sup>#</sup>, Wu, Z., Li, J., Li, S., Zhang, Q., Zhao, X., Li, G.<sup>*</sup>, Wei, Y.<sup>*</sup>, &amp; Gu, Z.<sup>*</sup> (2026).
+          Compact 9dBEs Enable Efficient and Precise Genome Editing in Mammalian Cells and <em>In Vivo</em>.
+          <strong><em>Advanced Science</em></strong>, 13, no. 62 (2026): e77279.
+          <a href="https://doi.org/10.1002/advs.77279" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/advs.77279</a>
+        </li>
+
+        <li>
+          <strong>Xiao, Q.<sup>#</sup></strong>, Li, G.<sup>#</sup>, Han, D.<sup>#</sup>, Wang, H.<sup>#</sup>, Yao, M.<sup>#</sup>, Ma, T., Zhou, J., Zhang, Y., Zhang, X., He, B., Yuan, Y., Shi, L., Li, T.<sup>*</sup>, Yang, H.<sup>*</sup>, Huang, J.<sup>*</sup>, &amp; Zhang, H.<sup>*</sup> (2024).
+          Engineered IscB-ωRNA system with expanded target range for base editing.
+          <strong><em>Nature Chemical Biology</em></strong>, 21(1), 100–108.
+          <a href="https://doi.org/10.1038/s41589-024-01706-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41589-024-01706-1</a>
+        </li>
+
+        <li>
+          <strong>Xiao, Q.<sup>#</sup></strong>, Xu, Z.<sup>#</sup>, Xue, Y.<sup>#</sup>, Xu, C.<sup>#</sup>, Han, L., Liu, Y., Wang, F., Zhang, R., Han, S., Wang, X., Li, G. L., Li, H.<sup>*</sup>, Yang, H.<sup>*</sup>, &amp; Shu, Y.<sup>*</sup> (2022).
+          Rescue of autosomal dominant hearing loss by <em>in vivo</em> delivery of mini dCas13X-derived RNA base editor.
+          <strong><em>Science Translational Medicine</em></strong>, 14(654), eabn0449.
+          <a href="https://doi.org/10.1126/scitranslmed.abn0449" target="_blank" rel="noopener noreferrer">https://doi.org/10.1126/scitranslmed.abn0449</a>
+        </li>
+
+        <li>
+          Han, D.<sup>#</sup>, <strong>Xiao, Q.<sup>#</sup></strong>, Wang, Y.<sup>#</sup>, Zhang, H.<sup>#</sup>, Dong, X., Li, G., Kong, X., Wang, S., Song, J., Zhang, W., Zhou, J., Bi, L., Yuan, Y., Shi, L., Zhong, N., Yang, H.<sup>*</sup>, &amp; Zhou, Y.<sup>*</sup> (2023).
+          Development of miniature base editors using engineered IscB nickase.
+          <strong><em>Nature Methods</em></strong>, 20(7), 1029–1036.
+          <a href="https://doi.org/10.1038/s41592-023-01898-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41592-023-01898-9</a>
+        </li>
+
+        <li>
+          Tong, H.<sup>#</sup>, Huang, J.<sup>#,*</sup>, <strong>Xiao, Q.<sup>#</sup></strong>, He, B.<sup>#</sup>, Dong, X.<sup>#</sup>, Liu, Y.<sup>#</sup>, Yang, X., Han, D., Wang, Z., Wang, X., Ying, W., Zhang, R., Wei, Y., Xu, C., Zhou, Y., Li, Y., Cai, M., Wang, Q., Xue, M., Li, G., Fang K., Zhang H.<sup>*</sup> &amp; Yang H.<sup>*</sup> (2022).
+          High-fidelity Cas13 variants for targeted RNA degradation with minimal collateral effects.
+          <strong><em>Nature Biotechnology</em></strong>, 41(1), 108–119.
+          <a href="https://doi.org/10.1038/s41587-022-01419-7" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41587-022-01419-7</a>
+        </li>
+
+        <li>
+          Xu, C.<sup>#</sup>, Zhou, Y.<sup>#,*</sup>, <strong>Xiao, Q.<sup>#</sup></strong>, He, B.<sup>#</sup>, Geng, G.<sup>#</sup>, Wang, Z., Cao, B., Dong, X., Bai, W., Wang, Y., Wang, X., Zhou, D., Yuan, T., Huo, X., Lai, J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2021).
+          Programmable RNA editing with compact CRISPR-Cas13 systems from uncultivated microbes.
+          <strong><em>Nature Methods</em></strong>, 18(5), 499–506.
+          <a href="https://doi.org/10.1038/s41592-021-01124-4" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41592-021-01124-4</a>
+        </li>
+
+        <li>
+          Li, G.<sup>#</sup>, Jin, M.<sup>#</sup>, Li, Z.<sup>#</sup>, <strong>Xiao, Q.<sup>#</sup></strong>, Lin, J.<sup>#</sup>, Yang, D.<sup>#</sup>, Liu, Y., Wang, X., Xie, L., Ying, W., Wang, H., Zuo, E., Shi, L., Wang, N.<sup>*</sup>, Chen, W.<sup>*</sup>, Xu, C.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2023).
+          Mini-dCas13X-mediated RNA editing restores dystrophin expression in a humanized mouse model of Duchenne muscular dystrophy.
+          <strong><em>The Journal of Clinical Investigation</em></strong>, 133(3), e162809.
+          <a href="https://doi.org/10.1172/JCI162809" target="_blank" rel="noopener noreferrer">https://doi.org/10.1172/JCI162809</a>
+        </li>
+
+        <li>
+          Hu, X.<sup>#</sup>, Wang, J.<sup>#</sup>, Yao, X.<sup>#</sup>, <strong>Xiao, Q.<sup>#</sup></strong>, Xue, Y., Wang, S., Shi, L., Shu, Y.<sup>*</sup>, Li, H.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2019).
+          Screened AAV variants permit efficient transduction access to supporting cells and hair cells.
+          <strong><em>Cell Discovery</em></strong>, 5, 49.
+          <a href="https://doi.org/10.1038/s41421-019-0115-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1038/s41421-019-0115-9</a>
+        </li>
+      </ol>
 
     </section>
 
@@ -556,10 +686,47 @@
 
       <h2>Other Publications</h2>
 
-      <img class="section-image"
-           src="./images/other-publications.jpg"
-           width="800"
-           alt="Other publications">
+      <p class="publication-note">
+        # denotes first or co-first authors.
+      </p>
+
+      <ol class="publication-list">
+        <li>
+          Guo R.<sup>#</sup>, Sun X.<sup>#</sup>, Wang F.<sup>#</sup>, Han D.<sup>#</sup>, Yang Q., Gao H., Li Z., Shao Z., Shi J., Yang R., Huo X., Yan J., Li G., <strong>Xiao Q.</strong>, Liu Y., Zhang S., Liu X., Zhou Y., Wang L.<sup>*</sup>, Hu C.<sup>*</sup>, Xu C.<sup>*</sup> (2024).
+          Engineered IscB-ωRNA system with improved base editing efficiency for disease correction via single AAV delivery in mice.
+          <strong><em>Cell Reports</em></strong>, 43(11), 114973.
+        </li>
+
+        <li>
+          Xue, Y.<sup>#</sup>, Tao, Y.<sup>#</sup>, Wang, X.<sup>#</sup>, Wang, X., Shu, Y., Liu, Y., Kang, W., Chen, S., Cheng, Z., Yan, B., Xie, Y., Bi, L., Jia, H., Li, J., <strong>Xiao, Q.</strong>, Chen, L., Yao, X., Shi, L., Yang, H.<sup>*</sup>, &amp; Wu, H.<sup>*</sup> (2023).
+          RNA base editing therapy cures hearing loss induced by OTOF gene mutation.
+          <strong><em>Molecular Therapy</em></strong>, 31(12), 3520–3530.
+        </li>
+
+        <li>
+          Gao, N.<sup>#</sup>, Hu, J.<sup>#</sup>, He, B.<sup>#</sup>, Ji, Z.<sup>#</sup>, Hu, X.<sup>#</sup>, Huang, J., Wei, Y., Peng, J., Wei, Y., Zhou, Y., Shen, X., Li, H., Feng, X., <strong>Xiao, Q.</strong>, Shi, L., Sun, Y., Zhou, C., Zhou, H.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2021).
+          Endogenous promoter-driven sgRNA for monitoring the expression of low-abundance transcripts and lncRNAs.
+          <strong><em>Nature Cell Biology</em></strong>, 23(1), 99–108.
+        </li>
+
+        <li>
+          Zhang, M.<sup>#</sup>, Zhou, C.<sup>#</sup>, Wei, Y.<sup>#</sup>, Xu, C.<sup>#</sup>, Pan, H., Ying, W., Sun, Y., Sun, Y., <strong>Xiao, Q.</strong>, Yao, N., Zhong, W., Li, Y., Wu, K., Yuan, G., Mitalipov, S.<sup>*</sup>, Chen, Z. J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2019).
+          Human cleaving embryos enable robust homozygotic nucleotide substitutions by base editors.
+          <strong><em>Genome Biology</em></strong>, 20(1), 101.
+        </li>
+
+        <li>
+          Jin, M.<sup>#</sup>, Lin, J.<sup>#</sup>, Zhang, Y.<sup>#</sup>, <strong>Xiao, Q.</strong>, Kong, X., Zhang, X., Shao, Z., Wang, Y., Yu, Y., Li, J., Chen, W. J., Li, G.<sup>*</sup>, Yang, H.<sup>*</sup>, &amp; Wang, N.<sup>*</sup> (2024).
+          enOsCas12f1-mediated exon skipping for Duchenne muscular dystrophy therapy in humanized mouse model.
+          <strong><em>Journal of Genetics and Genomics</em></strong>, 51(2), 256–259.
+        </li>
+
+        <li>
+          Yan, Z.<sup>#</sup>, Yao, Y.<sup>#</sup>, Li, L.<sup>#</sup>, Cai, L., Zhang, H., Zhang, S., <strong>Xiao, Q.</strong>, Wang, X., Zuo, E.<sup>*</sup>, Xu, C.<sup>*</sup>, Wu, J.<sup>*</sup>, &amp; Yang, H.<sup>*</sup> (2023).
+          Treatment of autosomal dominant retinitis pigmentosa caused by RHO-P23H mutation with high-fidelity Cas13X in mice.
+          <strong><em>Molecular Therapy: Nucleic Acids</em></strong>, 33, 750–761.
+        </li>
+      </ol>
 
     </section>
 
@@ -568,22 +735,67 @@
 
       <h2>Patents</h2>
 
-      <img class="section-image"
-           src="./images/patents.jpg"
-           width="800"
-           alt="Patents">
+      <ol class="publication-list">
+        <li>
+          A Cas protein, a fusion protein, a corresponding gene editing system thereof, and applications,
+          <strong>Qingquan Xiao</strong>, Zhen Gu, Zhijin Tian, ZL202610251120.1 (CN).
+        </li>
+
+        <li>
+          TYPE VI-E AND TYPE VI-F CRISPR-CAS SYSTEM AND USES THEREOF.
+          Hui Yang, Chunlong Xu, Yingsi Zhou, <strong>Qingquan Xiao</strong>.
+          US Patent 16/864,982. (USA), PCT.
+        </li>
+
+        <li>
+          TYPE VI-E AND TYPE VI-F CRISPR-CAS SYSTEM AND USES THEREOF.
+          Hui Yang, Chunlong Xu, Yingsi Zhou, <strong>Qingquan Xiao</strong>.
+          ZL.202010390901.1 (CN).
+        </li>
+
+        <li>
+          ISCB POLYPEPTIDES AND USES THEREOF.
+          Hainan Zhang, <strong>Qingquan Xiao</strong>.
+          2025-07-17, WIPO, PCT/CN2025/072127 (USA).
+        </li>
+      </ol>
 
     </section>
 
 
     <section id="presentations">
 
-      <h2>Conference Presentations</h2>
+      <h2>Invited Talks</h2>
 
-      <img class="section-image"
-           src="./images/conference-presentations.jpg"
-           width="800"
-           alt="Conference presentations">
+      <ol class="publication-list">
+        <li>
+          <strong>Xiao, Q.</strong>, “Development and Applications of Compact DNA Base Editors”.
+          The Genome Editing Branch of the Genetics Society of China, the 7th Annual Meeting,
+          Changsha, Hunan, China, October 15–18, 2026. (Invited Talk)
+        </li>
+
+        <li>
+          <strong>Xiao, Q.</strong>, “Development and Applications of Compact Genome Editing Tools.”
+          1st Symposium on Frontiers and Interdisciplinary Research in Intelligent Medicine &amp;
+          2025 Annual Academic Conference of the State Key Laboratory of Advanced Drug Delivery
+          and Release Systems, Hangzhou, Zhejiang, China, November 24–26, 2025. (Invited Talk)
+        </li>
+
+        <li>
+          <strong>Xiao Q.</strong>, Han D., Wang H., Li G., Yuan Y., Zhou Y., Li T., Wang S.,
+          Yao X., Alvin Luk, Kong X., Zhang H. and Yang H. (2024).
+          “Engineered IscB-ωRNA System with Expanded Target Range for Base Editing.”
+          <strong><em>ASGCT</em></strong>, the 27th Annual Meeting. (Invited Talk)
+        </li>
+
+        <li>
+          Li G., <strong>Xiao Q.</strong>, Han D., Wang H., Ma T., Zhou J., Zhang Y., Zhang X.,
+          Li T., Wang S., Yuan Y., Yao Y., Shi L., Zhou Y., Zhang H. and Yang H. (2024).
+          “Precise Correction of Duchenne Muscular Dystrophy by Compact Cytosine Base
+          Editor-Induced Exon Skipping.”
+          <strong><em>ASGCT</em></strong>, the 27th Annual Meeting. (Poster)
+        </li>
+      </ol>
 
     </section>
 
