@@ -2,27 +2,35 @@
 /**
  * Qingquan Xiao Laboratory
  * WeChat Official Account Auto Reply
- * Cloudflare Workers
  *
- * Initial version: plaintext callback mode
+ * Platform: Cloudflare Workers
+ * Mode: Plaintext callback
+ * Version: 1.1.0
  */
 
 const LAB_WEBSITE = "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory";
 
-// XML字段读取
+// ==========================================
+// 1. XML parsing
+// ==========================================
+
 function getXmlValue(xml, tag) {
   const regex = new RegExp(
-    `<${tag}>([\\s\\S]*?)</${tag}>`
+    `<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}\\s*>`
   );
 
   const match = xml.match(regex);
 
   if (!match) return "";
 
-  let value = match[1].trim();
+  const value = match[1].trim();
 
-  if (value.startsWith("<![CDATA[")) {
-    return value.slice(9, -3);
+  const cdataMatch = value.match(
+    /^<!\\[CDATA\\[([\\s\\S]*)\\]\\]>$/
+  );
+
+  if (cdataMatch) {
+    return cdataMatch[1];
   }
 
   return value
@@ -33,8 +41,16 @@ function getXmlValue(xml, tag) {
     .replace(/&amp;/g, "&");
 }
 
-// 微信签名验证
-async function verifySignature(token, timestamp, nonce, signature) {
+// ==========================================
+// 2. WeChat signature verification
+// ==========================================
+
+async function verifySignature(
+  token,
+  timestamp,
+  nonce,
+  signature
+) {
   if (!token || !timestamp || !nonce || !signature) {
     return false;
   }
@@ -55,22 +71,38 @@ async function verifySignature(token, timestamp, nonce, signature) {
   return hash === signature.toLowerCase();
 }
 
-// 生成微信文字回复
+// ==========================================
+// 3. XML CDATA helper
+// ==========================================
+
+function cdata(value) {
+  return String(value).replace(
+    /]]>/g,
+    "]]]]><![CDATA[>"
+  );
+}
+
+// ==========================================
+// 4. Generate WeChat text reply
+// ==========================================
+
 function createReply(toUser, fromUser, content) {
-  const safeContent = String(content)
-    .replace(/]]>/g, "]]]]><![CDATA[>");
+  const now = Math.floor(Date.now() / 1000);
 
   return `
 <xml>
-  <ToUserName><![CDATA[${toUser}]]></ToUserName>
-  <FromUserName><![CDATA[${fromUser}]]></FromUserName>
-  <CreateTime>${Math.floor(Date.now() / 1000)}</CreateTime>
+  <ToUserName><![CDATA[${cdata(toUser)}]]></ToUserName>
+  <FromUserName><![CDATA[${cdata(fromUser)}]]></FromUserName>
+  <CreateTime>${now}</CreateTime>
   <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA[${safeContent}]]></Content>
+  <Content><![CDATA[${cdata(content)}]]></Content>
 </xml>`.trim();
 }
 
-// 自动回复内容
+// ==========================================
+// 5. Laboratory reply database
+// ==========================================
+
 const replies = {
   "实验室介绍": `浙江大学肖庆全实验室
 
@@ -85,7 +117,7 @@ ${LAB_WEBSITE}`,
 
 1. 新一代基因编辑工具的开发
 2. 紧凑型CRISPR-Cas系统研究
-3. 基因编辑技术优化及应用
+3. 基因编辑技术的优化与应用
 4. 基因治疗技术开发
 
 更多信息：
@@ -112,7 +144,10 @@ ${LAB_WEBSITE}`,
 ${LAB_WEBSITE}`
 };
 
-// 关键词识别
+// ==========================================
+// 6. Keyword recognition
+// ==========================================
+
 function getReply(content) {
   const text = (content || "").trim();
 
@@ -120,12 +155,12 @@ function getReply(content) {
     return defaultReply();
   }
 
-  // 精确匹配
+  // Exact matching
   if (replies[text]) {
     return replies[text];
   }
 
-  // 模糊匹配
+  // Partial matching
   for (const keyword of Object.keys(replies)) {
     if (text.includes(keyword)) {
       return replies[keyword];
@@ -135,11 +170,14 @@ function getReply(content) {
   return defaultReply();
 }
 
-// 默认回复
+// ==========================================
+// 7. Default reply
+// ==========================================
+
 function defaultReply() {
   return `感谢关注浙江大学肖庆全实验室！
 
-您可以发送以下关键词：
+您可以发送以下关键词获取信息：
 
 【实验室介绍】
 【研究方向】
@@ -152,35 +190,62 @@ function defaultReply() {
 ${LAB_WEBSITE}`;
 }
 
-// HTTP响应
+// ==========================================
+// 8. HTTP XML response
+// ==========================================
+
 function xmlResponse(xml) {
   return new Response(xml, {
     status: 200,
     headers: {
-      "Content-Type": "application/xml; charset=utf-8"
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "no-store"
     }
   });
 }
 
-// Worker入口
+// ==========================================
+// 9. Cloudflare Worker
+// ==========================================
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 首页健康检查
-    if (url.pathname === "/" && request.method === "GET") {
+    // Health check
+    if (
+      url.pathname === "/" &&
+      request.method === "GET"
+    ) {
       return new Response(
         "Qingquan Xiao Laboratory WeChat Service is running.",
-        { status: 200 }
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8"
+          }
+        }
       );
     }
 
-    // 仅开放微信回调接口
+    // WeChat callback endpoint
     if (url.pathname !== "/wechat") {
-      return new Response("Not Found", { status: 404 });
+      return new Response("Not Found", {
+        status: 404
+      });
     }
 
+    if (request.method !== "GET" &&
+        request.method !== "POST") {
+      return new Response("Method Not Allowed", {
+        status: 405
+      });
+    }
+
+    // Check environment configuration
     if (!env.WECHAT_TOKEN) {
+      console.error("WECHAT_TOKEN is not configured.");
+
       return new Response("Server configuration error", {
         status: 500
       });
@@ -190,49 +255,67 @@ export default {
     const timestamp = url.searchParams.get("timestamp");
     const nonce = url.searchParams.get("nonce");
 
-    const valid = await verifySignature(
-      env.WECHAT_TOKEN,
-      timestamp,
-      nonce,
-      signature
-    );
-
-    if (!valid) {
-      return new Response("Invalid signature", {
-        status: 403
-      });
-    }
-
-    // 微信服务器首次验证URL
-    if (request.method === "GET") {
-      const echostr = url.searchParams.get("echostr");
-
-      return new Response(echostr || "", {
-        status: 200,
-        headers: {
-          "Content-Type": "text/plain; charset=utf-8"
-        }
-      });
-    }
-
-    if (request.method !== "POST") {
-      return new Response("Method Not Allowed", {
-        status: 405
-      });
-    }
-
     try {
+      // Verify WeChat signature
+      const valid = await verifySignature(
+        env.WECHAT_TOKEN,
+        timestamp,
+        nonce,
+        signature
+      );
+
+      if (!valid) {
+        return new Response("Invalid signature", {
+          status: 403
+        });
+      }
+
+      // ======================================
+      // GET: WeChat server URL verification
+      // ======================================
+
+      if (request.method === "GET") {
+        const echostr = url.searchParams.get("echostr");
+
+        if (echostr === null) {
+          return new Response("Missing echostr", {
+            status: 400
+          });
+        }
+
+        return new Response(echostr, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8"
+          }
+        });
+      }
+
+      // ======================================
+      // POST: Receive WeChat messages
+      // ======================================
+
       const xml = await request.text();
+
+      if (!xml) {
+        return new Response("Empty message", {
+          status: 400
+        });
+      }
 
       const toUser = getXmlValue(xml, "FromUserName");
       const fromUser = getXmlValue(xml, "ToUserName");
       const msgType = getXmlValue(xml, "MsgType");
 
-      if (!toUser || !fromUser) {
-        return new Response("", { status: 200 });
+      if (!toUser || !fromUser || !msgType) {
+        console.error("Invalid WeChat XML message.");
+
+        return new Response("Invalid message", {
+          status: 400
+        });
       }
 
-      // 新用户关注事件
+      // New subscriber event
       if (msgType === "event") {
         const event = getXmlValue(xml, "Event");
 
@@ -241,8 +324,15 @@ export default {
 
 我们致力于新一代基因编辑工具与基因治疗技术的开发。
 
-发送【研究方向】【论文】【网站】了解更多信息。
+发送以下关键词了解更多：
 
+【实验室介绍】
+【研究方向】
+【论文】
+【网站】
+【加入我们】
+
+官方网站：
 ${LAB_WEBSITE}`;
 
           return xmlResponse(
@@ -250,10 +340,13 @@ ${LAB_WEBSITE}`;
           );
         }
 
-        return new Response("", { status: 200 });
+        // Other events are not handled
+        return new Response("", {
+          status: 200
+        });
       }
 
-      // 普通文字消息
+      // Text messages
       if (msgType === "text") {
         const content = getXmlValue(xml, "Content");
         const reply = getReply(content);
@@ -263,8 +356,10 @@ ${LAB_WEBSITE}`;
         );
       }
 
-      // 其他类型消息暂不处理
-      return new Response("", { status: 200 });
+      // Unsupported message types
+      return new Response("", {
+        status: 200
+      });
 
     } catch (error) {
       console.error("WeChat processing error:", error);
@@ -275,4 +370,3 @@ ${LAB_WEBSITE}`;
     }
   }
 };
-
