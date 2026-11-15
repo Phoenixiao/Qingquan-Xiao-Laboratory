@@ -45,4 +45,4 @@ For deployment instructions and configuration, please refer to [`wechat/README.m
 
 ## Laboratory Website
 
-[HomePage](https://github.com/Phoenixiao/Qingquan-Xiao-Laboratory)
+[HomePage](https://phoenixiao.github.io/Qingquan-Xiao-Laboratory)
