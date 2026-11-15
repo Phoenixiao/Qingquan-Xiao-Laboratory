@@ -86,7 +86,7 @@ Plaintext mode.
 
 ### 7. Laboratory Website
 
-https://www.qingquanxiaolab.com
+https://phoenixiao.github.io/Qingquan-Xiao-Laboratory
 
 ### 8. Maintenance
 
