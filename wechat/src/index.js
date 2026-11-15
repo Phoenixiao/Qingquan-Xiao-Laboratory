@@ -5,40 +5,52 @@
  *
  * Platform: Cloudflare Workers
  * Mode: Plaintext callback
- * Version: 1.1.0
+ * Version: 1.1.1
  */
 
-const LAB_WEBSITE = "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory";
+const LAB_WEBSITE =
+  "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory/";
 
 // ==========================================
 // 1. XML parsing
 // ==========================================
 
 function getXmlValue(xml, tag) {
-  const regex = new RegExp(
-    `<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}\\s*>`
-  );
+  const openTag = `<${tag}>`;
+  const closeTag = `</${tag}>`;
 
-  const match = xml.match(regex);
+  const start = xml.indexOf(openTag);
 
-  if (!match) return "";
-
-  const value = match[1].trim();
-
-  const cdataMatch = value.match(
-    /^<!\\[CDATA\\[([\\s\\S]*)\\]\\]>$/
-  );
-
-  if (cdataMatch) {
-    return cdataMatch[1];
+  if (start === -1) {
+    return "";
   }
 
+  const contentStart = start + openTag.length;
+  const end = xml.indexOf(closeTag, contentStart);
+
+  if (end === -1) {
+    return "";
+  }
+
+  const value = xml
+    .slice(contentStart, end)
+    .trim();
+
+  // Handle CDATA
+  if (
+    value.startsWith("<![CDATA[") &&
+    value.endsWith("]]>")
+  ) {
+    return value.slice(9, -3);
+  }
+
+  // Decode XML entities
   return value
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'")
-    .replace(/&amp;/g, "&");
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&apos;", "'")
+    .replaceAll("&amp;", "&");
 }
 
 // ==========================================
@@ -76,8 +88,7 @@ async function verifySignature(
 // ==========================================
 
 function cdata(value) {
-  return String(value).replace(
-    /]]>/g,
+  return String(value).split("]]>").join(
     "]]]]><![CDATA[>"
   );
 }
@@ -235,8 +246,10 @@ export default {
       });
     }
 
-    if (request.method !== "GET" &&
-        request.method !== "POST") {
+    if (
+      request.method !== "GET" &&
+      request.method !== "POST"
+    ) {
       return new Response("Method Not Allowed", {
         status: 405
       });
