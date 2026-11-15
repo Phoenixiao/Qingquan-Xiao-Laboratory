@@ -1,4 +1,16 @@
 
+# Node.js dependencies
 node_modules/
-.dev.vars*
-.env*
+
+# Local environment variables and secrets
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+
+# Wrangler local state
+.wrangler/
+
+# Logs
+*.log
+npm-debug.log*
