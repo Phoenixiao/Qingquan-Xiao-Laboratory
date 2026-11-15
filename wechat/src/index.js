@@ -7,7 +7,7 @@
  * Initial version: plaintext callback mode
  */
 
-const LAB_WEBSITE = "https://www.qingquanxiaolab.com";
+const LAB_WEBSITE = "https://phoenixiao.github.io/Qingquan-Xiao-Laboratory";
 
 // XML字段读取
 function getXmlValue(xml, tag) {
