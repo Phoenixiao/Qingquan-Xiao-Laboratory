@@ -3,6 +3,8 @@
   "name": "qingquan-xiao-wechat",
   "version": "1.0.0",
   "private": true,
+  "description": "WeChat Official Account Auto Reply Service for Qingquan Xiao Laboratory",
+  "main": "src/index.js",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
