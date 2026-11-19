@@ -1,1 +1,8 @@
-ok
+name = "qingquan-xiao-lab-analytics"
+main = "src/index.js"
+compatibility_date = "2026-11-19"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "qingquan-xiao-lab-stats"
+database_id = "在这里填写你刚才复制的数据库ID"
