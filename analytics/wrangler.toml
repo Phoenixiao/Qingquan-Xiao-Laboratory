@@ -5,4 +5,4 @@ compatibility_date = "2026-11-19"
 [[d1_databases]]
 binding = "DB"
 database_name = "qingquan-xiao-lab-stats"
-database_id = "在这里填写你刚才复制的数据库ID"
+database_id = "af2883c1-12c3-481b-89fe-7e1f5c9008b5"
