@@ -1,3 +1,6 @@
+-- Qingquan Xiao Lab Website Analytics
+-- Initialize the website visitor counter
+
 CREATE TABLE IF NOT EXISTS site_stats (
     id TEXT PRIMARY KEY,
     total_visits INTEGER NOT NULL DEFAULT 0
