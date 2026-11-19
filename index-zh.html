@@ -20,6 +20,8 @@
     .hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}
     .hero-inner{position:relative;max-width:var(--max-width);margin:0 auto;padding:66px 28px 58px}
     .hero-stats{position:absolute;top:108px;right:28px;z-index:1;min-width:190px;color:var(--muted);text-align:right;line-height:1.55;font-variant-numeric:tabular-nums}
+    .hero-stats-visitors{color:var(--muted);font-size:12px;letter-spacing:.02em;white-space:nowrap;margin-bottom:2px}
+    .hero-stats-visitors span{color:var(--navy);font-weight:600;font-variant-numeric:tabular-nums}
     .hero-stats-date,.hero-stats-weekday{color:var(--muted);font-size:12px;letter-spacing:.02em;white-space:nowrap}
     .hero-stats-time{color:var(--ink);font-size:13px;font-weight:600;white-space:nowrap}
     .eyebrow{margin:0 0 12px;color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.14em}
@@ -64,7 +66,8 @@
 </div></header>
 
 <div class="hero" id="home"><div class="hero-inner">
-  <div class="hero-stats" aria-label="北京时间、日期和星期">
+  <div class="hero-stats" aria-label="累计访问量、北京时间、日期和星期">
+    <div class="hero-stats-visitors">累计访问量：<span id="visitor-count">加载中...</span></div>
     <div class="hero-stats-date" id="china-date">---- -- --</div>
     <div class="hero-stats-weekday" id="china-weekday">---</div>
     <div class="hero-stats-time" id="china-time">--:--:--</div>
@@ -161,6 +164,25 @@
 </footer>
 
 <script>
+// Record this page view and display the shared cumulative visitor count.
+(async function updateVisitorCount(){
+  const API="https://qingquan-xiao-lab-analytics.phoenixqqxiao.workers.dev";
+  const counter=document.getElementById("visitor-count");
+  if(!counter)return;
+  try{
+    const response=await fetch(`${API}/api/visit`,{method:"POST"});
+    if(!response.ok)throw new Error("Visit request failed: "+response.status);
+    const data=await response.json();
+    if(!data.success||typeof data.total_visits!=="number"){
+      throw new Error(data.error||"Invalid statistics response");
+    }
+    counter.textContent=data.total_visits.toLocaleString("zh-CN");
+  }catch(error){
+    console.error("Visitor statistics error:",error);
+    counter.textContent="暂不可用";
+  }
+})();
+
 (function(){
   const dateElement=document.getElementById("china-date");
   const weekdayElement=document.getElementById("china-weekday");
