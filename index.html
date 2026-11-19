@@ -128,6 +128,20 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .hero-stats-visitors {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      margin-bottom: 2px;
+    }
+
+    .hero-stats-visitors span {
+      color: var(--navy);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
     .hero-stats-date,
     .hero-stats-weekday {
       color: var(--muted);
@@ -478,7 +492,11 @@
       <!-- Date, weekday and time -->
 
       <div class="hero-stats"
-           aria-label="Current date, weekday and China Standard Time">
+           aria-label="Total visitors, current date, weekday and China Standard Time">
+
+        <div class="hero-stats-visitors">
+          Total Visitors: <span id="visitor-count">Loading...</span>
+        </div>
 
         <div class="hero-stats-date" id="china-date">
           ---- -- --
@@ -916,6 +934,38 @@
 
 
   <script>
+
+    // Record this page view and display the shared cumulative visitor count.
+    (async function updateVisitorCount() {
+      const API =
+        "https://qingquan-xiao-lab-analytics.phoenixqqxiao.workers.dev";
+
+      const counter = document.getElementById("visitor-count");
+
+      if (!counter) return;
+
+      try {
+        const response = await fetch(`${API}/api/visit`, {
+          method: "POST"
+        });
+
+        if (!response.ok) {
+          throw new Error("Visit request failed: " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!data.success || typeof data.total_visits !== "number") {
+          throw new Error(data.error || "Invalid statistics response");
+        }
+
+        counter.textContent = data.total_visits.toLocaleString("en-US");
+      } catch (error) {
+        console.error("Visitor statistics error:", error);
+        counter.textContent = "Unavailable";
+      }
+    })();
+
 
     // Display date, weekday and time in China Standard Time (UTC+8).
 
