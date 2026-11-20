@@ -935,64 +935,42 @@
 
   <script>
 
-    // Record one visit per browser tab session and display the shared site-wide total.
+    // Record one visit on every page load or refresh.
     (async function updateVisitorCount() {
       const API_BASE = "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com";
-      const SESSION_KEY = "qxl-lab-visit-recorded-v1";
       const counter = document.getElementById("visitor-count");
+
       if (!counter) return;
 
-      async function readCount() {
-        const response = await fetch(`${API_BASE}/api/count`, {
-          method: "GET",
+      try {
+        const response = await fetch(`${API_BASE}/api/visit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({}),
           cache: "no-store"
         });
-        if (!response.ok) throw new Error("Count request failed: " + response.status);
+
+        if (!response.ok) {
+          throw new Error("Visit request failed: " + response.status);
+        }
+
         const data = await response.json();
+
         if (!data.success || data.total_visits === undefined) {
-          throw new Error(data.error || "Invalid count response");
-        }
-        return data.total_visits;
-      }
-
-      try {
-        let alreadyRecorded = false;
-        try {
-          alreadyRecorded = Boolean(sessionStorage.getItem(SESSION_KEY));
-        } catch (storageError) {
-          console.warn("Session storage is unavailable; visit de-duplication may not work.", storageError);
+          throw new Error(data.error || "Invalid visit response");
         }
 
-        let totalVisits;
+        const numericTotal = Number(data.total_visits);
 
-        if (!alreadyRecorded) {
-          // Mark this tab before sending the request to reduce duplicate counts on rapid reloads.
-          try { sessionStorage.setItem(SESSION_KEY, "pending"); } catch (storageError) {}
-
-          const response = await fetch(`${API_BASE}/api/visit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
-            cache: "no-store"
-          });
-
-          if (!response.ok) throw new Error("Visit request failed: " + response.status);
-          const data = await response.json();
-          if (!data.success || data.total_visits === undefined) {
-            throw new Error(data.error || "Invalid visit response");
-          }
-          totalVisits = data.total_visits;
-          try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (storageError) {}
-        } else {
-          // Refreshes and language switching in the same tab only read the total; they do not add another visit.
-          totalVisits = await readCount();
+        if (!Number.isFinite(numericTotal)) {
+          throw new Error("Invalid visit count value");
         }
 
-        const numericTotal = Number(totalVisits);
-        if (!Number.isFinite(numericTotal)) throw new Error("Invalid visit count value");
         counter.textContent = numericTotal.toLocaleString("en-US");
+
       } catch (error) {
-        try { sessionStorage.removeItem(SESSION_KEY); } catch (storageError) {}
         console.error("Visitor statistics error:", error);
         counter.textContent = "Unavailable";
       }
