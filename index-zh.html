@@ -165,17 +165,25 @@
 
 <script>
 /*
- * 同一浏览器标签页会话只记录一次访问：
- * - 首次打开中文或英文页面：记录一次；
- * - 刷新页面：只读取总数，不增加；
- * - 在中文和英文页面之间切换：只读取总数，不增加；
- * - 关闭标签页后重新打开：新会话，可再记录一次。
+ * Qingquan Xiao Lab - Visitor Analytics
+ *
+ * 访问统计规则：
+ * 1. 每个标签页会话只记录一次访问。
+ * 2. 刷新当前页面不增加访问量。
+ * 3. 中文版和英文版之间切换不增加访问量。
+ * 4. 正常关闭标签页后重新打开，增加一次访问量。
+ * 5. 正常结束浏览器会话后重新访问，增加一次访问量。
+ * 6. 清除网站数据后重新访问，增加一次访问量。
  *
  * 中文版和英文版必须使用完全相同的 SESSION_KEY。
  */
+
 (async function updateVisitorCount() {
   const API_BASE = "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com";
+
+  // 必须与英文版保持完全一致
   const SESSION_KEY = "qxl-lab-visit-recorded-v1";
+
   const counter = document.getElementById("visitor-count");
 
   if (!counter) return;
@@ -200,23 +208,34 @@
   }
 
   try {
+    /*
+     * 读取当前标签页会话标记。
+     *
+     * 只要标记存在，就视为本次会话已经发起过访问记录。
+     * 这样即使页面在请求过程中刷新，也不会再次发送 POST。
+     */
     let alreadyRecorded = false;
 
     try {
-      alreadyRecorded = sessionStorage.getItem(SESSION_KEY) === "1";
+      alreadyRecorded = sessionStorage.getItem(SESSION_KEY) !== null;
     } catch (storageError) {
-      console.warn("Session storage is unavailable.", storageError);
+      console.error("Session storage is unavailable:", storageError);
+
+      // 无法使用 sessionStorage 时不进行访问计数，
+      // 避免刷新或切换语言造成重复记录。
+      counter.textContent = "暂不可用";
+      return;
     }
 
     let totalVisits;
 
     if (!alreadyRecorded) {
-      // 先写入 pending，避免快速刷新时重复发起访问记录请求。
-      try {
-        sessionStorage.setItem(SESSION_KEY, "pending");
-      } catch (storageError) {
-        console.warn("Unable to set session marker.", storageError);
-      }
+      /*
+       * 关键步骤：
+       * 必须先写入标记，再发送 POST 请求。
+       * 不能等服务器返回成功后才写入。
+       */
+      sessionStorage.setItem(SESSION_KEY, "1");
 
       const response = await fetch(`${API_BASE}/api/visit`, {
         method: "POST",
@@ -239,13 +258,11 @@
 
       totalVisits = data.total_visits;
 
-      try {
-        sessionStorage.setItem(SESSION_KEY, "1");
-      } catch (storageError) {
-        console.warn("Unable to save session marker.", storageError);
-      }
     } else {
-      // 已记录过本次会话：只读取总数，不再增加。
+      /*
+       * 本次标签页会话已经记录过访问：
+       * 只读取累计访问量，不再增加。
+       */
       totalVisits = await getTotalCount();
     }
 
@@ -258,19 +275,23 @@
     counter.textContent = numericTotal.toLocaleString("zh-CN");
 
   } catch (error) {
-    // 请求失败时清除标记，允许下次页面加载重试。
-    try {
-      if (sessionStorage.getItem(SESSION_KEY) === "pending") {
-        sessionStorage.removeItem(SESSION_KEY);
-      }
-    } catch (storageError) {
-      console.warn("Unable to clear pending session marker.", storageError);
-    }
-
     console.error("Visitor statistics error:", error);
+
+    /*
+     * 保留会话标记。
+     * 即使网络请求失败或响应丢失，也不在刷新时重复提交。
+     * 下一次新标签页会话可以重新尝试记录。
+     */
     counter.textContent = "暂不可用";
   }
 })();
+
+
+/*
+ * 北京时间
+ * 日期、星期、时间每秒更新。
+ * 此操作不会增加访问量。
+ */
 
 (function () {
   const dateElement = document.getElementById("china-date");
@@ -279,6 +300,7 @@
 
   function updateChinaClock() {
     const now = new Date();
+
     const parts = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Shanghai",
       year: "numeric",
@@ -287,8 +309,11 @@
     }).formatToParts(now);
 
     const values = {};
+
     parts.forEach(function (part) {
-      if (part.type !== "literal") values[part.type] = part.value;
+      if (part.type !== "literal") {
+        values[part.type] = part.value;
+      }
     });
 
     dateElement.textContent =
@@ -309,8 +334,14 @@
   }
 
   updateChinaClock();
+
   window.setInterval(updateChinaClock, 1000);
 })();
+
+
+/*
+ * 图片保护
+ */
 
 document.addEventListener("contextmenu", function (event) {
   if (event.target.closest && event.target.closest("img")) {
@@ -326,8 +357,14 @@ document.addEventListener("dragstart", function (event) {
   }
 }, true);
 
+
+/*
+ * 当前年份
+ */
+
 document.getElementById("current-year").textContent =
   new Date().getFullYear();
+
 </script>
 </body>
 </html>
