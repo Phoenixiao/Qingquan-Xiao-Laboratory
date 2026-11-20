@@ -164,20 +164,49 @@
 </footer>
 
 <script>
-// Record this page view and display the shared cumulative visitor count.
+// 每个浏览器标签页会话仅计数一次；刷新页面或切换中英文不重复增加。
 (async function updateVisitorCount(){
-  const API="https://qingquan-xiao-lab-analytics.phoenixqqxiao.workers.dev";
+  const API_BASE="https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com";
+  const SESSION_KEY="qxl-lab-visit-recorded-v1";
   const counter=document.getElementById("visitor-count");
   if(!counter)return;
-  try{
-    const response=await fetch(`${API}/api/visit`,{method:"POST"});
-    if(!response.ok)throw new Error("Visit request failed: "+response.status);
+
+  async function readCount(){
+    const response=await fetch(`${API_BASE}/api/count`,{method:"GET",cache:"no-store"});
+    if(!response.ok)throw new Error("Count request failed: "+response.status);
     const data=await response.json();
-    if(!data.success||typeof data.total_visits!=="number"){
-      throw new Error(data.error||"Invalid statistics response");
+    if(!data.success||data.total_visits===undefined)throw new Error(data.error||"Invalid count response");
+    return data.total_visits;
+  }
+
+  try{
+    let alreadyRecorded=false;
+    try{alreadyRecorded=Boolean(sessionStorage.getItem(SESSION_KEY));}
+    catch(storageError){console.warn("Session storage is unavailable; visit de-duplication may not work.",storageError);}
+
+    let totalVisits;
+    if(!alreadyRecorded){
+      try{sessionStorage.setItem(SESSION_KEY,"pending");}catch(storageError){}
+      const response=await fetch(`${API_BASE}/api/visit`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({}),
+        cache:"no-store"
+      });
+      if(!response.ok)throw new Error("Visit request failed: "+response.status);
+      const data=await response.json();
+      if(!data.success||data.total_visits===undefined)throw new Error(data.error||"Invalid visit response");
+      totalVisits=data.total_visits;
+      try{sessionStorage.setItem(SESSION_KEY,"1");}catch(storageError){}
+    }else{
+      totalVisits=await readCount();
     }
-    counter.textContent=data.total_visits.toLocaleString("zh-CN");
+
+    const numericTotal=Number(totalVisits);
+    if(!Number.isFinite(numericTotal))throw new Error("Invalid visit count value");
+    counter.textContent=numericTotal.toLocaleString("zh-CN");
   }catch(error){
+    try{sessionStorage.removeItem(SESSION_KEY);}catch(storageError){}
     console.error("Visitor statistics error:",error);
     counter.textContent="暂不可用";
   }
