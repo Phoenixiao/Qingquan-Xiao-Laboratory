@@ -935,62 +935,67 @@
 
   <script>
 
-    // Count every page load (including refreshes). Try Tencent SCF first,
-    // then fall back to Cloudflare Worker. Both services use the same CloudBase database.
+    // Record one visit per browser tab session and display the shared site-wide total.
     (async function updateVisitorCount() {
-      const API_BASES = [
-        "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com",
-        "https://qxl-lab-global-analytics.phoenixqqxiao.workers.dev"
-      ];
+      const API_BASE = "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com";
+      const SESSION_KEY = "qxl-lab-visit-recorded-v1";
       const counter = document.getElementById("visitor-count");
       if (!counter) return;
 
-      async function recordVisit(apiBase) {
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+      async function readCount() {
+        const response = await fetch(`${API_BASE}/api/count`, {
+          method: "GET",
+          cache: "no-store"
+        });
+        if (!response.ok) throw new Error("Count request failed: " + response.status);
+        const data = await response.json();
+        if (!data.success || data.total_visits === undefined) {
+          throw new Error(data.error || "Invalid count response");
+        }
+        return data.total_visits;
+      }
 
+      try {
+        let alreadyRecorded = false;
         try {
-          const response = await fetch(`${apiBase}/api/visit`, {
+          alreadyRecorded = Boolean(sessionStorage.getItem(SESSION_KEY));
+        } catch (storageError) {
+          console.warn("Session storage is unavailable; visit de-duplication may not work.", storageError);
+        }
+
+        let totalVisits;
+
+        if (!alreadyRecorded) {
+          // Mark this tab before sending the request to reduce duplicate counts on rapid reloads.
+          try { sessionStorage.setItem(SESSION_KEY, "pending"); } catch (storageError) {}
+
+          const response = await fetch(`${API_BASE}/api/visit`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ site_id: "qingquan-xiao-lab" }),
-            cache: "no-store",
-            signal: controller.signal
+            body: JSON.stringify({}),
+            cache: "no-store"
           });
 
-          if (!response.ok) {
-            throw new Error(`Visit request failed (${response.status})`);
-          }
-
+          if (!response.ok) throw new Error("Visit request failed: " + response.status);
           const data = await response.json();
           if (!data.success || data.total_visits === undefined) {
             throw new Error(data.error || "Invalid visit response");
           }
-
-          const total = Number(data.total_visits);
-          if (!Number.isFinite(total)) {
-            throw new Error("Invalid visit count value");
-          }
-          return total;
-        } finally {
-          window.clearTimeout(timeoutId);
+          totalVisits = data.total_visits;
+          try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (storageError) {}
+        } else {
+          // Refreshes and language switching in the same tab only read the total; they do not add another visit.
+          totalVisits = await readCount();
         }
-      }
 
-      let lastError;
-      for (const apiBase of API_BASES) {
-        try {
-          const totalVisits = await recordVisit(apiBase);
-          counter.textContent = totalVisits.toLocaleString("en-US");
-          return;
-        } catch (error) {
-          lastError = error;
-          console.warn("Visitor statistics endpoint failed; trying the next endpoint.", apiBase, error);
-        }
+        const numericTotal = Number(totalVisits);
+        if (!Number.isFinite(numericTotal)) throw new Error("Invalid visit count value");
+        counter.textContent = numericTotal.toLocaleString("en-US");
+      } catch (error) {
+        try { sessionStorage.removeItem(SESSION_KEY); } catch (storageError) {}
+        console.error("Visitor statistics error:", error);
+        counter.textContent = "Unavailable";
       }
-
-      console.error("Visitor statistics error:", lastError);
-      counter.textContent = "Unavailable";
     })();
 
 
