@@ -114,8 +114,6 @@
       padding: 66px 28px 58px;
     }
 
-    /* Date, weekday and China Standard Time */
-
     .hero-stats {
       position: absolute;
       top: 108px;
@@ -222,7 +220,6 @@
       max-width: 900px;
     }
 
-    /* Text-only research interests */
     .research-list {
       max-width: 900px;
     }
@@ -289,7 +286,6 @@
       font-style: italic;
     }
 
-    /* Numbered, text-only selected publications */
     .publication-list {
       max-width: 1000px;
       margin: 0;
@@ -463,12 +459,8 @@
         <a href="#pi">PI</a>
         <a href="#team">Team</a>
         <a href="#research">Research</a>
-        <a href="#selected-publications">
-          Selected Publications
-        </a>
-        <a href="#other-publications">
-          Other Publications
-        </a>
+        <a href="#selected-publications">Selected Publications</a>
+        <a href="#other-publications">Other Publications</a>
         <a href="#patents">Patents</a>
         <a href="#presentations">Presentations</a>
         <a href="#join-us">Join Us</a>
@@ -488,8 +480,6 @@
   <div class="hero" id="home">
 
     <div class="hero-inner">
-
-      <!-- Date, weekday and time -->
 
       <div class="hero-stats"
            aria-label="Total visitors, current date, weekday and China Standard Time">
@@ -935,116 +925,263 @@
 
   <script>
 
-    // Count only the first visit in this browser's persistent local storage.
-    // Refreshing the page or switching between English and Chinese will not
-    // create another visit. Both language pages must use the same STORAGE_KEY.
+    // ============================================================
+    // VISITOR COUNTER
+    //
+    // One visit per browser tab session.
+    //
+    // Refresh:
+    // No additional visit.
+    //
+    // English <-> Chinese:
+    // No additional visit.
+    //
+    // Close tab and open website again:
+    // New visit.
+    //
+    // Close browser and open website again:
+    // New visit, provided the browser does not restore the old tab
+    // session.
+    //
+    // Clear website data:
+    // New visit.
+    // ============================================================
+
     (async function updateVisitorCount() {
+
       const API_ENDPOINTS = [
         "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com",
         "https://qxl-lab-global-analytics.phoenixqqxiao.workers.dev"
       ];
 
-      const STORAGE_KEY = "qxl_lab_visit_recorded_v1";
+      // MUST be identical on English and Chinese pages.
+      const STORAGE_KEY = "qxl_lab_visit_recorded_session_v2";
+
       const counter = document.getElementById("visitor-count");
+
       if (!counter) return;
 
+
+      // ------------------------------------------------------------
+      // Check whether this tab has already recorded a visit.
+      // ------------------------------------------------------------
+
+      let storageAvailable = true;
+      let alreadyRecorded = false;
+
+      try {
+
+        alreadyRecorded =
+          sessionStorage.getItem(STORAGE_KEY) === "1";
+
+      } catch (error) {
+
+        storageAvailable = false;
+
+        console.warn(
+          "sessionStorage is unavailable.",
+          error
+        );
+
+      }
+
+
+      // ------------------------------------------------------------
+      // GET: Read current total visits.
+      // ------------------------------------------------------------
+
       async function requestCount(baseUrl) {
-        const response = await fetch(`${baseUrl}/api/count`, {
-          method: "GET",
-          cache: "no-store"
-        });
+
+        const response = await fetch(
+          `${baseUrl}/api/count`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(`Count request failed (${response.status})`);
+
+          throw new Error(
+            `Count request failed (${response.status})`
+          );
+
         }
 
         const data = await response.json();
-        if (!data || !data.success || data.total_visits === undefined) {
-          throw new Error((data && data.error) || "Invalid count response");
+
+        if (
+          !data ||
+          !data.success ||
+          data.total_visits === undefined
+        ) {
+
+          throw new Error(
+            (data && data.error) ||
+            "Invalid count response"
+          );
+
         }
 
         return data.total_visits;
+
       }
+
+
+      // ------------------------------------------------------------
+      // POST: Record one visit.
+      // ------------------------------------------------------------
 
       async function recordVisit(baseUrl) {
-        const response = await fetch(`${baseUrl}/api/visit`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-          cache: "no-store"
-        });
+
+        const response = await fetch(
+          `${baseUrl}/api/visit`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({}),
+            cache: "no-store"
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(`Visit request failed (${response.status})`);
+
+          throw new Error(
+            `Visit request failed (${response.status})`
+          );
+
         }
 
         const data = await response.json();
-        if (!data || !data.success || data.total_visits === undefined) {
-          throw new Error((data && data.error) || "Invalid visit response");
+
+        if (
+          !data ||
+          !data.success ||
+          data.total_visits === undefined
+        ) {
+
+          throw new Error(
+            (data && data.error) ||
+            "Invalid visit response"
+          );
+
         }
 
         return data.total_visits;
+
       }
 
+
+      // ------------------------------------------------------------
+      // API failover:
+      // Tencent Cloud SCF first, Cloudflare Worker second.
+      // ------------------------------------------------------------
+
       async function tryEndpoints(requestFunction) {
+
         let lastError;
 
         for (const baseUrl of API_ENDPOINTS) {
+
           try {
+
             return await requestFunction(baseUrl);
+
           } catch (error) {
+
             lastError = error;
-            console.warn(`Visitor API failed: ${baseUrl}`, error);
+
+            console.warn(
+              `Visitor API failed: ${baseUrl}`,
+              error
+            );
+
           }
+
         }
 
-        throw lastError || new Error("All visitor APIs are unavailable");
+        throw lastError ||
+          new Error("All visitor APIs are unavailable");
+
       }
 
-      try {
-        let alreadyRecorded = false;
 
-        try {
-          alreadyRecorded = localStorage.getItem(STORAGE_KEY) === "1";
-        } catch (storageError) {
-          // Without persistent storage, safely avoid repeated POSTs in this
-          // page instance, but cross-refresh de-duplication cannot be guaranteed.
-          console.warn("localStorage is unavailable; persistent de-duplication cannot be guaranteed.", storageError);
-        }
+      // ------------------------------------------------------------
+      // Main counting logic.
+      // ------------------------------------------------------------
+
+      try {
 
         let totalVisits;
 
-        if (!alreadyRecorded) {
-          // Save the flag BEFORE sending the request. This prevents refreshes,
-          // language switches, and quick repeat loads from issuing another POST.
-          // Do not clear this flag after a network error: the server may have
-          // received the request even if the browser did not receive its reply.
-          try {
-            localStorage.setItem(STORAGE_KEY, "1");
-          } catch (storageError) {
-            console.warn("Could not save the visit flag.", storageError);
-          }
+        if (!storageAvailable) {
+
+          // Fail safely if browser storage is blocked.
+          // Read the total but do not POST repeatedly.
+
+          console.warn(
+            "Visit recording skipped because sessionStorage is unavailable."
+          );
+
+          totalVisits = await tryEndpoints(requestCount);
+
+        } else if (!alreadyRecorded) {
+
+          // FIRST VISIT IN THIS TAB SESSION.
+          //
+          // Save the flag BEFORE sending POST.
+          // Refreshing and switching languages will not count again.
+
+          sessionStorage.setItem(STORAGE_KEY, "1");
 
           totalVisits = await tryEndpoints(recordVisit);
+
         } else {
-          // Existing browser: read the current total without incrementing it.
+
+          // ALREADY RECORDED IN THIS TAB SESSION.
+          //
+          // Only GET the current total.
+          // No additional visit is recorded.
+
           totalVisits = await tryEndpoints(requestCount);
+
         }
+
+
+        // ----------------------------------------------------------
+        // Display visitor count.
+        // ----------------------------------------------------------
 
         const numericTotal = Number(totalVisits);
+
         if (!Number.isFinite(numericTotal)) {
+
           throw new Error("Invalid visit count value");
+
         }
 
-        counter.textContent = numericTotal.toLocaleString("en-US");
+        counter.textContent =
+          numericTotal.toLocaleString("en-US");
+
       } catch (error) {
-        console.error("Visitor statistics error:", error);
+
+        console.error(
+          "Visitor statistics error:",
+          error
+        );
+
         counter.textContent = "Unavailable";
+
       }
+
     })();
 
 
-    // Display date, weekday and time in China Standard Time (UTC+8).
+    // ============================================================
+    // CHINA STANDARD TIME (UTC+8)
+    // ============================================================
 
     (function () {
 
@@ -1069,7 +1206,6 @@
           new Intl.DateTimeFormat("en-CA", {
 
             timeZone: "Asia/Shanghai",
-
             year: "numeric",
             month: "2-digit",
             day: "2-digit"
@@ -1094,7 +1230,7 @@
           dateValues.day;
 
 
-        // Weekday: Monday to Sunday
+        // Weekday
 
         weekdayElement.textContent =
           new Intl.DateTimeFormat("en-US", {
@@ -1105,17 +1241,15 @@
           }).format(now);
 
 
-        // Time: 24-hour format HH:MM:SS
+        // Time: HH:MM:SS
 
         timeElement.textContent =
           new Intl.DateTimeFormat("en-GB", {
 
             timeZone: "Asia/Shanghai",
-
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
-
             hourCycle: "h23"
 
           }).format(now);
@@ -1123,54 +1257,66 @@
       }
 
 
-      // Update immediately.
-
       updateChinaClock();
-
-
-      // Update every second.
 
       window.setInterval(updateChinaClock, 1000);
 
     })();
 
 
-    // Disable the context menu on images.
+    // ============================================================
+    // Disable context menu on images.
+    // ============================================================
 
-    document.addEventListener("contextmenu", function (event) {
+    document.addEventListener(
+      "contextmenu",
+      function (event) {
 
-      if (event.target.closest &&
-          event.target.closest("img")) {
+        if (
+          event.target.closest &&
+          event.target.closest("img")
+        ) {
 
-        event.preventDefault();
-        event.stopPropagation();
+          event.preventDefault();
+          event.stopPropagation();
 
-      }
+        }
 
-    }, true);
+      },
+      true
+    );
 
 
-    // Disable dragging images.
+    // ============================================================
+    // Disable image dragging.
+    // ============================================================
 
-    document.addEventListener("dragstart", function (event) {
+    document.addEventListener(
+      "dragstart",
+      function (event) {
 
-      if (event.target.closest &&
-          event.target.closest("img")) {
+        if (
+          event.target.closest &&
+          event.target.closest("img")
+        ) {
 
-        event.preventDefault();
-        event.stopPropagation();
+          event.preventDefault();
+          event.stopPropagation();
 
-      }
+        }
 
-    }, true);
+      },
+      true
+    );
 
-    
-    // Copyright current-year.
-    
+
+    // ============================================================
+    // Copyright current year.
+    // ============================================================
+
     document.getElementById("current-year").textContent =
       new Date().getFullYear();
 
-    
   </script>
 
 </body>
