@@ -935,111 +935,183 @@
 
   <script>
 
+    // Record one page view on every page load or refresh.
+    // Prefer Tencent SCF for the domestic route. If its count endpoint
+    // cannot be reached, use the Cloudflare Worker as the global route.
+    // Only ONE POST request is sent per page load, preventing fallback
+    // from accidentally recording the same visit twice.
     (async function updateVisitorCount() {
-  const SCF_API =
-    "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com";
+      const API_BASES = [
+        "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com",
+        "https://qxl-lab-global-analytics.phoenixqqxiao.workers.dev"
+      ];
 
-  const CLOUDFLARE_API =
-    "https://qxl-lab-global-analytics.phoenixqqxiao.workers.dev";
+      const SITE_ID = "qingquan-xiao-lab";
+      const STORAGE_KEY = "qxl_lab_visit_session_v1";
+      const REQUEST_TIMEOUT_MS = 6000;
 
-  const counter = document.getElementById("visitor-count");
+      const counter = document.getElementById("visitor-count");
+      if (!counter) return;
 
-  if (!counter) return;
+      const language =
+        document.documentElement.lang === "zh-CN" ? "zh-CN" : "en-US";
 
-  // 每次页面加载产生一个唯一请求 ID。
-  const requestId = (
-    window.crypto && crypto.randomUUID
-      ? crypto.randomUUID()
-      : Date.now() + "-" +
-        Math.random().toString(36).slice(2)
-  );
-
-  const payload = {
-    site_id: "qingquan-xiao-lab",
-    request_id: requestId
-  };
-
-  const endpoints = [
-    { name: "Tencent SCF", url: SCF_API },
-    { name: "Cloudflare", url: CLOUDFLARE_API }
-  ];
-
-  async function recordVisit(endpoint) {
-    const controller = new AbortController();
-
-    const timeout = setTimeout(
-      () => controller.abort(),
-      10000
-    );
-
-    try {
-      const response = await fetch(
-        endpoint.url + "/api/visit",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload),
-          cache: "no-store",
-          signal: controller.signal
+      function makeRequestId() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          return window.crypto.randomUUID();
         }
-      );
-
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
+        return Date.now() + "-" + Math.random().toString(36).slice(2);
       }
 
-      const data = await response.json();
+      function readVisitSession() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
 
-      const total = Number(data.total_visits);
+          const saved = JSON.parse(raw);
+          if (
+            !saved ||
+            typeof saved.requestId !== "string" ||
+            typeof saved.lastSeenAt !== "number"
+          ) {
+            return null;
+          }
 
-      if (data.success !== true || !Number.isFinite(total)) {
-        throw new Error("Invalid API response");
+          return saved;
+        } catch (error) {
+          console.warn("Visitor session storage is unavailable:", error);
+          return null;
+        }
       }
 
-      return total;
+      function saveVisitSession(session) {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+          return true;
+        } catch (error) {
+          console.warn("Could not save visitor session:", error);
+          return false;
+        }
+      }
 
-    } finally {
-      clearTimeout(timeout);
-    }
-  }
-
-  for (const endpoint of endpoints) {
-    try {
-      console.log("Trying analytics:", endpoint.name);
-
-      const total = await recordVisit(endpoint);
-
-      counter.textContent =
-        total.toLocaleString(
-          document.documentElement.lang === "zh-CN"
-            ? "zh-CN"
-            : "en-US"
+      async function requestJson(url, options) {
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(
+          () => controller.abort(),
+          REQUEST_TIMEOUT_MS
         );
 
-      console.log(
-        "Visitor count updated:",
-        endpoint.name,
-        total
-      );
+        try {
+          const response = await fetch(url, {
+            ...options,
+            cache: "no-store",
+            signal: controller.signal
+          });
 
-      return;
+          if (!response.ok) throw new Error("HTTP " + response.status);
 
-    } catch (error) {
-      console.warn(
-        endpoint.name + " failed; trying next endpoint.",
-        error
-      );
-    }
-  }
+          const data = await response.json();
+          const total = Number(data && data.total_visits);
 
-  counter.textContent =
-    document.documentElement.lang === "zh-CN"
-      ? "暂不可用"
-      : "Unavailable";
+          if (!data || data.success !== true || !Number.isFinite(total)) {
+            throw new Error(
+              (data && (data.message || data.error)) ||
+              "Invalid analytics response"
+            );
+          }
+          return total;
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
+      }
 
-})();
+      async function getCurrentCount() {
+        for (const apiBase of API_BASES) {
+          try {
+            return await requestJson(
+              apiBase + "/api/count",
+              { method: "GET" }
+            );
+          } catch (error) {
+            console.warn("Count endpoint failed:", apiBase, error);
+          }
+        }
+        throw new Error("Both count endpoints are unavailable.");
+      }
+
+      async function submitVisit(requestId) {
+        const payload = {
+          site_id: SITE_ID,
+          request_id: requestId
+        };
+
+        for (const apiBase of API_BASES) {
+          try {
+            const total = await requestJson(
+              apiBase + "/api/visit",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+              }
+            );
+            console.info("Visitor visit recorded via:", apiBase);
+            return total;
+          } catch (error) {
+            console.warn(
+              "Visit endpoint failed; trying the next endpoint:",
+              apiBase,
+              error
+            );
+          }
+        }
+        throw new Error("Both visit endpoints are unavailable.");
+      }
+
+      try {
+        const now = Date.now();
+        let visitSession = readVisitSession();
+        const isNewVisit = !visitSession;
+
+        if (isNewVisit) {
+          visitSession = {
+            requestId: makeRequestId(),
+            lastSeenAt: now,
+            status: "pending"
+          };
+        } else {
+          visitSession.lastSeenAt = now;
+        }
+
+        // Store before POST to reduce duplicate requests during rapid refreshes
+        // or switching between the English and Chinese pages.
+        saveVisitSession(visitSession);
+
+        let total;
+        if (isNewVisit || visitSession.status !== "done") {
+          // Reuse the same ID after a timeout; the API must deduplicate request_id.
+          total = await submitVisit(visitSession.requestId);
+          visitSession.status = "done";
+          visitSession.lastSeenAt = Date.now();
+          saveVisitSession(visitSession);
+        } else {
+          // Same 30-minute visit session: GET only, never POST another visit.
+          total = await getCurrentCount();
+        }
+
+        counter.textContent = total.toLocaleString(language);
+      } catch (error) {
+        console.error("Visitor statistics update failed:", error);
+        try {
+          const total = await getCurrentCount();
+          counter.textContent = total.toLocaleString(language);
+        } catch (countError) {
+          console.error("Unable to retrieve visitor count:", countError);
+          counter.textContent =
+            language === "zh-CN" ? "暂不可用" : "Unavailable";
+        }
+      }
+    })();
 
     // Display date, weekday and time in China Standard Time (UTC+8).
 
