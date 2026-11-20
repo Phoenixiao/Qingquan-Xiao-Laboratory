@@ -1,9 +1,7 @@
 name = "qxl-lab-global-analytics"
-
 main = "src/index.js"
-
 compatibility_date = "2026-11-20"
 
-workers_dev = true
-
-preview_urls = false
+# CLOUDBASE_ENV_ID and CLOUDBASE_API_KEY are configured
+# in Cloudflare Dashboard > Worker > Settings > Variables and Secrets.
+# Do not put the API Key in this file or commit it to GitHub.
