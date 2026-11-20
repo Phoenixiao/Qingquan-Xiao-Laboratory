@@ -2,11 +2,10 @@
   "name": "qxl-lab-global-analytics",
   "version": "1.0.0",
   "private": true,
-  "description": "Qingquan Xiao Lab Website Analytics API",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "tail": "wrangler tail"
+    "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
