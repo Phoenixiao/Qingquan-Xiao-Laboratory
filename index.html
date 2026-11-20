@@ -935,183 +935,114 @@
 
   <script>
 
-    // Record one page view on every page load or refresh.
-    // Prefer Tencent SCF for the domestic route. If its count endpoint
-    // cannot be reached, use the Cloudflare Worker as the global route.
-    // Only ONE POST request is sent per page load, preventing fallback
-    // from accidentally recording the same visit twice.
+    // Count only the first visit in this browser's persistent local storage.
+    // Refreshing the page or switching between English and Chinese will not
+    // create another visit. Both language pages must use the same STORAGE_KEY.
     (async function updateVisitorCount() {
-      const API_BASES = [
+      const API_ENDPOINTS = [
         "https://1537226783-dhv7md2cmx.ap-guangzhou.tencentscf.com",
         "https://qxl-lab-global-analytics.phoenixqqxiao.workers.dev"
       ];
 
-      const SITE_ID = "qingquan-xiao-lab";
-      const STORAGE_KEY = "qxl_lab_visit_session_v1";
-      const REQUEST_TIMEOUT_MS = 6000;
-
+      const STORAGE_KEY = "qxl_lab_visit_recorded_v1";
       const counter = document.getElementById("visitor-count");
       if (!counter) return;
 
-      const language =
-        document.documentElement.lang === "zh-CN" ? "zh-CN" : "en-US";
+      async function requestCount(baseUrl) {
+        const response = await fetch(`${baseUrl}/api/count`, {
+          method: "GET",
+          cache: "no-store"
+        });
 
-      function makeRequestId() {
-        if (window.crypto && typeof window.crypto.randomUUID === "function") {
-          return window.crypto.randomUUID();
+        if (!response.ok) {
+          throw new Error(`Count request failed (${response.status})`);
         }
-        return Date.now() + "-" + Math.random().toString(36).slice(2);
+
+        const data = await response.json();
+        if (!data || !data.success || data.total_visits === undefined) {
+          throw new Error((data && data.error) || "Invalid count response");
+        }
+
+        return data.total_visits;
       }
 
-      function readVisitSession() {
-        try {
-          const raw = window.localStorage.getItem(STORAGE_KEY);
-          if (!raw) return null;
+      async function recordVisit(baseUrl) {
+        const response = await fetch(`${baseUrl}/api/visit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+          cache: "no-store"
+        });
 
-          const saved = JSON.parse(raw);
-          if (
-            !saved ||
-            typeof saved.requestId !== "string" ||
-            typeof saved.lastSeenAt !== "number"
-          ) {
-            return null;
-          }
-
-          return saved;
-        } catch (error) {
-          console.warn("Visitor session storage is unavailable:", error);
-          return null;
+        if (!response.ok) {
+          throw new Error(`Visit request failed (${response.status})`);
         }
+
+        const data = await response.json();
+        if (!data || !data.success || data.total_visits === undefined) {
+          throw new Error((data && data.error) || "Invalid visit response");
+        }
+
+        return data.total_visits;
       }
 
-      function saveVisitSession(session) {
-        try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-          return true;
-        } catch (error) {
-          console.warn("Could not save visitor session:", error);
-          return false;
-        }
-      }
+      async function tryEndpoints(requestFunction) {
+        let lastError;
 
-      async function requestJson(url, options) {
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(
-          () => controller.abort(),
-          REQUEST_TIMEOUT_MS
-        );
-
-        try {
-          const response = await fetch(url, {
-            ...options,
-            cache: "no-store",
-            signal: controller.signal
-          });
-
-          if (!response.ok) throw new Error("HTTP " + response.status);
-
-          const data = await response.json();
-          const total = Number(data && data.total_visits);
-
-          if (!data || data.success !== true || !Number.isFinite(total)) {
-            throw new Error(
-              (data && (data.message || data.error)) ||
-              "Invalid analytics response"
-            );
-          }
-          return total;
-        } finally {
-          window.clearTimeout(timeoutId);
-        }
-      }
-
-      async function getCurrentCount() {
-        for (const apiBase of API_BASES) {
+        for (const baseUrl of API_ENDPOINTS) {
           try {
-            return await requestJson(
-              apiBase + "/api/count",
-              { method: "GET" }
-            );
+            return await requestFunction(baseUrl);
           } catch (error) {
-            console.warn("Count endpoint failed:", apiBase, error);
+            lastError = error;
+            console.warn(`Visitor API failed: ${baseUrl}`, error);
           }
         }
-        throw new Error("Both count endpoints are unavailable.");
-      }
 
-      async function submitVisit(requestId) {
-        const payload = {
-          site_id: SITE_ID,
-          request_id: requestId
-        };
-
-        for (const apiBase of API_BASES) {
-          try {
-            const total = await requestJson(
-              apiBase + "/api/visit",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-              }
-            );
-            console.info("Visitor visit recorded via:", apiBase);
-            return total;
-          } catch (error) {
-            console.warn(
-              "Visit endpoint failed; trying the next endpoint:",
-              apiBase,
-              error
-            );
-          }
-        }
-        throw new Error("Both visit endpoints are unavailable.");
+        throw lastError || new Error("All visitor APIs are unavailable");
       }
 
       try {
-        const now = Date.now();
-        let visitSession = readVisitSession();
-        const isNewVisit = !visitSession;
+        let alreadyRecorded = false;
 
-        if (isNewVisit) {
-          visitSession = {
-            requestId: makeRequestId(),
-            lastSeenAt: now,
-            status: "pending"
-          };
-        } else {
-          visitSession.lastSeenAt = now;
-        }
-
-        // Store before POST to reduce duplicate requests during rapid refreshes
-        // or switching between the English and Chinese pages.
-        saveVisitSession(visitSession);
-
-        let total;
-        if (isNewVisit || visitSession.status !== "done") {
-          // Reuse the same ID after a timeout; the API must deduplicate request_id.
-          total = await submitVisit(visitSession.requestId);
-          visitSession.status = "done";
-          visitSession.lastSeenAt = Date.now();
-          saveVisitSession(visitSession);
-        } else {
-          // Same 30-minute visit session: GET only, never POST another visit.
-          total = await getCurrentCount();
-        }
-
-        counter.textContent = total.toLocaleString(language);
-      } catch (error) {
-        console.error("Visitor statistics update failed:", error);
         try {
-          const total = await getCurrentCount();
-          counter.textContent = total.toLocaleString(language);
-        } catch (countError) {
-          console.error("Unable to retrieve visitor count:", countError);
-          counter.textContent =
-            language === "zh-CN" ? "暂不可用" : "Unavailable";
+          alreadyRecorded = localStorage.getItem(STORAGE_KEY) === "1";
+        } catch (storageError) {
+          // Without persistent storage, safely avoid repeated POSTs in this
+          // page instance, but cross-refresh de-duplication cannot be guaranteed.
+          console.warn("localStorage is unavailable; persistent de-duplication cannot be guaranteed.", storageError);
         }
+
+        let totalVisits;
+
+        if (!alreadyRecorded) {
+          // Save the flag BEFORE sending the request. This prevents refreshes,
+          // language switches, and quick repeat loads from issuing another POST.
+          // Do not clear this flag after a network error: the server may have
+          // received the request even if the browser did not receive its reply.
+          try {
+            localStorage.setItem(STORAGE_KEY, "1");
+          } catch (storageError) {
+            console.warn("Could not save the visit flag.", storageError);
+          }
+
+          totalVisits = await tryEndpoints(recordVisit);
+        } else {
+          // Existing browser: read the current total without incrementing it.
+          totalVisits = await tryEndpoints(requestCount);
+        }
+
+        const numericTotal = Number(totalVisits);
+        if (!Number.isFinite(numericTotal)) {
+          throw new Error("Invalid visit count value");
+        }
+
+        counter.textContent = numericTotal.toLocaleString("en-US");
+      } catch (error) {
+        console.error("Visitor statistics error:", error);
+        counter.textContent = "Unavailable";
       }
     })();
+
 
     // Display date, weekday and time in China Standard Time (UTC+8).
 
