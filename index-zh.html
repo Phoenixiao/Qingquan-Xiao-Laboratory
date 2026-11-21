@@ -182,7 +182,7 @@
   <ol class="patent-list">
     <li>一种Cas蛋白、融合蛋白、其相应的基因编辑系统及应用，<strong>肖庆全</strong>、顾臻、田之锦，ZL202610251120.1（中国），(<strong>第一发明人</strong>)</li>
     <li>TYPE VI-E AND TYPE VI-F CRISPR-CAS SYSTEM AND USES THEREOF. Hui Yang, Chunlong Xu, Yingsi Zhou, <strong>Qingquan Xiao</strong>. US Patent 16/864,982（美国），PCT，(<strong>共同发明人</strong>)</li>
-    <li>VI-E型和VI-F型CRISPR-Cas系统及其用途，杨辉、胥春龙、周英思、<strong>肖庆全</strong>，ZL.202010390901.1（中国），(99999<strong>共同发明人</strong>)</li>
+    <li>VI-E型和VI-F型CRISPR-Cas系统及其用途，杨辉、胥春龙、周英思、<strong>肖庆全</strong>，ZL.202010390901.1（中国），(<strong>共同发明人</strong>)</li>
     <li>ISCB POLYPEPTIDES AND USES THEREOF. Hainan Zhang, <strong>Qingquan Xiao</strong>. 2025-07-17, WIPO, PCT/CN2025/072127（美国），(<strong>共同发明人</strong>)</li>
   </ol>
 </section>
@@ -237,11 +237,8 @@
 
   // 必须与英文版保持完全一致
   const SESSION_KEY = "qxl-lab-visit-recorded-v1";
-
   const counter = document.getElementById("visitor-count");
-
   if (!counter) return;
-
   async function getTotalCount() {
     const response = await fetch(`${API_BASE}/api/count`, {
       method: "GET",
@@ -253,11 +250,9 @@
     }
 
     const data = await response.json();
-
     if (!data.success || data.total_visits === undefined) {
       throw new Error(data.error || "Invalid count response");
     }
-
     return data.total_visits;
   }
 
