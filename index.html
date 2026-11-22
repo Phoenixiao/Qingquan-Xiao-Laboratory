@@ -898,7 +898,7 @@
 
     </div>
 
-    © <span id="current-year"></span>
+    © 2024 - <span id="current-year"></span>
     The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University
 
   </footer>
@@ -906,14 +906,12 @@
 
   <style>
     /* Disable text selection across the website */
-
     body {
       -webkit-user-select: none;
       user-select: none;
     }
 
     /* Disable image selection and dragging */
-
     img {
       -webkit-user-drag: none;
       user-drag: none;
@@ -922,7 +920,6 @@
     }
 
     /* Prevent selected text from being highlighted */
-
     ::selection {
       background: transparent;
     }
@@ -962,9 +959,7 @@
 
       // MUST be identical on English and Chinese pages.
       const STORAGE_KEY = "qxl_lab_visit_recorded_session_v2";
-
       const counter = document.getElementById("visitor-count");
-
       if (!counter) return;
 
 
@@ -974,16 +969,11 @@
 
       let storageAvailable = true;
       let alreadyRecorded = false;
-
       try {
-
         alreadyRecorded =
           sessionStorage.getItem(STORAGE_KEY) === "1";
-
-      } catch (error) {
-
+        } catch (error) {
         storageAvailable = false;
-
         console.warn(
           "sessionStorage is unavailable.",
           error
@@ -997,7 +987,6 @@
       // ------------------------------------------------------------
 
       async function requestCount(baseUrl) {
-
         const response = await fetch(
           `${baseUrl}/api/count`,
           {
@@ -1005,33 +994,25 @@
             cache: "no-store"
           }
         );
-
         if (!response.ok) {
-
           throw new Error(
             `Count request failed (${response.status})`
           );
-
-        }
+          }
 
         const data = await response.json();
-
         if (
           !data ||
           !data.success ||
           data.total_visits === undefined
         ) {
-
           throw new Error(
             (data && data.error) ||
             "Invalid count response"
           );
-
-        }
-
+          }
         return data.total_visits;
-
-      }
+        }
 
 
       // ------------------------------------------------------------
@@ -1051,33 +1032,25 @@
             cache: "no-store"
           }
         );
-
         if (!response.ok) {
-
           throw new Error(
             `Visit request failed (${response.status})`
           );
-
-        }
+          }
 
         const data = await response.json();
-
         if (
           !data ||
           !data.success ||
           data.total_visits === undefined
         ) {
-
           throw new Error(
             (data && data.error) ||
             "Invalid visit response"
           );
-
-        }
-
+          }
         return data.total_visits;
-
-      }
+        }
 
 
       // ------------------------------------------------------------
@@ -1086,32 +1059,21 @@
       // ------------------------------------------------------------
 
       async function tryEndpoints(requestFunction) {
-
         let lastError;
-
         for (const baseUrl of API_ENDPOINTS) {
-
           try {
-
             return await requestFunction(baseUrl);
-
-          } catch (error) {
-
+            } catch (error) {
             lastError = error;
-
             console.warn(
               `Visitor API failed: ${baseUrl}`,
               error
             );
-
+            }
           }
-
-        }
-
         throw lastError ||
           new Error("All visitor APIs are unavailable");
-
-      }
+        }
 
 
       // ------------------------------------------------------------
@@ -1119,9 +1081,7 @@
       // ------------------------------------------------------------
 
       try {
-
         let totalVisits;
-
         if (!storageAvailable) {
 
           // Fail safely if browser storage is blocked.
@@ -1130,10 +1090,8 @@
           console.warn(
             "Visit recording skipped because sessionStorage is unavailable."
           );
-
           totalVisits = await tryEndpoints(requestCount);
-
-        } else if (!alreadyRecorded) {
+          } else if (!alreadyRecorded) {
 
           // FIRST VISIT IN THIS TAB SESSION.
           //
@@ -1141,10 +1099,8 @@
           // Refreshing and switching languages will not count again.
 
           sessionStorage.setItem(STORAGE_KEY, "1");
-
           totalVisits = await tryEndpoints(recordVisit);
-
-        } else {
+          } else {
 
           // ALREADY RECORDED IN THIS TAB SESSION.
           //
@@ -1152,8 +1108,7 @@
           // No additional visit is recorded.
 
           totalVisits = await tryEndpoints(requestCount);
-
-        }
+          }
 
 
         // ----------------------------------------------------------
@@ -1161,28 +1116,19 @@
         // ----------------------------------------------------------
 
         const numericTotal = Number(totalVisits);
-
         if (!Number.isFinite(numericTotal)) {
-
           throw new Error("Invalid visit count value");
-
-        }
-
+          }
         counter.textContent =
           numericTotal.toLocaleString("en-US");
-
-      } catch (error) {
-
+        } catch (error) {
         console.error(
           "Visitor statistics error:",
           error
         );
-
         counter.textContent = "Unavailable";
-
-      }
-
-    })();
+        }
+      })();
 
 
     // ============================================================
@@ -1190,44 +1136,30 @@
     // ============================================================
 
     (function () {
-
       const dateElement =
         document.getElementById("china-date");
-
       const weekdayElement =
         document.getElementById("china-weekday");
-
       const timeElement =
         document.getElementById("china-time");
-
-
       function updateChinaClock() {
-
         const now = new Date();
-
-
+        
         // Date: YYYY-MM-DD
 
         const dateParts =
           new Intl.DateTimeFormat("en-CA", {
-
             timeZone: "Asia/Shanghai",
             year: "numeric",
             month: "2-digit",
             day: "2-digit"
-
-          }).formatToParts(now);
-
-
+            }).formatToParts(now);
         const dateValues = {};
-
         dateParts.forEach(function (part) {
-
           if (part.type !== "literal") {
             dateValues[part.type] = part.value;
           }
-
-        });
+          });
 
 
         dateElement.textContent =
