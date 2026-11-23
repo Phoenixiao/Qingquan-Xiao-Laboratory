@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Generate random DNA or RNA sequences for molecular biology and genetic engineering research.">
+<meta name="theme-color" content="#173b5e">
+<title>Random Sequence Generator | The Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--paper:#fff;--wash:#f5f8fb;--max-width:1080px;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);min-height:68px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}.brand:hover{text-decoration:none}
+.home-link{display:inline-block;padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}.home-link:hover{background:var(--wash);text-decoration:none}
+.hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}.hero-inner{max-width:var(--max-width);margin:0 auto;padding:43px 28px 34px}
+.eyebrow{margin:0 0 9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}.intro{max-width:780px;margin:12px 0 0;color:var(--muted);font-size:16px}
+main{max-width:var(--max-width);margin:0 auto;padding:22px 28px 48px}.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
+h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.02em}h3{margin:0 0 10px;color:var(--navy);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}
+label{display:block;margin:0 0 7px;color:var(--ink);font-size:13px;font-weight:650}input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}input,select{height:42px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
+.help{margin-top:5px;color:var(--muted);font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}button,.button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer}button:hover,.button:hover{background:var(--blue);border-color:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover{background:var(--wash)}button:disabled{opacity:.5;cursor:not-allowed}
+.output{display:none;margin-top:18px}.output.show{display:block}.result-box{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:13px;margin:10px 0}.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;overflow-wrap:anywhere;white-space:pre-wrap}.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}.stat .value{font-size:20px;font-weight:700;color:var(--navy)}.stat .label{font-size:11px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{color:var(--navy);background:#f5f8fb}
+.notice{padding:11px 13px;border-radius:4px;background:#f1f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}.notice.warning{background:#fff8e9;border-left-color:#c18a2b}.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:4px;color:var(--red);font-size:13px;margin:12px 0}.success{color:var(--green);font-size:13px}.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:14px;padding:3px 9px;font-size:11px;margin:2px}
+footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}footer a{color:var(--blue)}
+@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px;gap:12px}.brand{font-size:16px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.panel{padding:19px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.home-link{font-size:12px}.hero-inner{padding-top:27px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-inner"><a class="brand" href="../index-zh.html">The Qingquan Xiao Lab</a><a class="home-link" href="../index-zh.html">← Back to Lab Homepage</a></div></header>
+<div class="hero"><div class="hero-inner">
+  <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+  <h1>Random Sequence Generator</h1>
+  <p class="intro">Generate random DNA or RNA sequences for molecular biology and genetic engineering research.</p></div></div>
+<main>
+<section class="panel">
+<h2>Generation settings</h2>
+<div class="grid">
+ <div class="field"><label for="type">Sequence type</label><select id="type"><option value="DNA">DNA (A, C, G, T)</option><option value="RNA">RNA (A, C, G, U)</option></select></div>
+ <div class="field"><label for="length">Sequence length (nt)</label><input id="length" type="number" min="1" max="5000" value="6"><div class="help">Allowed range: 1–5,000 nt</div></div>
+ <div class="field"><label for="count">Number of sequences</label><input id="count" type="number" min="1" max="100" value="1"><div class="help">Allowed range: 1–100 sequences</div></div>
+ <div class="field"><label for="format">Output format</label><select id="format"><option value="plain">Plain sequences</option><option value="fasta">FASTA (with headers)</option></select></div>
+</div>
+<div class="actions"><button id="generate">Generate random sequences</button><button class="secondary" id="clear">Clear</button></div>
+<div id="error" aria-live="polite"></div>
+<div class="output" id="output">
+ <div class="grid"><div><h2>Generated sequences</h2><div class="help" id="summary"></div></div><div class="actions" style="justify-content:flex-end;margin-top:0"><button class="secondary" id="copy">Copy all</button><button class="secondary" id="download">Download .txt</button></div></div>
+ <div id="list"></div>
+</div>
+</section>
+<div class="notice">Each nucleotide is selected independently with equal probability using the browser's Web Crypto random number generator. Generated sequences are random examples, not validated primers or guides.</div>
+
+</main>
+<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index-zh.html">Back to Lab Homepage</a></footer>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script>
+const $=id=>document.getElementById(id);
+let records=[];
+function randIndex(n){const limit=Math.floor(4294967296/n)*n,b=new Uint32Array(1);do{crypto.getRandomValues(b)}while(b[0]>=limit);return b[0]%n}
+function gc(s){return s.length?(100*( [...s].filter(x=>x==='G'||x==='C').length/s.length)).toFixed(1):'0.0'}
+function makeSeq(n,bases){let s='';for(let i=0;i<n;i++)s+=bases[randIndex(bases.length)];return s}
+function render(){
+ const fmt=$('format').value;
+ $('list').innerHTML=records.map((s,i)=>`<div class="result-box"><div class="help">Sequence ${i+1}</div><div class="mono sequence">${fmt==='fasta'?`>Random_${i+1}\\n`:''}${s}</div><div class="help">${s.length} nt · GC ${gc(s)}%</div></div>`).join('');
+}
+$('generate').onclick=()=>{
+ $('error').innerHTML='';const n=Number($('length').value),c=Number($('count').value);
+ if(!Number.isInteger(n)||n<1||n>5000||!Number.isInteger(c)||c<1||c>100){$('error').innerHTML='<div class="error">Enter a length from 1–5,000 and a sequence count from 1–100.</div>';return}
+ if(!window.crypto?.getRandomValues){$('error').innerHTML='<div class="error">A secure browser context with Web Crypto support is required.</div>';return}
+ const bases=$('type').value==='DNA'?['A','C','G','T']:['A','C','G','U'];
+ records=Array.from({length:c},()=>makeSeq(n,bases));$('summary').textContent=`${c} sequence(s) · ${n} nt each · ${$('type').value}`;$('output').classList.add('show');render();
+};
+$('format').onchange=()=>{if(records.length)render()};
+$('copy').onclick=async()=>{const f=$('format').value;const t=records.map((s,i)=>f==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');try{await navigator.clipboard.writeText(t);$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy all',1400)}catch(e){$('error').innerHTML='<div class="error">Clipboard access was unavailable. Select and copy the displayed sequences.</div>'}};
+$('download').onclick=()=>{const f=$('format').value,t=records.map((s,i)=>f==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='random_sequences.txt';a.click();URL.revokeObjectURL(a.href)};
+$('clear').onclick=()=>{records=[];$('list').innerHTML='';$('output').classList.remove('show');$('error').innerHTML=''};
+</script>
+</body></html>

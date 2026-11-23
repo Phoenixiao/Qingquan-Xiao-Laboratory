@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Check guide RNA sequence properties and scan target DNA for selected CRISPR nuclease PAM motifs.">
+<meta name="theme-color" content="#173b5e">
+<title>gRNA Sequence Tools | The Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--paper:#fff;--wash:#f5f8fb;--max-width:1080px;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);min-height:68px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}.brand:hover{text-decoration:none}
+.home-link{display:inline-block;padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}.home-link:hover{background:var(--wash);text-decoration:none}
+.hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}.hero-inner{max-width:var(--max-width);margin:0 auto;padding:43px 28px 34px}
+.eyebrow{margin:0 0 9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}.intro{max-width:780px;margin:12px 0 0;color:var(--muted);font-size:16px}
+main{max-width:var(--max-width);margin:0 auto;padding:22px 28px 48px}.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
+h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.02em}h3{margin:0 0 10px;color:var(--navy);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}
+label{display:block;margin:0 0 7px;color:var(--ink);font-size:13px;font-weight:650}input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}input,select{height:42px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
+.help{margin-top:5px;color:var(--muted);font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}button,.button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer}button:hover,.button:hover{background:var(--blue);border-color:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover{background:var(--wash)}button:disabled{opacity:.5;cursor:not-allowed}
+.output{display:none;margin-top:18px}.output.show{display:block}.result-box{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:13px;margin:10px 0}.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;overflow-wrap:anywhere;white-space:pre-wrap}.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}.stat .value{font-size:20px;font-weight:700;color:var(--navy)}.stat .label{font-size:11px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{color:var(--navy);background:#f5f8fb}
+.notice{padding:11px 13px;border-radius:4px;background:#f1f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}.notice.warning{background:#fff8e9;border-left-color:#c18a2b}.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:4px;color:var(--red);font-size:13px;margin:12px 0}.success{color:var(--green);font-size:13px}.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:14px;padding:3px 9px;font-size:11px;margin:2px}
+footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}footer a{color:var(--blue)}
+@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px;gap:12px}.brand{font-size:16px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.panel{padding:19px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.home-link{font-size:12px}.hero-inner{padding-top:27px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-inner"><a class="brand" href="../index-zh.html">The Qingquan Xiao Lab</a><a class="home-link" href="../index-zh.html">← Back to Lab Homepage</a></div></header>
+<div class="hero"><div class="hero-inner">
+  <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+  <h1>gRNA Sequence Tools</h1>
+  <p class="intro">Check guide RNA sequence properties and scan target DNA for selected CRISPR nuclease PAM motifs.</p></div></div>
+<main>
+<section class="panel">
+<h2>Mode 1 · Guide sequence checker</h2>
+<label for="guides">Paste one guide sequence per line (or FASTA)</label>
+<textarea id="guides" spellcheck="false" placeholder="GAGTCCGAGCAGAAGAAGAA&#10;GCTAGCTAGCTAGCTAGCTA"></textarea>
+<div class="grid">
+ <div class="field"><label for="guideMode">Nucleotide alphabet</label><select id="guideMode"><option value="DNA">DNA (T)</option><option value="RNA">RNA (U)</option></select></div>
+ <div class="field"><label for="minGC">Preferred GC range (%)</label><div class="grid"><input id="minGC" type="number" min="0" max="100" value="40" aria-label="Minimum GC"><input id="maxGC" type="number" min="0" max="100" value="70" aria-label="Maximum GC"></div></div>
+</div>
+<div class="actions"><button id="check">Check guide sequences</button><button class="secondary" id="guideExample">Load examples</button></div>
+<div id="guideError"></div><div class="output" id="guideOutput"></div>
+</section>
+<section class="panel">
+<h2>Mode 2 · PAM site scanner</h2>
+<p class="help">Scan an input DNA target for candidate protospacers adjacent to a selected PAM on both strands. This is a sequence-pattern scan, not an off-target or activity prediction.</p>
+<label for="target">Target DNA sequence (5′ → 3′)</label>
+<textarea id="target" spellcheck="false" placeholder="Paste target DNA sequence here..."></textarea>
+<div class="grid">
+ <div class="field"><label for="nuclease">Nuclease / PAM pattern</label><select id="nuclease"><option value="NGG">SpCas9 · NGG</option><option value="NAG">SpCas9 · NAG (less canonical)</option><option value="TTTV">AsCas12a / LbCas12a · TTTV</option><option value="NG">Relaxed NG (Cas9-NG-like motif)</option></select></div>
+ <div class="field"><label for="spacerLength">Spacer length (nt)</label><input id="spacerLength" type="number" min="10" max="30" value="20"></div>
+</div>
+<div class="actions"><button id="scan">Scan PAM sites</button><button class="secondary" id="targetExample">Load example</button></div>
+<div id="scanError"></div><div class="output" id="scanOutput"></div>
+</section>
+<div class="notice warning"><strong>Interpretation:</strong> GC range and homopolymer flags are simple sequence heuristics only. They do not establish guide efficacy, specificity, editing outcome, or safety. Confirm candidates with appropriate genome-wide off-target analysis and experimental validation.</div>
+
+</main>
+<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index-zh.html">Back to Lab Homepage</a></footer>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script>
+const $=id=>document.getElementById(id);
+function linesFromFasta(t){return t.split(/\r?\n/).filter(x=>!x.trim().startsWith('>')).join('\n').split(/[\r\n,;]+/).map(x=>x.replace(/\s+/g,'').toUpperCase()).filter(Boolean)}
+function revcomp(s){const m={A:'T',T:'A',C:'G',G:'C',N:'N'};return [...s].reverse().map(x=>m[x]||'?').join('')}
+function gc(s){return 100*[...s].filter(x=>x==='G'||x==='C').length/s.length}
+function longestRun(s){let best=1,cur=1;for(let i=1;i<s.length;i++){cur=s[i]===s[i-1]?cur+1:1;best=Math.max(best,cur)}return best}
+$('guideExample').onclick=()=>$('guides').value='GAGTCCGAGCAGAAGAAGAA\nGCTAGCTAGCTAGCTAGCTA\nGGGGGGGGGGGGGGGGGGGG';
+$('check').onclick=()=>{
+ $('guideError').innerHTML='';const seqs=linesFromFasta($('guides').value),rna=$('guideMode').value==='RNA';
+ const min=Number($('minGC').value),max=Number($('maxGC').value);
+ if(!seqs.length){$('guideError').innerHTML='<div class="error">Enter at least one guide sequence.</div>';return}
+ if(!(min>=0&&max<=100&&min<=max)){$('guideError').innerHTML='<div class="error">Set a valid GC range from 0 to 100, with minimum ≤ maximum.</div>';return}
+ const allowed=rna?'ACGUN':'ACGTN';
+ const rows=seqs.map((s,i)=>{const bad=[...new Set([...s].filter(x=>!allowed.includes(x)))];if(bad.length)return {i,s,error:'Invalid: '+bad.join('')};
+ const dna=s.replace(/U/g,'T'),g=gc(dna),run=longestRun(dna),flags=[];
+ if(s.length<18||s.length>25)flags.push('Length outside common 18–25 nt range');
+ if(g<min||g>max)flags.push('GC outside selected range');
+ if(run>=4)flags.push('Homopolymer run ≥4');
+ if(dna.includes('TTTT'))flags.push('Poly-T tract (check Pol III expression context)');
+ if(dna.includes('N'))flags.push('Contains ambiguous N');
+ return {i,s,len:s.length,g,run,flags};});
+ $('guideOutput').innerHTML='<h3>Guide sequence report</h3>'+rows.map(r=>r.error?`<div class="result-box"><strong>Guide ${r.i+1}</strong><div class="error">${r.error}</div></div>`:`<div class="result-box"><strong>Guide ${r.i+1}</strong><div class="mono sequence">${r.s}</div><div class="help">${r.len} nt · GC ${r.g.toFixed(1)}% · longest homopolymer ${r.run}</div><div>${r.flags.length?r.flags.map(f=>`<span class="pill">${f}</span>`).join(''):'<span class="success">No selected heuristic flags</span>'}</div></div>`).join('');
+ $('guideOutput').classList.add('show');
+};
+$('targetExample').onclick=()=>$('target').value='TTTCACTGATCGATCGATCGATCGGAGGCTTACGATCGATCGATCGGAGG';
+function matchAt(s,pat){if(pat==='NGG')return /^[ACGT][AG]G$/.test(s);if(pat==='NAG')return /^[ACGT]AG$/.test(s);if(pat==='NG')return /^[ACGT][AG]$/.test(s);if(pat==='TTTV')return /^TTT[ACG]$/.test(s);return false}
+$('scan').onclick=()=>{
+ $('scanError').innerHTML='';$('scanOutput').classList.remove('show');
+ const raw=$('target').value.toUpperCase().replace(/>.*(\r?\n)?/g,'').replace(/\s+/g,'');
+ const L=Number($('spacerLength').value),pam=$('nuclease').value;
+ if(!raw){$('scanError').innerHTML='<div class="error">Enter a target DNA sequence.</div>';return}
+ if(!/^[ACGTN]+$/.test(raw)){$('scanError').innerHTML='<div class="error">Target must contain only A, C, G, T, and optionally N.</div>';return}
+ if(!Number.isInteger(L)||L<10||L>30){$('scanError').innerHTML='<div class="error">Spacer length must be 10–30 nt.</div>';return}
+ const pLen=pam==='NG'?2:3,candidates=[];
+ function scanStrand(s,strand){for(let i=0;i<=s.length-L-pLen;i++){let spacer,pamSeq,start,end;if(pam==='TTTV'){pamSeq=s.slice(i,i+4);if(!matchAt(pamSeq,pam))continue;spacer=s.slice(i+4,i+4+L);start=i+1;end=i+4+L;}else{spacer=s.slice(i,i+L);pamSeq=s.slice(i+L,i+L+pLen);if(!matchAt(pamSeq,pam))continue;start=i+1;end=i+L+pLen;}if(spacer.includes('N'))continue;candidates.push({strand,spacer,pam:pamSeq,start,end,rc:strand==='+'?spacer:revcomp(spacer)});}}
+ scanStrand(raw,'+');scanStrand(revcomp(raw),'-');
+ if(!candidates.length){$('scanOutput').innerHTML='<div class="notice">No matching PAM-adjacent sites were found with the selected settings.</div>'}
+ else{$('scanOutput').innerHTML=`<h3>${candidates.length} candidate site(s)</h3><div class="help">Coordinates refer to the scanned strand sequence; reverse-strand coordinates are reported in reverse-complement orientation.</div><div style="overflow-x:auto"><table><tr><th>#</th><th>Strand</th><th>Spacer (5′→3′)</th><th>PAM</th><th>Position</th><th>GC</th></tr>${candidates.map((c,i)=>`<tr><td>${i+1}</td><td>${c.strand}</td><td class="mono">${c.spacer}</td><td class="mono">${c.pam}</td><td>${c.start}–${c.end}</td><td>${gc(c.spacer).toFixed(1)}%</td></tr>`).join('')}</table></div><div class="actions"><button class="secondary" id="copyCandidates">Copy candidate spacers</button></div>`;$('copyCandidates').onclick=()=>navigator.clipboard.writeText(candidates.map((c,i)=>`>candidate_${i+1}_${c.strand}_PAM_${c.pam}\n${c.spacer}`).join('\n'));}
+ $('scanOutput').classList.add('show');
+};
+</script>
+</body></html>
