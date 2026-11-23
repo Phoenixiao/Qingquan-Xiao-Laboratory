@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Check guide RNA sequence properties and scan target DNA for selected CRISPR nuclease PAM motifs.">
+<meta name="description" content="Analyze guide sequence properties and identify candidate spacer sites using protein-specific PAM/TAM motifs or custom IUPAC patterns.">
 <meta name="theme-color" content="#173b5e">
 <title>gRNA Sequence Tools | The Qingquan Xiao Lab</title>
 <style>
@@ -36,7 +36,7 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 <div class="hero"><div class="hero-inner">
   <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
   <h1>gRNA Sequence Tools</h1>
-  <p class="intro">Check guide RNA sequence properties and scan target DNA for selected CRISPR nuclease PAM motifs.</p></div></div>
+  <p class="intro">Analyze guide sequence properties and identify candidate spacer sites using protein-specific PAM/TAM motifs or custom IUPAC patterns.</p></div></div>
 <main>
 <section class="panel">
 <h2>Mode 1 · Guide sequence checker</h2>
@@ -44,21 +44,43 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 <textarea id="guides" spellcheck="false" placeholder="GAGTCCGAGCAGAAGAAGAA&#10;GCTAGCTAGCTAGCTAGCTA"></textarea>
 <div class="grid">
  <div class="field"><label for="guideMode">Nucleotide alphabet</label><select id="guideMode"><option value="DNA">DNA (T)</option><option value="RNA">RNA (U)</option></select></div>
- <div class="field"><label for="minGC">Preferred GC range (%)</label><div class="grid"><input id="minGC" type="number" min="0" max="100" value="40" aria-label="Minimum GC"><input id="maxGC" type="number" min="0" max="100" value="70" aria-label="Maximum GC"></div></div>
+ <div class="field"><label for="minGC">Preferred GC range (%)</label><div class="grid"><input id="minGC" type="number" min="0" max="100" value="45" aria-label="Minimum GC"><input id="maxGC" type="number" min="0" max="100" value="65" aria-label="Maximum GC"></div><div class="help">Default: 45–65%. You can change either limit to suit your system.</div></div>
 </div>
-<div class="actions"><button id="check">Check guide sequences</button><button class="secondary" id="guideExample">Load examples</button></div>
+<div class="actions"><button id="check">Check guide sequences</button><button class="secondary" id="guideExample">Load examples</button><button class="secondary" id="clearGuides">Clear</button></div>
 <div id="guideError"></div><div class="output" id="guideOutput"></div>
 </section>
 <section class="panel">
-<h2>Mode 2 · PAM site scanner</h2>
-<p class="help">Scan an input DNA target for candidate protospacers adjacent to a selected PAM on both strands. This is a sequence-pattern scan, not an off-target or activity prediction.</p>
+<h2>Mode 2 · PAM / TAM site scanner</h2>
+<p class="help">Select a nuclease system or define a custom PAM/TAM. The scanner searches both DNA strands and reports candidate spacer sequences in 5′ → 3′ orientation.</p>
 <label for="target">Target DNA sequence (5′ → 3′)</label>
-<textarea id="target" spellcheck="false" placeholder="Paste target DNA sequence here..."></textarea>
+<textarea id="target" spellcheck="false" placeholder="Paste target DNA sequence here (FASTA supported)..."></textarea>
 <div class="grid">
- <div class="field"><label for="nuclease">Nuclease / PAM pattern</label><select id="nuclease"><option value="NGG">SpCas9 · NGG</option><option value="NAG">SpCas9 · NAG (less canonical)</option><option value="TTTV">AsCas12a / LbCas12a · TTTV</option><option value="NG">Relaxed NG (Cas9-NG-like motif)</option></select></div>
- <div class="field"><label for="spacerLength">Spacer length (nt)</label><input id="spacerLength" type="number" min="10" max="30" value="20"></div>
+ <div class="field"><label for="nuclease">Protein / recognition motif</label>
+  <select id="nuclease">
+   <option value="Cas9d-Ultra">Cas9d-Ultra · PAM NGG · spacer–PAM (3′)</option>
+   <option value="OgeuIscB">OgeuIscB · TAM NWRRNA · spacer–TAM (3′)</option>
+   <option value="IscB.m16">IscB.m16 · TAM NNNGNA · spacer–TAM (3′)</option>
+   <option value="Cas12m">Cas12m · PAM TTTN · PAM–spacer (5′)</option>
+   <option value="SpCas9-NGG">SpCas9 · NGG</option>
+   <option value="SpCas9-NAG">SpCas9 · NAG (less canonical)</option>
+   <option value="Cas12a-TTTV">AsCas12a / LbCas12a · TTTV</option>
+   <option value="Cas9-NG">Relaxed NG (Cas9-NG-like motif)</option>
+   <option value="custom">Custom PAM / TAM</option>
+  </select>
+ </div>
+ <div class="field"><label for="spacerLength">sgRNA spacer length (nt)</label><input id="spacerLength" type="number" min="1" max="100" value="20"><div class="help">Default: 20 nt; adjustable from 1–100 nt.</div></div>
 </div>
-<div class="actions"><button id="scan">Scan PAM sites</button><button class="secondary" id="targetExample">Load example</button></div>
+<div class="grid" id="customSettings" style="display:none;margin-top:15px">
+ <div class="field"><label for="customMotif">Custom PAM / TAM motif (IUPAC)</label><input id="customMotif" type="text" value="NGG" maxlength="30" spellcheck="false" placeholder="e.g. NRG or NNNGNA"><div class="help">Use A/C/G/T and IUPAC ambiguity codes, e.g. N, R, W, B, D, H, K, M, S, V, Y.</div></div>
+ <div class="field"><label for="customSide">Motif position relative to spacer</label><select id="customSide"><option value="3">3′ side: 5′-SPACER-MOTIF-3′</option><option value="5">5′ side: 5′-MOTIF-SPACER-3′</option></select></div>
+</div>
+<div class="result-box" id="motifInfo" style="margin-top:15px">
+ <strong id="motifName">OgeuIscB</strong>
+ <div class="mono sequence" id="motifLayout">5′-NNNNNNNNNNNNNNNNNNNN-NWRRNA-3′</div>
+ <div class="help" id="motifDescription">TAM is located at the 3′ side of the spacer.</div>
+</div>
+<div class="notice"><strong>IUPAC / degenerate base codes:</strong> B = C/G/T; D = A/G/T; H = A/C/T; K = G/T; M = A/C; N = A/C/G/T; R = A/G; S = C/G; V = A/C/G; W = A/T; Y = C/T. These codes are supported in PAM/TAM motifs and guide-sequence checking.</div>
+<div class="actions"><button id="scan">Scan PAM / TAM sites</button><button class="secondary" id="targetExample">Load example</button><button class="secondary" id="clearTarget">Clear</button></div>
 <div id="scanError"></div><div class="output" id="scanOutput"></div>
 </section>
 <div class="notice warning"><strong>Interpretation:</strong> GC range and homopolymer flags are simple sequence heuristics only. They do not establish guide efficacy, specificity, editing outcome, or safety. Confirm candidates with appropriate genome-wide off-target analysis and experimental validation.</div>
@@ -68,43 +90,82 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 <script>
 const $=id=>document.getElementById(id);
+const IUPAC={A:'A',C:'C',G:'G',T:'T',R:'AG',Y:'CT',S:'CG',W:'AT',K:'GT',M:'AC',B:'CGT',D:'AGT',H:'ACT',V:'ACG',N:'ACGT'};
+const IUPAC_COMP={A:'T',T:'A',C:'G',G:'C',R:'Y',Y:'R',S:'S',W:'W',K:'M',M:'K',B:'V',V:'B',D:'H',H:'D',N:'N'};
+const SYSTEMS={
+ 'Cas9d-Ultra':{motif:'NGG',side:'3',kind:'PAM',layout:'spacer-motif',note:'PAM NGG is positioned downstream (3′) of the spacer.'},
+ 'OgeuIscB':{motif:'NWRRNA',side:'3',kind:'TAM',layout:'spacer-motif',note:'TAM NWRRNA is positioned downstream (3′) of the spacer.'},
+ 'IscB.m16':{motif:'NNNGNA',side:'3',kind:'TAM',layout:'spacer-motif',note:'TAM NNNGNA is positioned downstream (3′) of the spacer.'},
+ 'Cas12m':{motif:'TTTN',side:'5',kind:'PAM',layout:'motif-spacer',note:'PAM TTTN is positioned upstream (5′) of the spacer.'},
+ 'SpCas9-NGG':{motif:'NGG',side:'3',kind:'PAM',layout:'spacer-motif',note:'Canonical SpCas9 PAM NGG is positioned downstream (3′) of the spacer.'},
+ 'SpCas9-NAG':{motif:'NAG',side:'3',kind:'PAM',layout:'spacer-motif',note:'SpCas9 NAG is a less canonical PAM, positioned downstream (3′) of the spacer.'},
+ 'Cas12a-TTTV':{motif:'TTTV',side:'5',kind:'PAM',layout:'motif-spacer',note:'AsCas12a / LbCas12a PAM TTTV is positioned upstream (5′) of the spacer.'},
+ 'Cas9-NG':{motif:'NG',side:'3',kind:'PAM',layout:'spacer-motif',note:'Relaxed NG PAM is positioned downstream (3′) of the spacer.'}
+};
 function linesFromFasta(t){return t.split(/\r?\n/).filter(x=>!x.trim().startsWith('>')).join('\n').split(/[\r\n,;]+/).map(x=>x.replace(/\s+/g,'').toUpperCase()).filter(Boolean)}
-function revcomp(s){const m={A:'T',T:'A',C:'G',G:'C',N:'N'};return [...s].reverse().map(x=>m[x]||'?').join('')}
-function gc(s){return 100*[...s].filter(x=>x==='G'||x==='C').length/s.length}
+function revcomp(s){return [...s].reverse().map(x=>IUPAC_COMP[x]||'?').join('')}
+function gc(s){const concrete=[...s].filter(x=>x==='A'||x==='C'||x==='G'||x==='T');return concrete.length?100*concrete.filter(x=>x==='G'||x==='C').length/concrete.length:null}
 function longestRun(s){let best=1,cur=1;for(let i=1;i<s.length;i++){cur=s[i]===s[i-1]?cur+1:1;best=Math.max(best,cur)}return best}
-$('guideExample').onclick=()=>$('guides').value='GAGTCCGAGCAGAAGAAGAA\nGCTAGCTAGCTAGCTAGCTA\nGGGGGGGGGGGGGGGGGGGG';
+function patternValid(p){return p.length>0&&[...p].every(x=>Object.prototype.hasOwnProperty.call(IUPAC,x))}
+function matchesIupac(sequence,pattern){if(sequence.length!==pattern.length)return false;for(let i=0;i<pattern.length;i++){const allowed=IUPAC[pattern[i]];if(!allowed||!allowed.includes(sequence[i]))return false;}return true}
+function getSystem(){const key=$('nuclease').value;if(key==='custom')return {motif:$('customMotif').value.trim().toUpperCase(),side:$('customSide').value,kind:'PAM/TAM',note:'Custom motif; position is defined by your selection.'};return SYSTEMS[key]}
+function updateSystem(){const custom=$('nuclease').value==='custom';$('customSettings').style.display=custom?'grid':'none';const sys=getSystem();const L=Math.max(1,Math.min(100,Number($('spacerLength').value)||20));$('motifName').textContent=custom?'Custom PAM / TAM':$('nuclease').selectedOptions[0].textContent;$('motifLayout').textContent=sys.side==='3'?`5′-${'N'.repeat(Math.min(L,40))}${L>40?'…':''}-${sys.motif||'MOTIF'}-3′`:`5′-${sys.motif||'MOTIF'}-${'N'.repeat(Math.min(L,40))}${L>40?'…':''}-3′`;$('motifDescription').textContent=sys.note+(custom?' Motif uses IUPAC ambiguity codes.':'');}
+$('nuclease').addEventListener('change',updateSystem);$('customSide').addEventListener('change',updateSystem);$('customMotif').addEventListener('input',updateSystem);$('spacerLength').addEventListener('input',updateSystem);
+$('guideExample').onclick=()=>{$('guides').value='GAGTCCGAGCAGAAGAAGAA\nGCTAGCTAGCTAGCTAGCTA\nGGGGGGGGGGGGGGGGGGGG\nNNNNNNNNNNNNNNNNNNNN';$('guideOutput').classList.remove('show');$('guideError').innerHTML=''};
+$('clearGuides').onclick=()=>{$('guides').value='';$('guideOutput').innerHTML='';$('guideOutput').classList.remove('show');$('guideError').innerHTML=''};
 $('check').onclick=()=>{
  $('guideError').innerHTML='';const seqs=linesFromFasta($('guides').value),rna=$('guideMode').value==='RNA';
  const min=Number($('minGC').value),max=Number($('maxGC').value);
  if(!seqs.length){$('guideError').innerHTML='<div class="error">Enter at least one guide sequence.</div>';return}
  if(!(min>=0&&max<=100&&min<=max)){$('guideError').innerHTML='<div class="error">Set a valid GC range from 0 to 100, with minimum ≤ maximum.</div>';return}
- const allowed=rna?'ACGUN':'ACGTN';
- const rows=seqs.map((s,i)=>{const bad=[...new Set([...s].filter(x=>!allowed.includes(x)))];if(bad.length)return {i,s,error:'Invalid: '+bad.join('')};
- const dna=s.replace(/U/g,'T'),g=gc(dna),run=longestRun(dna),flags=[];
- if(s.length<18||s.length>25)flags.push('Length outside common 18–25 nt range');
- if(g<min||g>max)flags.push('GC outside selected range');
- if(run>=4)flags.push('Homopolymer run ≥4');
- if(dna.includes('TTTT'))flags.push('Poly-T tract (check Pol III expression context)');
- if(dna.includes('N'))flags.push('Contains ambiguous N');
- return {i,s,len:s.length,g,run,flags};});
- $('guideOutput').innerHTML='<h3>Guide sequence report</h3>'+rows.map(r=>r.error?`<div class="result-box"><strong>Guide ${r.i+1}</strong><div class="error">${r.error}</div></div>`:`<div class="result-box"><strong>Guide ${r.i+1}</strong><div class="mono sequence">${r.s}</div><div class="help">${r.len} nt · GC ${r.g.toFixed(1)}% · longest homopolymer ${r.run}</div><div>${r.flags.length?r.flags.map(f=>`<span class="pill">${f}</span>`).join(''):'<span class="success">No selected heuristic flags</span>'}</div></div>`).join('');
+ const allowed=rna?'ACGUNRYKMSWBDHV':'ACGTNRYKMSWBDHV';
+ const rows=seqs.map((s,i)=>{const bad=[...new Set([...s].filter(x=>!allowed.includes(x)))];if(bad.length)return {i,s,error:'Invalid character(s): '+bad.join(', ')};
+ const dna=s.replace(/U/g,'T'),g=gc(dna),run=longestRun(dna),flags=[],actions=[];
+ if(s.length<18||s.length>25){flags.push('Length outside common 18–25 nt range');actions.push('Check whether this system requires a different spacer length; compare with the recommended length for your nuclease.');}
+ if(g!==null&&g<min){flags.push(`GC below selected range (${g.toFixed(1)}% < ${min}%)`);actions.push(`Consider testing an alternative guide with GC content at or above ${min}%, while keeping within the selected ${min}–${max}% range.`);}
+ if(g!==null&&g>max){flags.push(`GC above selected range (${g.toFixed(1)}% > ${max}%)`);actions.push(`Consider testing an alternative guide with GC content at or below ${max}%, while keeping within the selected ${min}–${max}% range.`);}
+ if(g===null){flags.push('GC% unavailable');actions.push('The sequence contains no explicit A/C/G/T bases, so GC content cannot be calculated. Enter an unambiguous sequence to assess GC%.');}
+ if(run>=4){flags.push(`Homopolymer run of ${run} identical symbols`);actions.push('Consider an alternative spacer without a long consecutive repeat, if an equivalent target site is available.');}
+ if(dna.includes('TTTT')){flags.push('Poly-T tract (TTTT or longer)');actions.push('If using a Pol III-driven expression system, review this poly-T tract because it may act as a premature termination signal.');}
+ if(/[NRYKMSWBDHV]/.test(dna)){flags.push('Contains degenerate IUPAC base(s)');actions.push('Resolve ambiguous positions to the actual target sequence before treating this as a specific guide candidate. GC% is calculated using explicit A/C/G/T positions only.');}
+ return {i,s,len:s.length,g,run,flags,actions};});
+ $('guideOutput').innerHTML='<h3>Guide sequence report</h3><div class="notice">Assessment is based on the selected GC range ('+min+'–'+max+'%) and the simple sequence checks listed below. “Review” means one or more checks raised a point to inspect; it does not prove that a guide will fail. “No flags” means only that none of these selected checks were triggered.</div>'+rows.map(r=>r.error?`<div class="result-box"><strong>Guide ${r.i+1}</strong><div class="error">${r.error}</div><div class="help">Correct the sequence alphabet and run the checker again.</div></div>`:`<div class="result-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><strong>Guide ${r.i+1}</strong><span class="pill" style="${r.flags.length?'background:#fff2df;color:#805b16':'background:#eaf5ef;color:#216746'}">${r.flags.length?'REVIEW':'NO FLAGS'}</span></div><div class="mono sequence">${r.s}</div><div class="help">${r.len} nt · GC ${r.g===null?'N/A':r.g.toFixed(1)+'%'} · longest identical-symbol run ${r.run}</div>${r.flags.length?`<div style="margin-top:9px"><strong style="font-size:12px;color:#805b16">What to review</strong><ul style="margin:5px 0 0;padding-left:20px;font-size:13px">${r.flags.map(f=>`<li>${f}</li>`).join('')}</ul><strong style="display:block;margin-top:8px;font-size:12px;color:var(--navy)">Suggested next step</strong><ul style="margin:5px 0 0;padding-left:20px;font-size:13px">${r.actions.map(a=>`<li>${a}</li>`).join('')}</ul></div>`:'<div class="success" style="margin-top:8px">No warning flags were triggered by the current checks. This is not a prediction of guide activity or specificity.</div>'}</div>`).join('');
  $('guideOutput').classList.add('show');
 };
-$('targetExample').onclick=()=>$('target').value='TTTCACTGATCGATCGATCGATCGGAGGCTTACGATCGATCGATCGGAGG';
-function matchAt(s,pat){if(pat==='NGG')return /^[ACGT][AG]G$/.test(s);if(pat==='NAG')return /^[ACGT]AG$/.test(s);if(pat==='NG')return /^[ACGT][AG]$/.test(s);if(pat==='TTTV')return /^TTT[ACG]$/.test(s);return false}
+$('targetExample').onclick=()=>{const sys=getSystem(),concrete=[...sys.motif].map(x=>IUPAC[x]?.[0]||'A').join(''),spacer='ACGTACGTACGTACGTACGT',site=sys.side==='3'?spacer+concrete:concrete+spacer;$('target').value='GCGC'+site+'TGCA';$('scanOutput').classList.remove('show');$('scanError').innerHTML=''};
+$('clearTarget').onclick=()=>{$('target').value='';$('scanOutput').classList.remove('show');$('scanError').innerHTML=''};
 $('scan').onclick=()=>{
  $('scanError').innerHTML='';$('scanOutput').classList.remove('show');
- const raw=$('target').value.toUpperCase().replace(/>.*(\r?\n)?/g,'').replace(/\s+/g,'');
- const L=Number($('spacerLength').value),pam=$('nuclease').value;
+ const raw=linesFromFasta($('target').value).join(''),L=Number($('spacerLength').value),sys=getSystem(),motif=(sys.motif||'').toUpperCase();
  if(!raw){$('scanError').innerHTML='<div class="error">Enter a target DNA sequence.</div>';return}
- if(!/^[ACGTN]+$/.test(raw)){$('scanError').innerHTML='<div class="error">Target must contain only A, C, G, T, and optionally N.</div>';return}
- if(!Number.isInteger(L)||L<10||L>30){$('scanError').innerHTML='<div class="error">Spacer length must be 10–30 nt.</div>';return}
- const pLen=pam==='NG'?2:3,candidates=[];
- function scanStrand(s,strand){for(let i=0;i<=s.length-L-pLen;i++){let spacer,pamSeq,start,end;if(pam==='TTTV'){pamSeq=s.slice(i,i+4);if(!matchAt(pamSeq,pam))continue;spacer=s.slice(i+4,i+4+L);start=i+1;end=i+4+L;}else{spacer=s.slice(i,i+L);pamSeq=s.slice(i+L,i+L+pLen);if(!matchAt(pamSeq,pam))continue;start=i+1;end=i+L+pLen;}if(spacer.includes('N'))continue;candidates.push({strand,spacer,pam:pamSeq,start,end,rc:strand==='+'?spacer:revcomp(spacer)});}}
+ if(!/^[ACGTN]+$/.test(raw)){$('scanError').innerHTML='<div class="error">Target DNA must contain A, C, G, T, and optionally N. IUPAC codes are accepted in the PAM/TAM motif field.</div>';return}
+ if(!Number.isInteger(L)||L<1||L>100){$('scanError').innerHTML='<div class="error">Spacer length must be an integer from 1 to 100 nt.</div>';return}
+ if(!patternValid(motif)){$('scanError').innerHTML='<div class="error">Enter a valid non-empty PAM/TAM motif using A, C, G, T and IUPAC codes R/Y/S/W/K/M/B/D/H/V/N.</div>';return}
+ const total=L+motif.length,candidates=[];
+ function scanStrand(s,strand){
+  for(let i=0;i<=s.length-total;i++){
+   const spacer=sys.side==='3'?s.slice(i,i+L):s.slice(i+motif.length,i+motif.length+L);
+   const pamSeq=sys.side==='3'?s.slice(i+L,i+L+motif.length):s.slice(i,i+motif.length);
+   if(!matchesIupac(pamSeq,motif))continue;
+   if(!/^[ACGT]+$/.test(spacer))continue;
+   const orientedStart=i+1,orientedEnd=i+total;
+   const genomicStart=strand==='+'?orientedStart:raw.length-orientedEnd+1;
+   const genomicEnd=strand==='+'?orientedEnd:raw.length-orientedStart+1;
+   candidates.push({strand,spacer,motifFound:pamSeq,start:Math.min(genomicStart,genomicEnd),end:Math.max(genomicStart,genomicEnd),gc:gc(spacer)});
+  }
+ }
  scanStrand(raw,'+');scanStrand(revcomp(raw),'-');
- if(!candidates.length){$('scanOutput').innerHTML='<div class="notice">No matching PAM-adjacent sites were found with the selected settings.</div>'}
- else{$('scanOutput').innerHTML=`<h3>${candidates.length} candidate site(s)</h3><div class="help">Coordinates refer to the scanned strand sequence; reverse-strand coordinates are reported in reverse-complement orientation.</div><div style="overflow-x:auto"><table><tr><th>#</th><th>Strand</th><th>Spacer (5′→3′)</th><th>PAM</th><th>Position</th><th>GC</th></tr>${candidates.map((c,i)=>`<tr><td>${i+1}</td><td>${c.strand}</td><td class="mono">${c.spacer}</td><td class="mono">${c.pam}</td><td>${c.start}–${c.end}</td><td>${gc(c.spacer).toFixed(1)}%</td></tr>`).join('')}</table></div><div class="actions"><button class="secondary" id="copyCandidates">Copy candidate spacers</button></div>`;$('copyCandidates').onclick=()=>navigator.clipboard.writeText(candidates.map((c,i)=>`>candidate_${i+1}_${c.strand}_PAM_${c.pam}\n${c.spacer}`).join('\n'));}
+ candidates.sort((a,b)=>a.start-b.start||(a.strand==='+'?-1:1));
+ if(!candidates.length){$('scanOutput').innerHTML='<div class="notice">No matching PAM/TAM-adjacent sites were found with the selected protein, motif, spacer length, and motif orientation.</div>'}
+ else{
+  $('scanOutput').innerHTML=`<h3>${candidates.length} candidate site(s)</h3><div class="help">Coordinates are 1-based, inclusive, and mapped to the input target sequence. The reported spacer and motif are shown 5′ → 3′ in the orientation of the candidate strand.</div><div style="overflow-x:auto"><table><tr><th>#</th><th>Strand</th><th>Spacer (5′→3′)</th><th>${sys.kind}</th><th>Position</th><th>GC</th></tr>${candidates.map((c,i)=>`<tr><td>${i+1}</td><td>${c.strand}</td><td class="mono">${c.spacer}</td><td class="mono">${c.motifFound}</td><td>${c.start}–${c.end}</td><td>${c.gc===null?'N/A':c.gc.toFixed(1)+'%'}</td></tr>`).join('')}</table></div><div class="actions"><button class="secondary" id="copyCandidates">Copy candidate spacers (FASTA)</button><button class="secondary" id="downloadCandidates">Download candidates</button></div>`;
+  const fasta=candidates.map((c,i)=>`>candidate_${i+1}_${c.strand}_${sys.kind}_${c.motifFound}_position_${c.start}-${c.end}\n${c.spacer}`).join('\n');
+  $('copyCandidates').onclick=async()=>{try{await navigator.clipboard.writeText(fasta);$('copyCandidates').textContent='Copied';setTimeout(()=>$('copyCandidates').textContent='Copy candidate spacers (FASTA)',1300)}catch(e){$('scanError').innerHTML='<div class="error">Clipboard unavailable. Select and copy the candidate table instead.</div>'}};
+  $('downloadCandidates').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([fasta],{type:'text/plain'}));a.download='pam_tam_candidates.fasta';a.click();URL.revokeObjectURL(a.href)};
+ }
  $('scanOutput').classList.add('show');
 };
+updateSystem();
 </script>
-</body></html>
+</body>
+</html>
