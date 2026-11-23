@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Perform common DNA and RNA sequence transformations, FASTA formatting, sequence splitting, and translation.">
+<meta name="theme-color" content="#173b5e">
+<title>Sequence Utilities | The Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--bg:#f5f7fa;--border:#dce3eb;--text:#263747;--muted:#718096;--white:#fff;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+header{background:#fff;border-bottom:1px solid var(--border);padding:13px 22px}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{color:var(--navy);font-weight:700;font-size:17px;letter-spacing:.3px;text-decoration:none}
+.subtitle{color:var(--muted);font-size:12px;margin-top:1px}
+.home-link{display:inline-block;color:var(--navy);border:1px solid var(--border);border-radius:22px;padding:7px 13px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap}
+.home-link:hover{background:#edf3f8;border-color:#b9cbd9}
+main{max-width:940px;margin:42px auto;padding:0 20px 45px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--blue);font-weight:700;text-transform:uppercase}
+h1{font-size:30px;line-height:1.25;color:var(--navy);margin:8px 0}
+.intro{color:var(--muted);margin:8px 0 26px}
+.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:25px;margin:16px 0;box-shadow:0 3px 12px rgba(20,50,80,.035)}
+h2{font-size:18px;color:var(--navy);margin:0 0 15px}
+h3{font-size:15px;color:var(--navy);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{min-width:0}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:14px Arial,sans-serif;padding:11px 12px}
+input,select{height:43px}
+textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"Courier New",monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c6d9e8;border-color:var(--blue)}
+.help{font-size:12px;color:var(--muted);margin-top:5px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+button,.button{border:0;border-radius:7px;padding:10px 16px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+button:hover,.button:hover{background:var(--blue)}
+button.secondary{background:#edf3f8;color:var(--navy);border:1px solid var(--border)}
+button.secondary:hover{background:#e1ebf3}
+button:disabled{opacity:.5;cursor:not-allowed}
+.output{display:none;margin-top:18px}
+.output.show{display:block}
+.result-box{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0}
+.mono{font-family:"Courier New",monospace;overflow-wrap:anywhere;white-space:pre-wrap}
+.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.stat{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:12px}
+.stat .value{font-size:20px;font-weight:700;color:var(--navy)}
+.stat .label{font-size:11px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}
+th,td{border-bottom:1px solid var(--border);padding:9px;text-align:left;vertical-align:top}
+th{color:var(--navy);background:#f5f8fb}
+.notice{padding:11px 13px;border-radius:7px;background:#f2f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}
+.warning{background:#fff8e9;border-left-color:#c18a2b}
+.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:6px;color:var(--red);font-size:13px;margin:12px 0}
+.success{color:var(--green);font-size:13px}
+.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:20px;padding:3px 9px;font-size:11px;margin:2px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px 15px;border-top:1px solid var(--border);background:#fff}
+footer a{color:var(--blue);text-decoration:none}
+@media(max-width:650px){.header-inner{align-items:flex-start}.brand{font-size:15px}main{margin:29px auto;padding:0 15px 35px}h1{font-size:25px}.panel{padding:18px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.home-link{font-size:12px;padding:6px 10px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <div><a class="brand" href="../index.html">THE QINGQUAN XIAO LAB</a><div class="subtitle">Jinhua Institute of Zhejiang University</div></div>
+  <a class="home-link" href="../index.html">← Back to Lab Homepage</a>
+</div></header>
+<main>
+  <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+  <h1>Sequence Utilities</h1>
+  <p class="intro">Perform common DNA and RNA sequence transformations, FASTA formatting, sequence splitting, and translation.</p>
+  
+<section class="panel">
+<h2>Input sequence</h2>
+<label for="inputSeq">Paste DNA or RNA sequence (FASTA supported)</label>
+<textarea id="inputSeq" spellcheck="false" placeholder=">Sequence_1&#10;ATGCGTACGTAGCTAG"></textarea>
+<div class="grid">
+ <div class="field"><label for="alphabet">Input alphabet</label><select id="alphabet"><option value="DNA">DNA (A/C/G/T/N)</option><option value="RNA">RNA (A/C/G/U/N)</option></select></div>
+ <div class="field"><label for="operation">Operation</label><select id="operation"><option value="revcomp">Reverse complement</option><option value="reverse">Reverse sequence</option><option value="complement">Complement</option><option value="transcribe">DNA → RNA (T → U)</option><option value="back">RNA → DNA (U → T)</option><option value="fasta">Format as FASTA</option><option value="split">Split into fixed-length lines</option><option value="translate">Translate coding sequence to protein</option></select></div>
+</div>
+<div class="grid" id="extraField"><div class="field"><label for="lineLength">Line width / FASTA wrap length</label><input id="lineLength" type="number" min="1" max="10000" value="60"></div><div class="field"><label for="header">FASTA header</label><input id="header" value="Sequence_1" maxlength="100"></div></div>
+<div class="actions"><button id="run">Run operation</button><button class="secondary" id="clear">Clear</button></div>
+<div id="error"></div>
+</section>
+<section class="panel output" id="result">
+<div class="grid"><div><h2>Result</h2><div class="help" id="resultInfo"></div></div><div class="actions" style="justify-content:flex-end;margin-top:0"><button class="secondary" id="copy">Copy result</button><button class="secondary" id="download">Download .txt</button></div></div>
+<div class="result-box mono" id="resultText"></div>
+</section>
+<div class="notice">Translation uses the standard genetic code and reads from the first nucleotide in the selected frame (frame 1). It does not identify ORFs or predict protein function. Ambiguous codons are translated as X.</div>
+
+</main>
+<footer>© 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script>
+const $=id=>document.getElementById(id);let output='';
+const compDNA={A:'T',T:'A',C:'G',G:'C',N:'N'},compRNA={A:'U',U:'A',C:'G',G:'C',N:'N'};
+const codons={
+'TTT':'F','TTC':'F','TTA':'L','TTG':'L','TCT':'S','TCC':'S','TCA':'S','TCG':'S','TAT':'Y','TAC':'Y','TAA':'*','TAG':'*','TGT':'C','TGC':'C','TGA':'*','TGG':'W',
+'CTT':'L','CTC':'L','CTA':'L','CTG':'L','CCT':'P','CCC':'P','CCA':'P','CCG':'P','CAT':'H','CAC':'H','CAA':'Q','CAG':'Q','CGT':'R','CGC':'R','CGA':'R','CGG':'R',
+'ATT':'I','ATC':'I','ATA':'I','ATG':'M','ACT':'T','ACC':'T','ACA':'T','ACG':'T','AAT':'N','AAC':'N','AAA':'K','AAG':'K','AGT':'S','AGC':'S','AGA':'R','AGG':'R',
+'GTT':'V','GTC':'V','GTA':'V','GTG':'V','GCT':'A','GCC':'A','GCA':'A','GCG':'A','GAT':'D','GAC':'D','GAA':'E','GAG':'E','GGT':'G','GGC':'G','GGA':'G','GGG':'G'};
+function cleanInput(t){return t.split(/\r?\n/).filter(l=>!l.trim().startsWith('>')).join('').replace(/\s+/g,'').toUpperCase()}
+function wrap(s,n){let a=[];for(let i=0;i<s.length;i+=n)a.push(s.slice(i,i+n));return a.join('\n')}
+$('operation').onchange=()=>{$('extraField').style.display=['fasta','split'].includes($('operation').value)?'grid':'none'};
+$('clear').onclick=()=>{$('inputSeq').value='';$('result').classList.remove('show');$('error').innerHTML='';output=''};
+$('run').onclick=()=>{
+ $('error').innerHTML='';const s=cleanInput($('inputSeq').value),type=$('alphabet').value,op=$('operation').value,n=Number($('lineLength').value);
+ if(!s){$('error').innerHTML='<div class="error">Enter a sequence first.</div>';return}
+ const valid=type==='DNA'?'ACGTN':'ACGUN',bad=[...new Set([...s].filter(x=>!valid.includes(x)))];
+ if(bad.length){$('error').innerHTML=`<div class="error">Invalid ${type} character(s): ${bad.join(', ')}.</div>`;return}
+ if(['fasta','split'].includes(op)&&(!Number.isInteger(n)||n<1||n>10000)){$('error').innerHTML='<div class="error">Line width must be an integer from 1 to 10,000.</div>';return}
+ const map=type==='DNA'?compDNA:compRNA;
+ if(op==='reverse')output=[...s].reverse().join('');
+ else if(op==='complement')output=[...s].map(x=>map[x]).join('');
+ else if(op==='revcomp')output=[...s].reverse().map(x=>map[x]).join('');
+ else if(op==='transcribe'){if(type!=='DNA'){$('error').innerHTML='<div class="error">Choose DNA input for DNA → RNA transcription.</div>';return}output=s.replace(/T/g,'U')}
+ else if(op==='back'){if(type!=='RNA'){$('error').innerHTML='<div class="error">Choose RNA input for RNA → DNA conversion.</div>';return}output=s.replace(/U/g,'T')}
+ else if(op==='fasta')output=`>${$('header').value.trim()||'Sequence_1'}\n${wrap(s,n)}`;
+ else if(op==='split')output=wrap(s,n);
+ else if(op==='translate'){const dna=s.replace(/U/g,'T');let aa='';for(let i=0;i+2<dna.length;i+=3)aa+=codons[dna.slice(i,i+3)]||'X';output=aa;$('resultInfo').textContent=`${aa.length} amino acids · incomplete trailing ${dna.length%3} nt omitted · * = stop codon`;}
+ if(op!=='translate')$('resultInfo').textContent=`Input: ${s.length} nt · Output: ${output.length} character(s)`;
+ $('resultText').textContent=output;$('result').classList.add('show');
+};
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(output);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy result',1200)}catch(e){$('error').innerHTML='<div class="error">Clipboard access unavailable; select and copy the result manually.</div>'}};
+$('download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([output],{type:'text/plain'}));a.download='sequence_result.txt';a.click();URL.revokeObjectURL(a.href)};
+$('operation').dispatchEvent(new Event('change'));
+</script>
+</body></html>

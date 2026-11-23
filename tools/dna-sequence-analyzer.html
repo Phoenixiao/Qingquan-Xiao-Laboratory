@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Analyze DNA sequence composition, GC content, GC skew, reverse complement, and RNA transcription.">
+<meta name="theme-color" content="#173b5e">
+<title>DNA Sequence Analyzer | The Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--bg:#f5f7fa;--border:#dce3eb;--text:#263747;--muted:#718096;--white:#fff;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+header{background:#fff;border-bottom:1px solid var(--border);padding:13px 22px}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{color:var(--navy);font-weight:700;font-size:17px;letter-spacing:.3px;text-decoration:none}
+.subtitle{color:var(--muted);font-size:12px;margin-top:1px}
+.home-link{display:inline-block;color:var(--navy);border:1px solid var(--border);border-radius:22px;padding:7px 13px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap}
+.home-link:hover{background:#edf3f8;border-color:#b9cbd9}
+main{max-width:940px;margin:42px auto;padding:0 20px 45px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--blue);font-weight:700;text-transform:uppercase}
+h1{font-size:30px;line-height:1.25;color:var(--navy);margin:8px 0}
+.intro{color:var(--muted);margin:8px 0 26px}
+.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:25px;margin:16px 0;box-shadow:0 3px 12px rgba(20,50,80,.035)}
+h2{font-size:18px;color:var(--navy);margin:0 0 15px}
+h3{font-size:15px;color:var(--navy);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{min-width:0}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:14px Arial,sans-serif;padding:11px 12px}
+input,select{height:43px}
+textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"Courier New",monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c6d9e8;border-color:var(--blue)}
+.help{font-size:12px;color:var(--muted);margin-top:5px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+button,.button{border:0;border-radius:7px;padding:10px 16px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+button:hover,.button:hover{background:var(--blue)}
+button.secondary{background:#edf3f8;color:var(--navy);border:1px solid var(--border)}
+button.secondary:hover{background:#e1ebf3}
+button:disabled{opacity:.5;cursor:not-allowed}
+.output{display:none;margin-top:18px}
+.output.show{display:block}
+.result-box{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0}
+.mono{font-family:"Courier New",monospace;overflow-wrap:anywhere;white-space:pre-wrap}
+.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.stat{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:12px}
+.stat .value{font-size:20px;font-weight:700;color:var(--navy)}
+.stat .label{font-size:11px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}
+th,td{border-bottom:1px solid var(--border);padding:9px;text-align:left;vertical-align:top}
+th{color:var(--navy);background:#f5f8fb}
+.notice{padding:11px 13px;border-radius:7px;background:#f2f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}
+.warning{background:#fff8e9;border-left-color:#c18a2b}
+.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:6px;color:var(--red);font-size:13px;margin:12px 0}
+.success{color:var(--green);font-size:13px}
+.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:20px;padding:3px 9px;font-size:11px;margin:2px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px 15px;border-top:1px solid var(--border);background:#fff}
+footer a{color:var(--blue);text-decoration:none}
+@media(max-width:650px){.header-inner{align-items:flex-start}.brand{font-size:15px}main{margin:29px auto;padding:0 15px 35px}h1{font-size:25px}.panel{padding:18px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.home-link{font-size:12px;padding:6px 10px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <div><a class="brand" href="../index.html">THE QINGQUAN XIAO LAB</a><div class="subtitle">Jinhua Institute of Zhejiang University</div></div>
+  <a class="home-link" href="../index.html">← Back to Lab Homepage</a>
+</div></header>
+<main>
+  <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+  <h1>DNA Sequence Analyzer</h1>
+  <p class="intro">Analyze DNA sequence composition, GC content, GC skew, reverse complement, and RNA transcription.</p>
+  
+<section class="panel">
+<h2>Input sequence</h2>
+<label for="seq">Paste DNA sequence or FASTA</label>
+<textarea id="seq" spellcheck="false" placeholder=">Example_sequence&#10;ATGCGTACGTAGCTAGCTAG"></textarea>
+<div class="help">Accepts A, C, G, T and N. FASTA headers and whitespace are ignored. U is not accepted in DNA mode.</div>
+<div class="actions"><button id="analyze">Analyze sequence</button><button class="secondary" id="sample">Load example</button><button class="secondary" id="reset">Clear</button></div>
+<div id="error"></div>
+</section>
+<section class="panel output" id="result">
+<h2>Sequence statistics</h2><div class="stats" id="stats"></div>
+<table><tbody id="counts"></tbody></table>
+<h2 style="margin-top:22px">Sequence operations</h2>
+<div class="grid">
+ <div class="field"><label>Reverse complement (5′ → 3′)</label><div class="result-box mono" id="rc"></div><button class="secondary" data-copy="rc">Copy</button></div>
+ <div class="field"><label>RNA transcript (T → U)</label><div class="result-box mono" id="rna"></div><button class="secondary" data-copy="rna">Copy</button></div>
+</div>
+<div class="actions"><button class="secondary" id="download">Download analysis (.txt)</button></div>
+</section>
+
+</main>
+<footer>© 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script>
+const $=id=>document.getElementById(id);let analyzed=null;
+function clean(raw){return raw.split(/\r?\n/).filter(l=>!l.trim().startsWith('>')).join('').replace(/\s+/g,'').toUpperCase()}
+function revcomp(s){const m={A:'T',T:'A',C:'G',G:'C',N:'N'};return [...s].reverse().map(x=>m[x]).join('')}
+$('sample').onclick=()=>$('seq').value='>Example_DNA\nATGCGTACGTAGCTAGCTAGNNATCG';
+$('reset').onclick=()=>{$('seq').value='';$('result').classList.remove('show');$('error').innerHTML='';analyzed=null};
+$('analyze').onclick=()=>{
+ $('error').innerHTML='';const s=clean($('seq').value);
+ if(!s){$('error').innerHTML='<div class="error">Please enter a DNA sequence.</div>';return}
+ const invalid=[...new Set([...s].filter(x=>!['A','C','G','T','N'].includes(x)))];
+ if(invalid.length){$('error').innerHTML=`<div class="error">Invalid character(s): ${invalid.join(', ')}. Allowed DNA characters: A, C, G, T, N.</div>`;return}
+ const c={A:0,C:0,G:0,T:0,N:0};[...s].forEach(x=>c[x]++);
+ const known=s.length-c.N,gcPct=known?100*(c.G+c.C)/known:0;
+ const gcSkew=(c.G+c.C)?(c.G-c.C)/(c.G+c.C):null;
+ analyzed={s,c,rc:revcomp(s),rna:s.replace(/T/g,'U'),gcPct,gcSkew,known};
+ $('stats').innerHTML=[['Length',s.length+' nt'],['GC content',gcPct.toFixed(2)+'%'],['Ambiguous N',c.N],['GC skew',gcSkew===null?'N/A':gcSkew.toFixed(3)]].map(x=>`<div class="stat"><div class="value">${x[1]}</div><div class="label">${x[0]}</div></div>`).join('');
+ $('counts').innerHTML=`<tr><th>Base</th><th>Count</th><th>Percentage of total</th></tr>`+['A','C','G','T','N'].map(b=>`<tr><td>${b}</td><td>${c[b]}</td><td>${(100*c[b]/s.length).toFixed(2)}%</td></tr>`).join('')+`<tr><th>Known bases (A/C/G/T)</th><td>${known}</td><td>${(100*known/s.length).toFixed(2)}%</td></tr>`;
+ $('rc').textContent=analyzed.rc;$('rna').textContent=analyzed.rna;$('result').classList.add('show');
+};
+document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{await navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});
+$('download').onclick=()=>{if(!analyzed)return;const a=document.createElement('a');const t=`Length: ${analyzed.s.length}\nA: ${analyzed.c.A}\nC: ${analyzed.c.C}\nG: ${analyzed.c.G}\nT: ${analyzed.c.T}\nN: ${analyzed.c.N}\nGC content (excluding N): ${analyzed.gcPct.toFixed(2)}%\nGC skew: ${analyzed.gcSkew===null?'N/A':analyzed.gcSkew.toFixed(3)}\nReverse complement: ${analyzed.rc}\nRNA: ${analyzed.rna}\n`;a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='dna_sequence_analysis.txt';a.click();URL.revokeObjectURL(a.href)};
+</script>
+</body></html>
