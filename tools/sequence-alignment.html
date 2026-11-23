@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pairwise DNA, RNA, and protein sequence alignment using Needleman–Wunsch global alignment and Smith–Waterman local alignment, with substitution matrices and affine gap penalties.">
+<meta name="theme-color" content="#173b5e">
+<title>Sequence Alignment | The Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--bg:#f5f8fb;--border:#dce4ec;--text:#263747;--muted:#718096;--green:#287a59;--red:#a33b3b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--border);padding:13px 22px}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{color:var(--navy);font-weight:700;font-size:17px;letter-spacing:.3px;text-decoration:none}.subtitle{color:var(--muted);font-size:12px;margin-top:1px}
+.home-link{display:inline-block;color:var(--navy);border:1px solid var(--border);border-radius:22px;padding:7px 13px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap}.home-link:hover{background:#edf3f8}
+main{max-width:980px;margin:38px auto;padding:0 20px 45px}.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--blue);font-weight:700;text-transform:uppercase}
+h1{font-size:30px;line-height:1.25;color:var(--navy);margin:8px 0}.intro{color:var(--muted);margin:8px 0 25px}
+.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;margin:16px 0;box-shadow:0 3px 12px rgba(20,50,80,.035)}
+h2{font-size:18px;color:var(--navy);margin:0 0 15px}h3{font-size:15px;color:var(--navy);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{min-width:0}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:14px Arial,sans-serif;padding:11px 12px}
+input,select{height:43px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"Courier New",monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c6d9e8;border-color:var(--blue)}
+.help{font-size:12px;color:var(--muted);margin-top:5px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+button{border:0;border-radius:7px;padding:10px 16px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+button:hover{background:var(--blue)}button.secondary{background:#edf3f8;color:var(--navy);border:1px solid var(--border)}button.secondary:hover{background:#e1ebf3}
+.notice{padding:11px 13px;border-radius:7px;background:#f2f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}
+.warning{background:#fff8e9;border-left-color:#c18a2b}
+.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:6px;color:var(--red);font-size:13px;margin:12px 0}
+.output{display:none;margin-top:18px}.output.show{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.stat{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:12px;min-width:0}.stat .value{font-size:19px;font-weight:700;color:var(--navy);overflow-wrap:anywhere}.stat .label{font-size:11px;color:var(--muted)}
+.result-box{background:#f5f8fb;border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0}
+.alignment-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:#fff;padding:12px}
+.alignment-pre{margin:0;min-width:max-content;font:14px/1.75 "Courier New",Courier,monospace;color:var(--navy);white-space:pre}
+.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0}
+.legend b{font-family:"Courier New",monospace;color:var(--navy);font-size:13px}
+.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}th,td{border-bottom:1px solid var(--border);padding:9px;text-align:left;vertical-align:top}th{color:var(--navy);background:#f5f8fb}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px 15px;border-top:1px solid var(--border);background:#fff}
+.hidden{display:none!important}
+@media(max-width:650px){.header-inner{align-items:flex-start}.brand{font-size:15px}main{margin:28px auto;padding:0 15px 35px}h1{font-size:25px}.panel{padding:17px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.home-link{font-size:12px;padding:6px 10px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+ <div><a class="brand" href="../index.html">THE QINGQUAN XIAO LAB</a><div class="subtitle">Jinhua Institute of Zhejiang University</div></div>
+ <a class="home-link" href="../index.html">← Back to Lab Homepage</a>
+</div></header>
+<main>
+ <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+ <h1>Sequence Alignment</h1>
+ <p class="intro">Pairwise global or local alignment of DNA, RNA, and protein sequences using dynamic programming.</p>
+
+ <section class="panel">
+  <h2>1. Input sequences</h2>
+  <div class="grid">
+   <div class="field"><label for="seq1">Sequence 1</label><textarea id="seq1" spellcheck="false" placeholder=">Sequence_1&#10;ATGCGTACGTAGCTAG"></textarea><div style="margin-top:10px"><label for="type1">Sequence 1 type</label><select id="type1"><option value="DNA">DNA</option><option value="RNA">RNA</option><option value="PROTEIN">Protein</option></select></div></div>
+   <div class="field"><label for="seq2">Sequence 2</label><textarea id="seq2" spellcheck="false" placeholder=">Sequence_2&#10;ATGCGTTCGTAGCTAG"></textarea><div style="margin-top:10px"><label for="type2">Sequence 2 type</label><select id="type2"><option value="DNA">DNA</option><option value="RNA">RNA</option><option value="PROTEIN">Protein</option></select></div></div>
+  </div>
+  <div class="help">FASTA headers and whitespace are ignored. DNA–RNA and RNA–DNA comparisons are supported; T and U are treated as equivalent for scoring, while original input characters are retained in the display.</div>
+  <div class="actions"><button class="secondary" id="exampleDNA">DNA example</button><button class="secondary" id="exampleRNA">DNA–RNA example</button><button class="secondary" id="exampleProtein">Protein example</button><button class="secondary" id="clear">Clear</button></div>
+ </section>
+
+ <section class="panel">
+  <h2>2. Alignment settings</h2>
+  <div class="grid">
+   <div class="field"><label for="algorithm">Alignment algorithm</label><select id="algorithm"><option value="global">Needleman–Wunsch · Global</option><option value="local">Smith–Waterman · Local</option></select><div class="help" id="algorithmHelp">Aligns both complete sequences end-to-end.</div></div>
+   <div class="field"><label for="scoring">Scoring scheme</label><select id="scoring"><option value="auto">Automatic (BLOSUM62 for proteins)</option><option value="simple">Simple match / mismatch</option><option value="BLOSUM45">BLOSUM45 (protein only)</option><option value="BLOSUM50">BLOSUM50 (protein only)</option><option value="BLOSUM62">BLOSUM62 (protein only)</option><option value="BLOSUM80">BLOSUM80 (protein only)</option><option value="PAM250">PAM250 (protein only)</option></select><div class="help">Substitution matrices are available for protein–protein alignment only.</div></div>
+   <div class="field" id="matchField"><label for="match">Match score</label><input id="match" type="number" value="2" step="0.5"></div>
+   <div class="field" id="mismatchField"><label for="mismatch">Mismatch score</label><input id="mismatch" type="number" value="-1" step="0.5"></div>
+   <div class="field"><label for="gapModel">Gap penalty model</label><select id="gapModel"><option value="affine" selected>Affine gap penalty (recommended)</option><option value="linear">Linear gap penalty</option></select><div class="help">Affine distinguishes opening a gap from extending an existing gap.</div></div>
+   <div class="field" id="gapOpenField"><label for="gapOpen">Gap opening penalty</label><input id="gapOpen" type="number" value="-5" step="0.5"><div class="help">Negative value; charged when a new gap is opened.</div></div>
+   <div class="field" id="gapExtendField"><label for="gapExtend">Gap extension penalty</label><input id="gapExtend" type="number" value="-1" step="0.5"><div class="help">Negative value; charged for each additional gap character.</div></div>
+   <div class="field hidden" id="linearGapField"><label for="linearGap">Linear gap penalty</label><input id="linearGap" type="number" value="-2" step="0.5"><div class="help">Negative penalty charged for every gap character.</div></div>
+   <div class="field"><label for="maxLength">Maximum sequence length</label><input id="maxLength" value="1,500 residues per sequence" disabled><div class="help">Conservative browser memory limit for dynamic programming matrices.</div></div>
+  </div>
+  <div class="notice">Protein–protein alignment supports both algorithms and the BLOSUM45/50/62/80 and PAM250 matrices. Automatic mode selects BLOSUM62 for proteins and match/mismatch scoring for nucleotides. Mixed DNA/RNA comparisons use nucleotide scoring with T and U considered equivalent.</div>
+  <div class="actions"><button id="align">Run alignment</button></div>
+  <div id="runError"></div>
+ </section>
+
+ <section class="panel output" id="results">
+  <h2>3. Alignment results</h2>
+  <div class="stats" id="stats"></div>
+  <div class="result-box">
+   <h3>Pairwise alignment</h3>
+   <div class="legend"><span><b>|</b> Identical</span><span><b>+</b> Positive substitution (protein matrix)</span><span><b>*</b> Mismatch</span><span><b>-</b> Gap</span></div>
+   <div class="alignment-scroll"><pre class="alignment-pre" id="alignmentView"></pre></div>
+   <div class="help" id="coordinates"></div>
+   <div class="actions"><button class="secondary" id="copy">Copy alignment</button><button class="secondary" id="download">Download alignment (.txt)</button></div>
+  </div>
+  <div class="result-box"><h3>Consensus / conservation</h3><div class="help">Consensus uses the identical residue at fully conserved columns; non-identical or gapped columns are shown as X (protein) or N (nucleotide). It is a visualization aid, not a separately inferred biological sequence.</div><div class="alignment-scroll"><pre class="alignment-pre" id="consensusView"></pre></div></div>
+  <div class="table-scroll"><table><tbody id="details"></tbody></table></div>
+ </section>
+ <div class="notice warning"><strong>Methodological notes:</strong> Needleman–Wunsch performs global alignment; Smith–Waterman performs local alignment. Both are applicable to nucleotide and protein sequences. This implementation uses Gotoh-style three-state dynamic programming for affine gaps. For a gap of length L, the penalty is gap-open + (L−1) × gap-extension. Reported identity is identical aligned residue pairs divided by alignment columns, including columns containing gaps. This is pairwise alignment, not multiple sequence alignment (MSA). Alignment scores depend on the selected matrix and gap parameters; results alone do not establish homology, function, or clinical relevance.</div>
+</main>
+<footer>© 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html" style="color:#2d648d;text-decoration:none">Back to Lab Homepage</a></footer>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+$('year').textContent=new Date().getFullYear();
+let lastResult=null;
+const MATRIX_DATA={"BLOSUM45":{"alphabet":"ARNDCQEGHILKMFPSTWYVBZX*","values":[[5,-2,-1,-2,-1,-1,-1,0,-2,-1,-1,-1,-1,-2,-1,1,0,-2,-2,0,-1,-1,0,-5],[-2,7,0,-1,-3,1,0,-2,0,-3,-2,3,-1,-2,-2,-1,-1,-2,-1,-2,-1,0,-1,-5],[-1,0,6,2,-2,0,0,0,1,-2,-3,0,-2,-2,-2,1,0,-4,-2,-3,4,0,-1,-5],[-2,-1,2,7,-3,0,2,-1,0,-4,-3,0,-3,-4,-1,0,-1,-4,-2,-3,5,1,-1,-5],[-1,-3,-2,-3,12,-3,-3,-3,-3,-3,-2,-3,-2,-2,-4,-1,-1,-5,-3,-1,-2,-3,-2,-5],[-1,1,0,0,-3,6,2,-2,1,-2,-2,1,0,-4,-1,0,-1,-2,-1,-3,0,4,-1,-5],[-1,0,0,2,-3,2,6,-2,0,-3,-2,1,-2,-3,0,0,-1,-3,-2,-3,1,4,-1,-5],[0,-2,0,-1,-3,-2,-2,7,-2,-4,-3,-2,-2,-3,-2,0,-2,-2,-3,-3,-1,-2,-1,-5],[-2,0,1,0,-3,1,0,-2,10,-3,-2,-1,0,-2,-2,-1,-2,-3,2,-3,0,0,-1,-5],[-1,-3,-2,-4,-3,-2,-3,-4,-3,5,2,-3,2,0,-2,-2,-1,-2,0,3,-3,-3,-1,-5],[-1,-2,-3,-3,-2,-2,-2,-3,-2,2,5,-3,2,1,-3,-3,-1,-2,0,1,-3,-2,-1,-5],[-1,3,0,0,-3,1,1,-2,-1,-3,-3,5,-1,-3,-1,-1,-1,-2,-1,-2,0,1,-1,-5],[-1,-1,-2,-3,-2,0,-2,-2,0,2,2,-1,6,0,-2,-2,-1,-2,0,1,-2,-1,-1,-5],[-2,-2,-2,-4,-2,-4,-3,-3,-2,0,1,-3,0,8,-3,-2,-1,1,3,0,-3,-3,-1,-5],[-1,-2,-2,-1,-4,-1,0,-2,-2,-2,-3,-1,-2,-3,9,-1,-1,-3,-3,-3,-2,-1,-1,-5],[1,-1,1,0,-1,0,0,0,-1,-2,-3,-1,-2,-2,-1,4,2,-4,-2,-1,0,0,0,-5],[0,-1,0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-1,-1,2,5,-3,-1,0,0,-1,0,-5],[-2,-2,-4,-4,-5,-2,-3,-2,-3,-2,-2,-2,-2,1,-3,-4,-3,15,3,-3,-4,-2,-2,-5],[-2,-1,-2,-2,-3,-1,-2,-3,2,0,0,-1,0,3,-3,-2,-1,3,8,-1,-2,-2,-1,-5],[0,-2,-3,-3,-1,-3,-3,-3,-3,3,1,-2,1,0,-3,-1,0,-3,-1,5,-3,-3,-1,-5],[-1,-1,4,5,-2,0,1,-1,0,-3,-3,0,-2,-3,-2,0,0,-4,-2,-3,4,2,-1,-5],[-1,0,0,1,-3,4,4,-2,0,-3,-2,1,-1,-3,-1,0,-1,-2,-2,-3,2,4,-1,-5],[0,-1,-1,-1,-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-2,-1,-1,-1,-1,-1,-5],[-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,1]]},"BLOSUM50":{"alphabet":"ARNDCQEGHILKMFPSTWYVBZX*","values":[[5,-2,-1,-2,-1,-1,-1,0,-2,-1,-2,-1,-1,-3,-1,1,0,-3,-2,0,-2,-1,-1,-5],[-2,7,-1,-2,-4,1,0,-3,0,-4,-3,3,-2,-3,-3,-1,-1,-3,-1,-3,-1,0,-1,-5],[-1,-1,7,2,-2,0,0,0,1,-3,-4,0,-2,-4,-2,1,0,-4,-2,-3,4,0,-1,-5],[-2,-2,2,8,-4,0,2,-1,-1,-4,-4,-1,-4,-5,-1,0,-1,-5,-3,-4,5,1,-1,-5],[-1,-4,-2,-4,13,-3,-3,-3,-3,-2,-2,-3,-2,-2,-4,-1,-1,-5,-3,-1,-3,-3,-2,-5],[-1,1,0,0,-3,7,2,-2,1,-3,-2,2,0,-4,-1,0,-1,-1,-1,-3,0,4,-1,-5],[-1,0,0,2,-3,2,6,-3,0,-4,-3,1,-2,-3,-1,-1,-1,-3,-2,-3,1,5,-1,-5],[0,-3,0,-1,-3,-2,-3,8,-2,-4,-4,-2,-3,-4,-2,0,-2,-3,-3,-4,-1,-2,-2,-5],[-2,0,1,-1,-3,1,0,-2,10,-4,-3,0,-1,-1,-2,-1,-2,-3,2,-4,0,0,-1,-5],[-1,-4,-3,-4,-2,-3,-4,-4,-4,5,2,-3,2,0,-3,-3,-1,-3,-1,4,-4,-3,-1,-5],[-2,-3,-4,-4,-2,-2,-3,-4,-3,2,5,-3,3,1,-4,-3,-1,-2,-1,1,-4,-3,-1,-5],[-1,3,0,-1,-3,2,1,-2,0,-3,-3,6,-2,-4,-1,0,-1,-3,-2,-3,0,1,-1,-5],[-1,-2,-2,-4,-2,0,-2,-3,-1,2,3,-2,7,0,-3,-2,-1,-1,0,1,-3,-1,-1,-5],[-3,-3,-4,-5,-2,-4,-3,-4,-1,0,1,-4,0,8,-4,-3,-2,1,4,-1,-4,-4,-2,-5],[-1,-3,-2,-1,-4,-1,-1,-2,-2,-3,-4,-1,-3,-4,10,-1,-1,-4,-3,-3,-2,-1,-2,-5],[1,-1,1,0,-1,0,-1,0,-1,-3,-3,0,-2,-3,-1,5,2,-4,-2,-2,0,0,-1,-5],[0,-1,0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-2,-1,2,5,-3,-2,0,0,-1,0,-5],[-3,-3,-4,-5,-5,-1,-3,-3,-3,-3,-2,-3,-1,1,-4,-4,-3,15,2,-3,-5,-2,-3,-5],[-2,-1,-2,-3,-3,-1,-2,-3,2,-1,-1,-2,0,4,-3,-2,-2,2,8,-1,-3,-2,-1,-5],[0,-3,-3,-4,-1,-3,-3,-4,-4,4,1,-3,1,-1,-3,-2,0,-3,-1,5,-4,-3,-1,-5],[-2,-1,4,5,-3,0,1,-1,0,-4,-4,0,-3,-4,-2,0,0,-5,-3,-4,5,2,-1,-5],[-1,0,0,1,-3,4,5,-2,0,-3,-3,1,-1,-4,-1,0,-1,-2,-2,-3,2,5,-1,-5],[-1,-1,-1,-1,-2,-1,-1,-2,-1,-1,-1,-1,-1,-2,-2,-1,0,-3,-1,-1,-1,-1,-1,-5],[-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,1]]},"BLOSUM62":{"alphabet":"ARNDCQEGHILKMFPSTWYVBZX*","values":[[4,-1,-2,-2,0,-1,-1,0,-2,-1,-1,-1,-1,-2,-1,1,0,-3,-2,0,-2,-1,0,-4],[-1,5,0,-2,-3,1,0,-2,0,-3,-2,2,-1,-3,-2,-1,-1,-3,-2,-3,-1,0,-1,-4],[-2,0,6,1,-3,0,0,0,1,-3,-3,0,-2,-3,-2,1,0,-4,-2,-3,3,0,-1,-4],[-2,-2,1,6,-3,0,2,-1,-1,-3,-4,-1,-3,-3,-1,0,-1,-4,-3,-3,4,1,-1,-4],[0,-3,-3,-3,9,-3,-4,-3,-3,-1,-1,-3,-1,-2,-3,-1,-1,-2,-2,-1,-3,-3,-2,-4],[-1,1,0,0,-3,5,2,-2,0,-3,-2,1,0,-3,-1,0,-1,-2,-1,-2,0,3,-1,-4],[-1,0,0,2,-4,2,5,-2,0,-3,-3,1,-2,-3,-1,0,-1,-3,-2,-2,1,4,-1,-4],[0,-2,0,-1,-3,-2,-2,6,-2,-4,-4,-2,-3,-3,-2,0,-2,-2,-3,-3,-1,-2,-1,-4],[-2,0,1,-1,-3,0,0,-2,8,-3,-3,-1,-2,-1,-2,-1,-2,-2,2,-3,0,0,-1,-4],[-1,-3,-3,-3,-1,-3,-3,-4,-3,4,2,-3,1,0,-3,-2,-1,-3,-1,3,-3,-3,-1,-4],[-1,-2,-3,-4,-1,-2,-3,-4,-3,2,4,-2,2,0,-3,-2,-1,-2,-1,1,-4,-3,-1,-4],[-1,2,0,-1,-3,1,1,-2,-1,-3,-2,5,-1,-3,-1,0,-1,-3,-2,-2,0,1,-1,-4],[-1,-1,-2,-3,-1,0,-2,-3,-2,1,2,-1,5,0,-2,-1,-1,-1,-1,1,-3,-1,-1,-4],[-2,-3,-3,-3,-2,-3,-3,-3,-1,0,0,-3,0,6,-4,-2,-2,1,3,-1,-3,-3,-1,-4],[-1,-2,-2,-1,-3,-1,-1,-2,-2,-3,-3,-1,-2,-4,7,-1,-1,-4,-3,-2,-2,-1,-2,-4],[1,-1,1,0,-1,0,0,0,-1,-2,-2,0,-1,-2,-1,4,1,-3,-2,-2,0,0,0,-4],[0,-1,0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-2,-1,1,5,-2,-2,0,-1,-1,0,-4],[-3,-3,-4,-4,-2,-2,-3,-2,-2,-3,-2,-3,-1,1,-4,-3,-2,11,2,-3,-4,-3,-2,-4],[-2,-2,-2,-3,-2,-1,-2,-3,2,-1,-1,-2,-1,3,-3,-2,-2,2,7,-1,-3,-2,-1,-4],[0,-3,-3,-3,-1,-2,-2,-3,-3,3,1,-2,1,-1,-2,-2,0,-3,-1,4,-3,-2,-1,-4],[-2,-1,3,4,-3,0,1,-1,0,-3,-4,0,-3,-3,-2,0,-1,-4,-3,-3,4,1,-1,-4],[-1,0,0,1,-3,3,4,-2,0,-3,-3,1,-1,-3,-1,0,-1,-3,-2,-2,1,4,-1,-4],[0,-1,-1,-1,-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-2,0,0,-2,-1,-1,-1,-1,-1,-4],[-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,1]]},"BLOSUM80":{"alphabet":"ARNDCQEGHILKMFPSTWYVBZX*","values":[[7,-3,-3,-3,-1,-2,-2,0,-3,-3,-3,-1,-2,-4,-1,2,0,-5,-4,-1,-3,-2,-1,-8],[-3,9,-1,-3,-6,1,-1,-4,0,-5,-4,3,-3,-5,-3,-2,-2,-5,-4,-4,-2,0,-2,-8],[-3,-1,9,2,-5,0,-1,-1,1,-6,-6,0,-4,-6,-4,1,0,-7,-4,-5,5,-1,-2,-8],[-3,-3,2,10,-7,-1,2,-3,-2,-7,-7,-2,-6,-6,-3,-1,-2,-8,-6,-6,6,1,-3,-8],[-1,-6,-5,-7,13,-5,-7,-6,-7,-2,-3,-6,-3,-4,-6,-2,-2,-5,-5,-2,-6,-7,-4,-8],[-2,1,0,-1,-5,9,3,-4,1,-5,-4,2,-1,-5,-3,-1,-1,-4,-3,-4,-1,5,-2,-8],[-2,-1,-1,2,-7,3,8,-4,0,-6,-6,1,-4,-6,-2,-1,-2,-6,-5,-4,1,6,-2,-8],[0,-4,-1,-3,-6,-4,-4,9,-4,-7,-7,-3,-5,-6,-5,-1,-3,-6,-6,-6,-2,-4,-3,-8],[-3,0,1,-2,-7,1,0,-4,12,-6,-5,-1,-4,-2,-4,-2,-3,-4,3,-5,-1,0,-2,-8],[-3,-5,-6,-7,-2,-5,-6,-7,-6,7,2,-5,2,-1,-5,-4,-2,-5,-3,4,-6,-6,-2,-8],[-3,-4,-6,-7,-3,-4,-6,-7,-5,2,6,-4,3,0,-5,-4,-3,-4,-2,1,-7,-5,-2,-8],[-1,3,0,-2,-6,2,1,-3,-1,-5,-4,8,-3,-5,-2,-1,-1,-6,-4,-4,-1,1,-2,-8],[-2,-3,-4,-6,-3,-1,-4,-5,-4,2,3,-3,9,0,-4,-3,-1,-3,-3,1,-5,-3,-2,-8],[-4,-5,-6,-6,-4,-5,-6,-6,-2,-1,0,-5,0,10,-6,-4,-4,0,4,-2,-6,-6,-3,-8],[-1,-3,-4,-3,-6,-3,-2,-5,-4,-5,-5,-2,-4,-6,12,-2,-3,-7,-6,-4,-4,-2,-3,-8],[2,-2,1,-1,-2,-1,-1,-1,-2,-4,-4,-1,-3,-4,-2,7,2,-6,-3,-3,0,-1,-1,-8],[0,-2,0,-2,-2,-1,-2,-3,-3,-2,-3,-1,-1,-4,-3,2,8,-5,-3,0,-1,-2,-1,-8],[-5,-5,-7,-8,-5,-4,-6,-6,-4,-5,-4,-6,-3,0,-7,-6,-5,16,3,-5,-8,-5,-5,-8],[-4,-4,-4,-6,-5,-3,-5,-6,3,-3,-2,-4,-3,4,-6,-3,-3,3,11,-3,-5,-4,-3,-8],[-1,-4,-5,-6,-2,-4,-4,-6,-5,4,1,-4,1,-2,-4,-3,0,-5,-3,7,-6,-4,-2,-8],[-3,-2,5,6,-6,-1,1,-2,-1,-6,-7,-1,-5,-6,-4,0,-1,-8,-5,-6,6,0,-3,-8],[-2,0,-1,1,-7,5,6,-4,0,-6,-5,1,-3,-6,-2,-1,-2,-5,-4,-4,0,6,-1,-8],[-1,-2,-2,-3,-4,-2,-2,-3,-2,-2,-2,-2,-2,-3,-3,-1,-1,-5,-3,-2,-3,-1,-2,-8],[-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,1]]},"PAM250":{"alphabet":"ARNDCQEGHILKMFPSTWYVBZX*","values":[[2,-2,0,0,-2,0,0,1,-1,-1,-2,-1,-1,-3,1,1,1,-6,-3,0,0,0,0,-8],[-2,6,0,-1,-4,1,-1,-3,2,-2,-3,3,0,-4,0,0,-1,2,-4,-2,-1,0,-1,-8],[0,0,2,2,-4,1,1,0,2,-2,-3,1,-2,-3,0,1,0,-4,-2,-2,2,1,0,-8],[0,-1,2,4,-5,2,3,1,1,-2,-4,0,-3,-6,-1,0,0,-7,-4,-2,3,3,-1,-8],[-2,-4,-4,-5,12,-5,-5,-3,-3,-2,-6,-5,-5,-4,-3,0,-2,-8,0,-2,-4,-5,-3,-8],[0,1,1,2,-5,4,2,-1,3,-2,-2,1,-1,-5,0,-1,-1,-5,-4,-2,1,3,-1,-8],[0,-1,1,3,-5,2,4,0,1,-2,-3,0,-2,-5,-1,0,0,-7,-4,-2,3,3,-1,-8],[1,-3,0,1,-3,-1,0,5,-2,-3,-4,-2,-3,-5,0,1,0,-7,-5,-1,0,0,-1,-8],[-1,2,2,1,-3,3,1,-2,6,-2,-2,0,-2,-2,0,-1,-1,-3,0,-2,1,2,-1,-8],[-1,-2,-2,-2,-2,-2,-2,-3,-2,5,2,-2,2,1,-2,-1,0,-5,-1,4,-2,-2,-1,-8],[-2,-3,-3,-4,-6,-2,-3,-4,-2,2,6,-3,4,2,-3,-3,-2,-2,-1,2,-3,-3,-1,-8],[-1,3,1,0,-5,1,0,-2,0,-2,-3,5,0,-5,-1,0,0,-3,-4,-2,1,0,-1,-8],[-1,0,-2,-3,-5,-1,-2,-3,-2,2,4,0,6,0,-2,-2,-1,-4,-2,2,-2,-2,-1,-8],[-3,-4,-3,-6,-4,-5,-5,-5,-2,1,2,-5,0,9,-5,-3,-3,0,7,-1,-4,-5,-2,-8],[1,0,0,-1,-3,0,-1,0,0,-2,-3,-1,-2,-5,6,1,0,-6,-5,-1,-1,0,-1,-8],[1,0,1,0,0,-1,0,1,-1,-1,-3,0,-2,-3,1,2,1,-2,-3,-1,0,0,0,-8],[1,-1,0,0,-2,-1,0,0,-1,0,-2,0,-1,-3,0,1,3,-5,-3,0,0,-1,0,-8],[-6,2,-4,-7,-8,-5,-7,-7,-3,-5,-2,-3,-4,0,-6,-2,-5,17,0,-6,-5,-6,-4,-8],[-3,-4,-2,-4,0,-4,-4,-5,0,-1,-1,-4,-2,7,-5,-3,-3,0,10,-2,-3,-4,-2,-8],[0,-2,-2,-2,-2,-2,-2,-1,-2,4,2,-2,2,-1,-1,-1,0,-6,-2,4,-2,-2,-1,-8],[0,-1,2,3,-4,1,3,0,1,-2,-3,1,-2,-4,-1,0,0,-5,-3,-2,3,2,-1,-8],[0,0,1,3,-5,3,3,0,2,-2,-3,0,-2,-5,0,0,-1,-6,-4,-2,2,3,-1,-8],[0,-1,0,-1,-3,-1,-1,-1,-1,-1,-1,-1,-1,-2,-1,0,0,-4,-2,-1,-1,-1,-1,-8],[-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,-8,1]]}};
+const MATRICES={};
+for(const [name,obj] of Object.entries(MATRIX_DATA)){
+ const index={};[...obj.alphabet].forEach((a,i)=>index[a]=i);
+ MATRICES[name]={index,values:obj.values};
+}
+const PROTEIN_ALLOWED='ACDEFGHIKLMNPQRSTVWYBZX*';
+const NUCLEOTIDE_ALLOWED='ACGTN';
+function clean(raw){return raw.split(/\r?\n/).filter(x=>!x.trim().startsWith('>')).join('').replace(/\s+/g,'').toUpperCase()}
+function fastaName(raw,fallback){const h=raw.split(/\r?\n/).find(x=>x.trim().startsWith('>'));return h?h.trim().slice(1).slice(0,60):fallback}
+function validate(seq,type,label){
+ if(!seq)return `${label} is empty.`;
+ const allowed=type==='PROTEIN'?PROTEIN_ALLOWED:(type==='RNA'?'ACGUN':NUCLEOTIDE_ALLOWED);
+ const invalid=[...new Set([...seq].filter(c=>!allowed.includes(c)))];
+ return invalid.length?`${label} contains unsupported ${type} symbol(s): ${invalid.join(', ')}. ${type==='PROTEIN'?'Accepted: standard amino acids plus B, Z, X and * stop.':'Accepted: A, C, G, T (or U for RNA), and N.'}`:null;
+}
+function scorePair(a,b,opt){
+ if(opt.matrix){
+  const mat=MATRICES[opt.matrix],ia=mat.index[a],ib=mat.index[b];
+  if(ia===undefined||ib===undefined)throw new Error(`Residue ${a} or ${b} is not represented in ${opt.matrix}.`);
+  return mat.values[ia][ib];
+ }
+ const x=a==='U'?'T':a,y=b==='U'?'T':b;
+ return x===y?opt.match:opt.mismatch;
+}
+function max3(a,b,c){return Math.max(a,b,c)}
+function alignPair(s1,s2,opt){
+ const n=s1.length,m=s2.length,cols=m+1,size=(n+1)*cols,NEG=-1e30;
+ // M: residue-residue; X: residue in seq1 aligned to a gap in seq2;
+ // Y: gap in seq1 aligned to a residue in seq2.
+ const M=new Float64Array(size),X=new Float64Array(size),Y=new Float64Array(size);
+ const tM=new Uint8Array(size),tX=new Uint8Array(size),tY=new Uint8Array(size);
+ M.fill(NEG);X.fill(NEG);Y.fill(NEG);
+ const at=(i,j)=>i*cols+j,local=opt.algorithm==='local';
+ M[0]=0;
+ if(local){
+  // Smith–Waterman permits a local alignment to start at any sequence position.
+  // Zero-valued M states along the first row and column provide those starts.
+  for(let i=0;i<=n;i++)M[at(i,0)]=0;
+  for(let j=0;j<=m;j++)M[at(0,j)]=0;
+ }
+ if(!local){
+  for(let i=1;i<=n;i++){const k=at(i,0);X[k]=opt.gapOpen+(i-1)*opt.gapExtend;tX[k]=i===1?1:2;}
+  for(let j=1;j<=m;j++){const k=at(0,j);Y[k]=opt.gapOpen+(j-1)*opt.gapExtend;tY[k]=j===1?1:3;}
+ }
+ let best=local?0:NEG,bestI=0,bestJ=0,bestState=0;
+ for(let i=1;i<=n;i++){
+  for(let j=1;j<=m;j++){
+   const k=at(i,j),diag=at(i-1,j-1),up=at(i-1,j),left=at(i,j-1),sub=scorePair(s1[i-1],s2[j-1],opt);
+   let v=M[diag],p=1;if(X[diag]>v){v=X[diag];p=2;}if(Y[diag]>v){v=Y[diag];p=3;}
+   v+=sub;if(local&&v<=0){M[k]=0;tM[k]=0;}else{M[k]=v;tM[k]=p;}
+   let xv=M[up]+opt.gapOpen,xp=1,c=X[up]+opt.gapExtend;if(c>xv){xv=c;xp=2;}
+   if(local&&xv<=0){X[k]=0;tX[k]=0;}else{X[k]=xv;tX[k]=xp;}
+   let yv=M[left]+opt.gapOpen,yp=1,c2=Y[left]+opt.gapExtend;if(c2>yv){yv=c2;yp=3;}
+   if(local&&yv<=0){Y[k]=0;tY[k]=0;}else{Y[k]=yv;tY[k]=yp;}
+   if(local){
+    if(M[k]>best){best=M[k];bestI=i;bestJ=j;bestState=1;}
+    if(X[k]>best){best=X[k];bestI=i;bestJ=j;bestState=2;}
+    if(Y[k]>best){best=Y[k];bestI=i;bestJ=j;bestState=3;}
+   }
+  }
+ }
+ if(!local){
+  const k=at(n,m),vals=[M[k],X[k],Y[k]];best=Math.max(...vals);bestState=vals.indexOf(best)+1;bestI=n;bestJ=m;
+ }
+ let i=bestI,j=bestJ,state=bestState,a1=[],a2=[];
+ while(i>0||j>0){
+  const k=at(i,j);
+  if(local){
+   const current=state===1?M[k]:state===2?X[k]:Y[k];
+   if(current<=0)break;
+  }
+  if(state===1){
+   const prev=tM[k];if(!prev)break;
+   a1.push(s1[i-1]);a2.push(s2[j-1]);i--;j--;state=prev;
+  }else if(state===2){
+   const prev=tX[k];if(!prev)break;
+   a1.push(s1[i-1]);a2.push('-');i--;state=prev;
+  }else if(state===3){
+   const prev=tY[k];if(!prev)break;
+   a1.push('-');a2.push(s2[j-1]);j--;state=prev;
+  }else break;
+ }
+ a1.reverse();a2.reverse();
+ return {a1:a1.join(''),a2:a2.join(''),score:best,start1:a1.length?i+1:null,end1:a1.length?bestI:null,start2:a2.length?j+1:null,end2:a2.length?bestJ:null};
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function updateSettings(){
+ const protein=$('type1').value==='PROTEIN'&&$('type2').value==='PROTEIN';
+ for(const o of $('scoring').options)if(o.value!=='auto'&&o.value!=='simple')o.disabled=!protein;
+ if(!protein&&$('scoring').value!=='auto'&&$('scoring').value!=='simple')$('scoring').value='auto';
+ const useMatrix=protein&&$('scoring').value!=='simple';
+ $('matchField').classList.toggle('hidden',useMatrix);$('mismatchField').classList.toggle('hidden',useMatrix);
+}
+function updateGapFields(){
+ const affine=$('gapModel').value==='affine';
+ $('gapOpenField').classList.toggle('hidden',!affine);$('gapExtendField').classList.toggle('hidden',!affine);$('linearGapField').classList.toggle('hidden',affine);
+}
+$('type1').onchange=updateSettings;$('type2').onchange=updateSettings;$('scoring').onchange=updateSettings;$('gapModel').onchange=updateGapFields;
+$('algorithm').onchange=()=>{$('algorithmHelp').textContent=$('algorithm').value==='global'?'Aligns both complete sequences end-to-end.':'Finds the highest-scoring local region; unaligned flanking residues are excluded.';};
+$('exampleDNA').onclick=()=>{$('seq1').value='>DNA_sequence_1\nATGCGTACGTAGCTAGCTAG';$('seq2').value='>DNA_sequence_2\nATGCGTTCGTAGCTAGCTAG';$('type1').value='DNA';$('type2').value='DNA';$('scoring').value='auto';updateSettings();};
+$('exampleRNA').onclick=()=>{$('seq1').value='>DNA_sequence\nATGCGTACGTAGCTAG';$('seq2').value='>RNA_sequence\nAUGCGUACGUAGCUAG';$('type1').value='DNA';$('type2').value='RNA';$('scoring').value='auto';updateSettings();};
+$('exampleProtein').onclick=()=>{$('seq1').value='>Protein_A\nMKWVTFISLLFLFSSAYS';$('seq2').value='>Protein_B\nMKWVTFISLLFLSSAYS';$('type1').value='PROTEIN';$('type2').value='PROTEIN';$('scoring').value='BLOSUM62';updateSettings();};
+$('clear').onclick=()=>{$('seq1').value='';$('seq2').value='';$('runError').innerHTML='';$('results').classList.remove('show');lastResult=null;};
+function makeAlignmentText(r,opt,n1,n2){
+ const width=60,lines=[],cons=[];
+ for(let start=0;start<r.a1.length;start+=width){
+  const a=r.a1.slice(start,start+width),b=r.a2.slice(start,start+width);
+  const marker=[...a].map((c,k)=>{
+   const d=b[k];if(c==='-'||d==='-')return ' ';
+   if((c==='U'?'T':c)===(d==='U'?'T':d))return '|';
+   if(opt.matrix&&scorePair(c,d,opt)>0)return '+';
+   return '*';
+  }).join('');
+  const con=[...a].map((c,k)=>{const d=b[k];if(c==='-'||d==='-')return '-';if((c==='U'?'T':c)===(d==='U'?'T':d))return c;return opt.protein?'X':'N';}).join('');
+  const pad=(s)=>s.padEnd(10,' ');
+  lines.push(`Columns ${start+1}-${Math.min(start+width,r.a1.length)}`);
+  lines.push(`${pad('Seq 1')}${a}`);
+  lines.push(`${pad('')}${marker}`);
+  lines.push(`${pad('Seq 2')}${b}`);
+  lines.push(`${pad('Consensus')}${con}`);
+  lines.push('');
+  cons.push(con);
+ }
+ return {alignment:lines.join('\n').trimEnd(),consensus:cons.join('')};
+}
+$('align').onclick=()=>{
+ $('runError').innerHTML='';
+ try{
+  const raw1=$('seq1').value,raw2=$('seq2').value,s1=clean(raw1),s2=clean(raw2),t1=$('type1').value,t2=$('type2').value;
+  const err=validate(s1,t1,'Sequence 1')||validate(s2,t2,'Sequence 2');
+  if(err)throw new Error(err);
+  if(s1.length>1500||s2.length>1500)throw new Error('Each sequence is limited to 1,500 residues in this browser implementation to keep dynamic-programming memory use bounded.');
+  const p1=t1==='PROTEIN',p2=t2==='PROTEIN';
+  if(p1!==p2)throw new Error('Protein sequences must be aligned against protein sequences. Select Protein for both inputs, or choose DNA/RNA for both.');
+  const protein=p1&&p2,selected=$('scoring').value;
+  const matrix=protein?(selected==='auto'?'BLOSUM62':(selected==='simple'?null:selected)):null;
+  const match=Number($('match').value),mismatch=Number($('mismatch').value);
+  if(!matrix&&(!Number.isFinite(match)||!Number.isFinite(mismatch)))throw new Error('Enter finite nucleotide match and mismatch scores.');
+  if(matrix&&(!MATRICES[matrix]))throw new Error('The selected substitution matrix is unavailable.');
+  const affine=$('gapModel').value==='affine';
+  const gapOpen=Number($('gapOpen').value),gapExtend=Number($('gapExtend').value),linearGap=Number($('linearGap').value);
+  if(affine&&(!Number.isFinite(gapOpen)||!Number.isFinite(gapExtend)||gapOpen>=0||gapExtend>0))throw new Error('For affine gaps, gap opening must be negative and gap extension must be zero or negative.');
+  if(!affine&&(!Number.isFinite(linearGap)||linearGap>=0))throw new Error('Linear gap penalty must be negative.');
+  const opt={algorithm:$('algorithm').value,protein,matrix,match,mismatch,gapOpen:affine?gapOpen:linearGap,gapExtend:affine?gapExtend:linearGap};
+  const r=alignPair(s1,s2,opt),len=r.a1.length;
+  let matches=0,positives=0,gapColumns=0,gapResidues=0;
+  for(let k=0;k<len;k++){
+   const a=r.a1[k],b=r.a2[k];
+   if(a==='-'||b==='-'){gapColumns++;gapResidues+=(a==='-'?1:0)+(b==='-'?1:0);continue;}
+   const identical=(a==='U'?'T':a)===(b==='U'?'T':b);
+   if(identical)matches++;
+   if(protein&&matrix&&scorePair(a,b,opt)>0)positives++;
+  }
+  const identityPct=len?100*matches/len:0,similarityPct=len&&protein&&matrix?100*positives/len:null;
+  const n1=fastaName(raw1,'Sequence 1'),n2=fastaName(raw2,'Sequence 2');
+  const view=makeAlignmentText(r,opt,n1,n2);
+  const alg=$('algorithm').value==='global'?'Needleman–Wunsch (global)':'Smith–Waterman (local)';
+  const scoring=matrix||`Simple scoring (match ${match}, mismatch ${mismatch})`;
+  const gapDesc=affine?`Affine: open ${gapOpen}, extend ${gapExtend} (open + (L−1) × extend)`:`Linear: ${linearGap} per gap residue`;
+  const noLocalHit=opt.algorithm==='local'&&len===0;
+  $('stats').innerHTML=[['Alignment score',r.score.toFixed(2)],['Identity',`${matches}/${len} (${identityPct.toFixed(1)}%)`],['Gap residues',gapResidues],['Alignment length',`${len} columns`]].map(x=>`<div class="stat"><div class="value">${x[1]}</div><div class="label">${x[0]}</div></div>`).join('');
+  $('alignmentView').textContent=len?`Sequence 1: ${n1}\nSequence 2: ${n2}\n\n${view.alignment}`:'No positive-scoring local alignment was found. Try adjusting the substitution scores or gap penalties.';$('consensusView').textContent=view.consensus||'(No aligned columns)';
+  $('coordinates').textContent=noLocalHit?`${alg} · No positive-scoring local alignment was found with the selected scoring parameters.`:`${alg} · ${t1} vs ${t2} · ${scoring} · ${gapDesc} · Seq 1: ${r.start1}–${r.end1} · Seq 2: ${r.start2}–${r.end2}`;
+  $('details').innerHTML=`<tr><th>Parameter</th><th>Result</th></tr><tr><td>Algorithm</td><td>${alg}</td></tr><tr><td>Sequence types</td><td>${t1} vs ${t2}</td></tr><tr><td>Substitution scoring</td><td>${esc(scoring)}</td></tr><tr><td>Gap model</td><td>${esc(gapDesc)}</td></tr><tr><td>Identical aligned pairs</td><td>${matches} / ${len} columns (${identityPct.toFixed(1)}%)</td></tr><tr><td>Positive-scoring pairs</td><td>${matrix?`${positives} / ${len} columns (${similarityPct.toFixed(1)}%)`:'Not applicable for simple nucleotide scoring'}</td></tr><tr><td>Gap columns</td><td>${gapColumns}</td></tr><tr><td>Gap residues</td><td>${gapResidues}</td></tr><tr><td>Sequence 1 aligned coordinates</td><td>${r.start1}–${r.end1} (1-based, inclusive; input sequence coordinates)</td></tr><tr><td>Sequence 2 aligned coordinates</td><td>${r.start2}–${r.end2} (1-based, inclusive; input sequence coordinates)</td></tr>`;
+  lastResult=`${alg}\nSequence types: ${t1} vs ${t2}\nScoring: ${scoring}\nGap model: ${gapDesc}\nScore: ${r.score}\nIdentity: ${matches}/${len} (${identityPct.toFixed(1)}%)\nGap residues: ${gapResidues}\nCoordinates: ${noLocalHit?'No positive-scoring local alignment':`Seq1 ${r.start1}-${r.end1}; Seq2 ${r.start2}-${r.end2}`}\n\n${view.alignment}\n\nConsensus:\n${view.consensus}\n`;
+  $('results').classList.add('show');$('results').scrollIntoView({behavior:'smooth',block:'start'});
+ }catch(e){$('runError').innerHTML=`<div class="error">${esc(e.message||String(e))}</div>`;}
+};
+$('copy').onclick=async()=>{if(!lastResult)return;try{await navigator.clipboard.writeText(lastResult);$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy alignment',1200);}catch(e){$('runError').innerHTML='<div class="error">Clipboard access is unavailable. Use Download alignment instead.</div>';}};
+$('download').onclick=()=>{if(!lastResult)return;const blob=new Blob([lastResult],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='pairwise_alignment.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);};
+updateSettings();updateGapFields();
+</script>
+</body>
+</html>
