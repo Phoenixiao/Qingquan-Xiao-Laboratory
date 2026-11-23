@@ -898,7 +898,7 @@
 
     </div>
 
-    © 2024 - <span id="current-year"></span>
+    Copyright © 2024 - <span id="current-year"></span>
     The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University
 
   </footer>
@@ -1146,7 +1146,6 @@
         const now = new Date();
         
         // Date: YYYY-MM-DD
-
         const dateParts =
           new Intl.DateTimeFormat("en-CA", {
             timeZone: "Asia/Shanghai",
@@ -1160,8 +1159,6 @@
             dateValues[part.type] = part.value;
           }
           });
-
-
         dateElement.textContent =
           dateValues.year + "-" +
           dateValues.month + "-" +
@@ -1169,58 +1166,42 @@
 
 
         // Weekday
-
         weekdayElement.textContent =
           new Intl.DateTimeFormat("en-US", {
-
             timeZone: "Asia/Shanghai",
             weekday: "long"
-
-          }).format(now);
+            }).format(now);
 
 
         // Time: HH:MM:SS
-
         timeElement.textContent =
           new Intl.DateTimeFormat("en-GB", {
-
             timeZone: "Asia/Shanghai",
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
             hourCycle: "h23"
-
-          }).format(now);
-
-      }
-
-
+            }).format(now);
+        }
       updateChinaClock();
-
       window.setInterval(updateChinaClock, 1000);
-
-    })();
+      })();
 
 
     // ============================================================
     // Disable context menu on images.
     // ============================================================
-
     document.addEventListener(
       "contextmenu",
       function (event) {
-
         if (
           event.target.closest &&
           event.target.closest("img")
         ) {
-
           event.preventDefault();
           event.stopPropagation();
-
-        }
-
-      },
+          }
+        },
       true
     );
 
@@ -1228,22 +1209,17 @@
     // ============================================================
     // Disable image dragging.
     // ============================================================
-
     document.addEventListener(
       "dragstart",
       function (event) {
-
         if (
           event.target.closest &&
           event.target.closest("img")
         ) {
-
           event.preventDefault();
           event.stopPropagation();
-
-        }
-
-      },
+          }
+        },
       true
     );
 
@@ -1251,7 +1227,6 @@
     // ============================================================
     // Copyright current year.
     // ============================================================
-
     document.getElementById("current-year").textContent =
       new Date().getFullYear();
 
