@@ -91,6 +91,67 @@
       font-weight: 600;
     }
 
+    .nav-tools {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nav-tools-trigger {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #536474;
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .nav-tools-trigger:hover,
+    .nav-tools-trigger:focus-visible {
+      color: var(--navy);
+      outline-offset: 4px;
+    }
+
+    .nav-tools-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 235px;
+      padding: 7px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(23,59,94,.13);
+      z-index: 30;
+    }
+
+    .nav-tools:hover .nav-tools-menu,
+    .nav-tools:focus-within .nav-tools-menu,
+    .nav-tools.open .nav-tools-menu {
+      display: block;
+    }
+
+    .nav-tools-menu a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 5px;
+      color: #536474;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .nav-tools-menu a:hover,
+    .nav-tools-menu a:focus-visible {
+      background: var(--wash);
+      color: var(--navy);
+      text-decoration: none;
+    }
+
     .nav a.language-switch {
       display: inline-block;
       padding: 4px 10px;
@@ -464,7 +525,7 @@
         <a href="#patents">Patents</a>
         <a href="#presentations">Presentations</a>
         <a href="#join-us">Join Us</a>
-        
+
         <div class="nav-tools">
           <button class="nav-tools-trigger" type="button" aria-haspopup="true" aria-expanded="false">Tools <span aria-hidden="true">▾</span></button>
           <div class="nav-tools-menu" role="menu">
@@ -935,6 +996,33 @@
     }
   </style>
 
+
+  <script>
+    // Accessible Tools dropdown: supports mouse, keyboard, and touch.
+    (function () {
+      const menu = document.querySelector(".nav-tools");
+      if (!menu) return;
+      const trigger = menu.querySelector(".nav-tools-trigger");
+      trigger.addEventListener("click", function (event) {
+        event.preventDefault();
+        const isOpen = menu.classList.toggle("open");
+        trigger.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("click", function (event) {
+        if (!menu.contains(event.target)) {
+          menu.classList.remove("open");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          menu.classList.remove("open");
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.focus();
+        }
+      });
+    })();
+  </script>
 
   <script>
 
