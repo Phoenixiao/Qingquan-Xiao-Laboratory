@@ -17,6 +17,15 @@
     .brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
     .nav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px 20px}
     .nav a{color:#536474;font-size:13px;font-weight:600}.nav a.language-switch{display:inline-block;padding:4px 10px;color:var(--navy);border:1px solid var(--line);border-radius:16px;font-weight:700}
+    .tools-menu{position:relative;display:inline-flex;align-items:center}
+    .tools-trigger{display:inline-flex;align-items:center;gap:5px;padding:0;border:0;background:transparent;color:#536474;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+    .tools-trigger:hover,.tools-trigger:focus-visible{color:var(--navy)}
+    .tools-chevron{font-size:10px;transition:transform .18s ease}
+    .tools-menu.open .tools-chevron{transform:rotate(180deg)}
+    .tools-dropdown{display:none;position:absolute;top:calc(100% + 12px);right:0;min-width:230px;padding:7px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(23,59,94,.13);z-index:30}
+    .tools-menu.open .tools-dropdown,.tools-menu:focus-within .tools-dropdown{display:block}
+    .nav .tools-dropdown a{display:block;padding:9px 11px;border-radius:6px;color:#536474;font-size:13px;font-weight:500;white-space:nowrap}
+    .nav .tools-dropdown a:hover,.nav .tools-dropdown a:focus-visible{background:var(--wash);color:var(--navy);text-decoration:none}
     .hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}
     .hero-inner{position:relative;max-width:var(--max-width);margin:0 auto;padding:66px 28px 58px}
     .hero-stats{position:absolute;top:108px;right:28px;z-index:1;min-width:190px;color:var(--muted);text-align:right;line-height:1.55;font-variant-numeric:tabular-nums}
@@ -61,6 +70,15 @@
     <a href="#pi">课题组负责人</a><a href="#team">团队成员</a><a href="#research">研究方向</a>
     <a href="#selected-publications">代表性论文</a><a href="#other-publications">其他论文</a>
     <a href="#patents">专利</a><a href="#presentations">学术报告</a><a href="#join-us">加入我们</a>
+    <div class="tools-menu" id="tools-menu">
+      <button class="tools-trigger" type="button" id="tools-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="tools-dropdown">工具 <span class="tools-chevron" aria-hidden="true">▾</span></button>
+      <div class="tools-dropdown" id="tools-dropdown" role="menu" aria-label="Online research tools">
+        <a role="menuitem" href="./tools/random-sequence.html">Random Sequence Generator</a>
+        <a role="menuitem" href="./tools/dna-sequence-analyzer.html">DNA Sequence Analyzer</a>
+        <a role="menuitem" href="./tools/grna-sequence-tools.html">gRNA Sequence Tools</a>
+        <a role="menuitem" href="./tools/sequence-utilities.html">Sequence Utilities</a>
+      </div>
+    </div>
     <a class="language-switch" href="./index.html" lang="en" aria-label="Switch to English">EN</a>
   </nav>
 </div></header>
@@ -375,6 +393,38 @@
   }
   updateChinaClock();
   window.setInterval(updateChinaClock, 1000);
+})();
+
+
+/*
+ * Tools 导航下拉菜单
+ */
+(function () {
+  const menu = document.getElementById("tools-menu");
+  const trigger = document.getElementById("tools-trigger");
+  if (!menu || !trigger) return;
+
+  function closeMenu() {
+    menu.classList.remove("open");
+    trigger.setAttribute("aria-expanded", "false");
+  }
+
+  trigger.addEventListener("click", function (event) {
+    event.stopPropagation();
+    const isOpen = menu.classList.toggle("open");
+    trigger.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!menu.contains(event.target)) closeMenu();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeMenu();
+      trigger.focus();
+    }
+  });
 })();
 
 
