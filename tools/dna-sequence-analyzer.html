@@ -58,7 +58,7 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 </section>
 
 </main>
-<footer>© 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
+<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
 <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 <script>
 const $=id=>document.getElementById(id);let analyzed=null;
@@ -82,4 +82,5 @@ $('analyze').onclick=()=>{
 document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{await navigator.clipboard.writeText($(b.dataset.copy).textContent);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});
 $('download').onclick=()=>{if(!analyzed)return;const a=document.createElement('a');const t=`Length: ${analyzed.s.length}\nA: ${analyzed.c.A}\nC: ${analyzed.c.C}\nG: ${analyzed.c.G}\nT: ${analyzed.c.T}\nN: ${analyzed.c.N}\nGC content (excluding N): ${analyzed.gcPct.toFixed(2)}%\nGC skew: ${analyzed.gcSkew===null?'N/A':analyzed.gcSkew.toFixed(3)}\nReverse complement: ${analyzed.rc}\nRNA: ${analyzed.rna}\n`;a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='dna_sequence_analysis.txt';a.click();URL.revokeObjectURL(a.href)};
 </script>
-</body></html>
+</body>
+</html>
