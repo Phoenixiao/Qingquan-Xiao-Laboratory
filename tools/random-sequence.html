@@ -43,8 +43,16 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 <div class="grid">
  <div class="field"><label for="type">Sequence type</label><select id="type"><option value="DNA">DNA (A, C, G, T)</option><option value="RNA">RNA (A, C, G, U)</option></select></div>
  <div class="field"><label for="length">Sequence length (nt)</label><input id="length" type="number" min="1" max="5000" value="6"><div class="help">Allowed range: 1–5,000 nt</div></div>
- <div class="field"><label for="count">Number of sequences</label><input id="count" type="number" min="1" max="100" value="1"><div class="help">Allowed range: 1–100 sequences</div></div>
+ <div class="field"><label for="count">Number of sequences</label><input id="count" type="number" min="1" max="4" value="1"><div class="help" id="countHelp">Maximum depends on sequence length: 4<sup>n</sup> unique sequences (subject to browser resource limits).</div></div>
  <div class="field"><label for="format">Output format</label><select id="format"><option value="plain">Plain sequences</option><option value="fasta">FASTA (with headers)</option></select></div>
+ <div class="field" style="grid-column:1/-1">
+  <label style="display:flex;align-items:center;gap:9px;font-weight:650"><input id="gcFilter" type="checkbox" style="width:16px;height:16px;margin:0"> Filter sequences by GC content</label>
+  <div class="grid" style="margin-top:10px">
+   <div class="field"><label for="gcMin">Minimum GC content (%)</label><input id="gcMin" type="number" min="0" max="100" step="0.1" value="45" disabled></div>
+   <div class="field"><label for="gcMax">Maximum GC content (%)</label><input id="gcMax" type="number" min="0" max="100" step="0.1" value="65" disabled></div>
+  </div>
+  <div class="help" id="gcHelp">Optional. When enabled, only sequences whose GC content falls within the inclusive range are returned.</div>
+ </div>
 </div>
 <div class="actions"><button id="generate">Generate random sequences</button><button class="secondary" id="clear">Clear</button></div>
 <div id="error" aria-live="polite"></div>
@@ -56,28 +64,176 @@ footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;bac
 <div class="notice">Each nucleotide is selected independently with equal probability using the browser's Web Crypto random number generator. Generated sequences are random examples, not validated primers or guides.</div>
 
 </main>
-<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
+<footer>© 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
 <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 <script>
+'use strict';
 const $=id=>document.getElementById(id);
 let records=[];
-function randIndex(n){const limit=Math.floor(4294967296/n)*n,b=new Uint32Array(1);do{crypto.getRandomValues(b)}while(b[0]>=limit);return b[0]%n}
-function gc(s){return s.length?(100*( [...s].filter(x=>x==='G'||x==='C').length/s.length)).toFixed(1):'0.0'}
-function makeSeq(n,bases){let s='';for(let i=0;i<n;i++)s+=bases[randIndex(bases.length)];return s}
+const OUTPUT_CAP=65536;
+const TOTAL_BASE_BUDGET=5000000;
+
+function randomUint32(){
+ const a=new Uint32Array(1);
+ crypto.getRandomValues(a);
+ return a[0];
+}
+function randIndex(n){
+ if(!Number.isSafeInteger(n)||n<1)throw new Error('Invalid random selection range.');
+ const range=0x100000000,limit=Math.floor(range/n)*n;
+ let x;do{x=randomUint32()}while(x>=limit);
+ return x%n;
+}
+function gcCount(s){let n=0;for(const c of s)if(c==='G'||c==='C')n++;return n}
+function gc(s){return s.length?(100*gcCount(s)/s.length).toFixed(1):'0.0'}
+function makeSeq(n,bases){
+ let s='';for(let i=0;i<n;i++)s+=bases[randIndex(4)];
+ return s;
+}
+function binomial(n,k){
+ k=Math.min(k,n-k);let v=1n;
+ for(let i=1;i<=k;i++)v=v*BigInt(n-k+i)/BigInt(i);
+ return v;
+}
+function theoreticalCapacity(n,useGC,minGC,maxGC){
+ if(!useGC)return 4n**BigInt(n);
+ const kMin=Math.max(0,Math.ceil((minGC*n/100)-1e-10));
+ const kMax=Math.min(n,Math.floor((maxGC*n/100)+1e-10));
+ if(kMin>kMax)return 0n;
+ let sum=0n;
+ for(let k=kMin;k<=kMax;k++)sum+=binomial(n,k);
+ return sum*(2n**BigInt(n));
+}
+function formatBigInt(v){
+ const s=v.toString();
+ return s.length>18?s.slice(0,6)+'… ('+s.length+' digits)':s.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+function currentSettings(){
+ const n=Number($('length').value);
+ const useGC=$('gcFilter').checked;
+ const min=Number($('gcMin').value),max=Number($('gcMax').value);
+ return {n,useGC,min,max};
+}
+function updateLimits(){
+ const {n,useGC,min,max}=currentSettings();
+ const validN=Number.isInteger(n)&&n>=1&&n<=5000;
+ const validGC=Number.isFinite(min)&&Number.isFinite(max)&&min>=0&&max<=100&&min<=max;
+ $('gcMin').disabled=!useGC;$('gcMax').disabled=!useGC;
+ if(!validN){
+  $('count').max='1';$('countHelp').textContent='Enter a sequence length from 1 to 5,000 nt to calculate the maximum.';
+  $('gcHelp').textContent='GC range is inclusive; minimum must not exceed maximum.';
+  return;
+ }
+ if(useGC&&!validGC){
+  $('count').max='1';$('countHelp').textContent='Set a valid GC range (0–100%, minimum ≤ maximum) to calculate the maximum.';
+  $('gcHelp').textContent='Please enter a valid GC range.';
+  return;
+ }
+ const theoretical=theoreticalCapacity(n,useGC,min,max);
+ const resourceCap=BigInt(Math.min(OUTPUT_CAP,Math.max(1,Math.floor(TOTAL_BASE_BUDGET/n))));
+ const allowed=theoretical<resourceCap?theoretical:resourceCap;
+ const maxCount=Number(allowed>BigInt(Number.MAX_SAFE_INTEGER)?BigInt(Number.MAX_SAFE_INTEGER):allowed);
+ $('count').max=String(Math.max(1,maxCount));
+ if(Number($('count').value)>maxCount)$('count').value=String(maxCount);
+ if(Number($('count').value)<1||!Number.isFinite(Number($('count').value)))$('count').value='1';
+ $('countHelp').textContent=`Maximum possible unique sequences${useGC?' within this GC range':''}: ${formatBigInt(theoretical)}. Browser output limit for this run: ${maxCount.toLocaleString()} sequence(s).`;
+ $('gcHelp').textContent=useGC
+  ? `Inclusive GC range: ${min}%–${max}%. The theoretical maximum is calculated exactly from sequence length and the allowed integer GC counts.`
+  : 'Optional. When enabled, only sequences whose GC content falls within the inclusive range are returned.';
+}
+function enumerateAll(n,useGC,min,max,isRNA){
+ const total=4**n,all=[];
+ for(let x=0;x<total;x++){
+  let v=x,s='';
+  for(let i=0;i<n;i++){s='ACGT'[v&3]+s;v=Math.floor(v/4)}
+  if(isRNA)s=s.replace(/T/g,'U');
+  const g=100*gcCount(s)/n;
+  if(!useGC||(g+1e-10>=min&&g-1e-10<=max))all.push(s);
+ }
+ // Fisher–Yates shuffle using Web Crypto-backed unbiased bounded integers.
+ for(let i=all.length-1;i>0;i--){const j=randIndex(i+1);[all[i],all[j]]=[all[j],all[i]]}
+ return all;
+}
+function generateUnique(n,count,useGC,min,max,bases,isRNA){
+ const output=[];
+ // For small sequence spaces, enumerate the complete space. This guarantees
+ // that requesting every available sequence returns every valid sequence once.
+ if(n<=8){
+  const all=enumerateAll(n,useGC,min,max,isRNA);
+  return all.slice(0,count);
+ }
+ const seen=new Set();
+ const maxAttempts=Math.min(2000000,Math.max(10000,count*100));
+ let attempts=0;
+ while(output.length<count&&attempts<maxAttempts){
+  attempts++;
+  const s=makeSeq(n,bases);
+  if(seen.has(s))continue;
+  if(useGC){
+   const pct=100*gcCount(s)/n;
+   if(pct+1e-10<min||pct-1e-10>max)continue;
+  }
+  seen.add(s);output.push(s);
+ }
+ return output;
+}
 function render(){
  const fmt=$('format').value;
- $('list').innerHTML=records.map((s,i)=>`<div class="result-box"><div class="help">Sequence ${i+1}</div><div class="mono sequence">${fmt==='fasta'?`>Random_${i+1}\\n`:''}${s}</div><div class="help">${s.length} nt · GC ${gc(s)}%</div></div>`).join('');
+ $('list').innerHTML=records.map((s,i)=>`<div class="result-box"><div class="help">Sequence ${i+1}</div><div class="mono sequence">${fmt==='fasta'?`&gt;Random_${i+1}<br>`:''}${s}</div><div class="help">${s.length} nt · GC ${gc(s)}%</div></div>`).join('');
 }
-$('generate').onclick=()=>{
- $('error').innerHTML='';const n=Number($('length').value),c=Number($('count').value);
- if(!Number.isInteger(n)||n<1||n>5000||!Number.isInteger(c)||c<1||c>100){$('error').innerHTML='<div class="error">Enter a length from 1–5,000 and a sequence count from 1–100.</div>';return}
- if(!window.crypto?.getRandomValues){$('error').innerHTML='<div class="error">A secure browser context with Web Crypto support is required.</div>';return}
- const bases=$('type').value==='DNA'?['A','C','G','T']:['A','C','G','U'];
- records=Array.from({length:c},()=>makeSeq(n,bases));$('summary').textContent=`${c} sequence(s) · ${n} nt each · ${$('type').value}`;$('output').classList.add('show');render();
-};
+function outputText(){
+ const fmt=$('format').value;
+ return records.map((s,i)=>fmt==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');
+}
+$('length').addEventListener('input',updateLimits);
+$('gcFilter').addEventListener('change',updateLimits);
+$('gcMin').addEventListener('input',updateLimits);
+$('gcMax').addEventListener('input',updateLimits);
 $('format').onchange=()=>{if(records.length)render()};
-$('copy').onclick=async()=>{const f=$('format').value;const t=records.map((s,i)=>f==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');try{await navigator.clipboard.writeText(t);$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy all',1400)}catch(e){$('error').innerHTML='<div class="error">Clipboard access was unavailable. Select and copy the displayed sequences.</div>'}};
-$('download').onclick=()=>{const f=$('format').value,t=records.map((s,i)=>f==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='random_sequences.txt';a.click();URL.revokeObjectURL(a.href)};
-$('clear').onclick=()=>{records=[];$('list').innerHTML='';$('output').classList.remove('show');$('error').innerHTML=''};
+$('generate').onclick=()=>{
+ $('error').innerHTML='';
+ const {n,useGC,min,max}=currentSettings(),c=Number($('count').value);
+ if(!Number.isInteger(n)||n<1||n>5000){$('error').innerHTML='<div class="error">Enter a sequence length from 1–5,000 nt.</div>';return}
+ if(useGC&&(!Number.isFinite(min)||!Number.isFinite(max)||min<0||max>100||min>max)){
+  $('error').innerHTML='<div class="error">Enter a valid GC range from 0–100%, with minimum ≤ maximum.</div>';return;
+ }
+ if(!Number.isInteger(c)||c<1||c>Number($('count').max)){
+  $('error').innerHTML='<div class="error">The requested number exceeds the maximum available for the selected sequence length and GC filter. Please reduce the number of sequences.</div>';return;
+ }
+ if(!window.crypto?.getRandomValues){
+  $('error').innerHTML='<div class="error">A secure browser context with Web Crypto support is required.</div>';return;
+ }
+ const theoretical=theoreticalCapacity(n,useGC,min,max);
+ if(theoretical===0n){$('error').innerHTML='<div class="error">No sequence of this length can satisfy the selected GC range. Adjust the range.</div>';return}
+ $('generate').disabled=true;$('generate').textContent='Generating…';
+ try{
+  const isRNA=$('type').value==='RNA';
+  records=generateUnique(n,c,useGC,min,max,isRNA?'ACGU':'ACGT',isRNA);
+  $('summary').textContent=`${records.length} unique sequence(s) generated · ${n} nt each · ${isRNA?'RNA':'DNA'} · GC ${useGC?`${min}–${max}%`:'not filtered'}`;
+  $('output').classList.add('show');render();
+  if(records.length<c){
+   $('error').innerHTML=`<div class="notice warning">Generated ${records.length.toLocaleString()} of ${c.toLocaleString()} requested sequences. The GC filter and bounded random sampling limited the yield. You can widen the GC range or request fewer sequences. No duplicate sequences were returned.</div>`;
+  }
+ }catch(e){
+  $('error').innerHTML=`<div class="error">Generation failed: ${String(e.message||e)}</div>`;
+ }finally{
+  $('generate').disabled=false;$('generate').textContent='Generate random sequences';
+ }
+};
+$('copy').onclick=async()=>{
+ if(!records.length)return;
+ try{await navigator.clipboard.writeText(outputText());$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy all',1400)}
+ catch(e){$('error').innerHTML='<div class="error">Clipboard access was unavailable. Select and copy the displayed sequences.</div>'}
+};
+$('download').onclick=()=>{
+ if(!records.length)return;
+ const blob=new Blob([outputText()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='random_sequences.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$('clear').onclick=()=>{
+ records=[];$('list').innerHTML='';$('output').classList.remove('show');$('error').innerHTML='';
+};
+updateLimits();
 </script>
-</body></html>
+</body>
+</html>
