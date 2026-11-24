@@ -1,239 +1,2032 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Generate random DNA or RNA sequences for molecular biology and genetic engineering research.">
-<meta name="theme-color" content="#173b5e">
-<title>Random Sequence Generator | The Qingquan Xiao Lab</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Random DNA and RNA sequence generator with IUPAC support, barcode distance constraints, and barcode set validation.">
+  <meta name="theme-color" content="#173b5e">
+  <title>Random Sequence Generator | Qingquan Xiao Lab</title>
+
+  <style>
 :root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--paper:#fff;--wash:#f5f8fb;--max-width:1080px;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:82px}
+body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
 a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
-.site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.site-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .header-inner{max-width:var(--max-width);min-height:68px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}.brand:hover{text-decoration:none}
 .home-link{display:inline-block;padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}.home-link:hover{background:var(--wash);text-decoration:none}
-.hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}.hero-inner{max-width:var(--max-width);margin:0 auto;padding:43px 28px 34px}
+.hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}
+.hero-inner{max-width:var(--max-width);margin:0 auto;padding:43px 28px 34px}
 .eyebrow{margin:0 0 9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}.intro{max-width:780px;margin:12px 0 0;color:var(--muted);font-size:16px}
-main{max-width:var(--max-width);margin:0 auto;padding:22px 28px 48px}.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
-h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.02em}h3{margin:0 0 10px;color:var(--navy);font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}
-label{display:block;margin:0 0 7px;color:var(--ink);font-size:13px;font-weight:650}input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}input,select{height:42px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
-.help{margin-top:5px;color:var(--muted);font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}button,.button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer}button:hover,.button:hover{background:var(--blue);border-color:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover{background:var(--wash)}button:disabled{opacity:.5;cursor:not-allowed}
-.output{display:none;margin-top:18px}.output.show{display:block}.result-box{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:13px;margin:10px 0}.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;overflow-wrap:anywhere;white-space:pre-wrap}.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}.stat .value{font-size:20px;font-weight:700;color:var(--navy)}.stat .label{font-size:11px;color:var(--muted)}
-table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{color:var(--navy);background:#f5f8fb}
-.notice{padding:11px 13px;border-radius:4px;background:#f1f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}.notice.warning{background:#fff8e9;border-left-color:#c18a2b}.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:4px;color:var(--red);font-size:13px;margin:12px 0}.success{color:var(--green);font-size:13px}.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:14px;padding:3px 9px;font-size:11px;margin:2px}
+h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}
+.intro{max-width:780px;margin:12px 0 0;color:var(--muted);font-size:16px}
+main{max-width:var(--max-width);margin:0 auto;padding:22px 28px 48px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
+h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.02em}
+h3{margin:20px 0 10px;color:var(--navy);font-size:15px;line-height:1.4}
+p{margin:8px 0 14px}.section-description{margin:-7px 0 18px;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{min-width:0}.field.full{grid-column:1/-1}
+label{display:block;margin:0 0 7px;color:var(--ink);font-size:13px;font-weight:650}
+input[type="number"],input[type="text"],select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px;outline:none}
+input[type="number"],input[type="text"],select{min-height:42px}
+textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
+input[type="checkbox"]{width:16px;height:16px;accent-color:var(--blue);margin:0 8px 0 0;flex:0 0 auto;transform:translateY(1px)}
+.check-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:9px 0}
+.check-row label{display:inline-flex;align-items:center;font-size:13px;font-weight:600;margin:0}
+.subfield{margin:8px 0 14px 25px;max-width:260px}.subfield label{font-size:12px}
+.hint{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.55}
+.note,.warning{padding:11px 13px;border-radius:4px;font-size:12px;margin:12px 0;color:#536779}
+.note{background:#f1f6fa;border-left:3px solid var(--blue)}
+.warning{background:#fff8e9;border-left:3px solid #c18a2b}
+.button-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+button:hover:not(:disabled){background:var(--blue);border-color:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover:not(:disabled){background:var(--wash)}button.danger{background:#8b4a4a;border-color:#8b4a4a}button:disabled{opacity:.5;cursor:not-allowed}
+.status{display:none;margin-top:16px;padding:11px 13px;border-radius:5px;font-size:13px;overflow-wrap:anywhere}
+.status.success{display:block;color:#205b3c;background:#eaf5ee;border:1px solid #c9e4d2}
+.status.error{display:block;color:#8d2929;background:#fff1f1;border:1px solid #efcccc}
+.status.info{display:block;color:#285574;background:#edf4f9;border:1px solid #d3e2ee}
+.result-box{margin-top:18px}.result-box textarea{min-height:230px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}
+.stat-value{color:var(--navy);font-size:20px;font-weight:700;overflow-wrap:anywhere}.stat-label{color:var(--muted);font-size:11px}
+.table-wrap{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:5px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:540px;margin:0}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:9px 10px;vertical-align:top}th{color:var(--navy);background:#f5f8fb;font-weight:650}tbody tr:last-child td{border-bottom:0}
+.pass{color:var(--green);font-weight:650}.fail{color:var(--red);font-weight:650}.muted{color:var(--muted)}
+.hidden{display:none!important}.divider{border:0;border-top:1px solid var(--line);margin:22px 0}
 footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}footer a{color:var(--blue)}
-@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px;gap:12px}.brand{font-size:16px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.panel{padding:19px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:420px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.home-link{font-size:12px}.hero-inner{padding-top:27px}}
+@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px;gap:12px}.brand{font-size:16px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.panel{padding:19px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.home-link{font-size:12px}.hero-inner{padding-top:27px}.panel{padding:16px}.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
+
 <body>
+
 <header class="site-header"><div class="header-inner"><a class="brand" href="../index.html">The Qingquan Xiao Lab</a><a class="home-link" href="../index.html">← Back to Lab Homepage</a></div></header>
+
 <div class="hero"><div class="hero-inner">
   <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
   <h1>Random Sequence Generator</h1>
-  <p class="intro">Generate random DNA or RNA sequences for molecular biology and genetic engineering research.</p></div></div>
+  <p class="intro">Generate random DNA or RNA sequences, design barcode sets with sequence-distance constraints, and independently validate barcode sets.</p>
+</div></div>
+
 <main>
-<section class="panel">
-<h2>Generation settings</h2>
-<div class="grid">
- <div class="field"><label for="type">Sequence type</label><select id="type"><option value="DNA">DNA (A, C, G, T)</option><option value="RNA">RNA (A, C, G, U)</option></select></div>
- <div class="field"><label for="length">Sequence length (nt)</label><input id="length" type="number" min="1" max="5000" value="6"><div class="help">Allowed range: 1–5,000 nt</div></div>
- <div class="field"><label for="count">Number of sequences</label><input id="count" type="number" min="1" max="4" value="1"><div class="help" id="countHelp">Maximum depends on sequence length: 4<sup>n</sup> unique sequences (subject to browser resource limits).</div></div>
- <div class="field"><label for="format">Output format</label><select id="format"><option value="plain">Plain sequences</option><option value="fasta">FASTA (with headers)</option></select></div>
- <div class="field" style="grid-column:1/-1">
-  <label style="display:flex;align-items:center;gap:9px;font-weight:650"><input id="gcFilter" type="checkbox" style="width:16px;height:16px;margin:0"> Filter sequences by GC content</label>
-  <div class="grid" style="margin-top:10px">
-   <div class="field"><label for="gcMin">Minimum GC content (%)</label><input id="gcMin" type="number" min="0" max="100" step="0.1" value="45" disabled></div>
-   <div class="field"><label for="gcMax">Maximum GC content (%)</label><input id="gcMax" type="number" min="0" max="100" step="0.1" value="65" disabled></div>
-  </div>
-  <div class="help" id="gcHelp">Optional. When enabled, only sequences whose GC content falls within the inclusive range are returned.</div>
- </div>
-</div>
-<div class="actions"><button id="generate">Generate random sequences</button><button class="secondary" id="clear">Clear</button></div>
-<div id="error" aria-live="polite"></div>
-<div class="output" id="output">
- <div class="grid"><div><h2>Generated sequences</h2><div class="help" id="summary"></div></div><div class="actions" style="justify-content:flex-end;margin-top:0"><button class="secondary" id="copy">Copy all</button><button class="secondary" id="download">Download .txt</button></div></div>
- <div id="list"></div>
-</div>
-</section>
-<div class="notice">Each nucleotide is selected independently with equal probability using the browser's Web Crypto random number generator. Generated sequences are random examples, not validated primers or guides.</div>
+
+  <!-- ================= GENERATOR ================= -->
+
+  <section class="panel">
+    <h2>1. Sequence Generator</h2>
+    <p class="section-description">
+      Generate unique random sequences using standard nucleotides or
+      IUPAC-degenerate sequence patterns.
+    </p>
+
+    <div class="grid">
+
+      <div class="field">
+        <label for="alphabet">Sequence alphabet</label>
+        <select id="alphabet">
+          <option value="DNA">DNA (A, C, G, T)</option>
+          <option value="RNA">RNA (A, C, G, U)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="outputFormat">Output format</label>
+        <select id="outputFormat">
+          <option value="plain">Plain sequences</option>
+          <option value="fasta">FASTA</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sequenceLength">Sequence length (nt)</label>
+        <input id="sequenceLength" type="number" min="1" max="5000" value="6">
+        <div class="hint" id="sequenceLengthHint">Default: 6 nt. When a custom IUPAC pattern is entered, its length is shown here automatically.</div>
+      </div>
+
+      <div class="field">
+        <label for="sequenceCount">Number of sequences</label>
+        <input id="sequenceCount" type="number" min="1" max="10000" value="10">
+        <div class="hint" id="sequenceCountHint" aria-live="polite">
+          Calculating the number of sequences available under the current settings…
+        </div>
+      </div>
+
+      <div class="field full">
+        <label for="customPattern">Custom IUPAC pattern (optional)</label>
+        <input
+          id="customPattern"
+          type="text"
+          placeholder="e.g. NNNNNNNNNN or RYNNWS"
+          autocomplete="off"
+          spellcheck="false">
+        <div class="hint">
+          Supported codes: A, C, G, T, R, Y, S, W, K, M, B, D, H, V, N.
+          Input is case-insensitive and normalized to uppercase.
+          T is converted to U for RNA output. The sequence length is automatically set to the number of characters in this pattern.
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="divider">
+
+    <h3>Sequence filters</h3>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="useGC">
+        Apply GC content filter
+      </label>
+    </div>
+
+    <div class="grid subfield" id="gcFields">
+      <div class="field">
+        <label for="gcMin">Minimum GC (%)</label>
+        <input id="gcMin" type="number" min="0" max="100" value="45">
+      </div>
+      <div class="field">
+        <label for="gcMax">Maximum GC (%)</label>
+        <input id="gcMax" type="number" min="0" max="100" value="65">
+      </div>
+    </div>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="useHomopolymer" checked>
+        Exclude homopolymer runs of 3 or more identical bases
+      </label>
+    </div>
+
+    <hr class="divider">
+
+    <h3>Barcode distance constraints</h3>
+
+    <div class="note">
+      Distance constraints are applied between different selected sequences.
+      A sequence is never compared against itself or its own reverse complement.
+      All generated sequences are unique regardless of whether distance
+      constraints are enabled.
+    </div>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="useHamming">
+        Minimum pairwise Hamming distance
+      </label>
+    </div>
+
+    <div class="subfield">
+      <label for="hammingMin">Minimum Hamming distance (nt)</label>
+      <input id="hammingMin" type="number" min="1" max="5000" value="3">
+    </div>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="useRC">
+        Minimum pairwise reverse-complement distance
+      </label>
+    </div>
+
+    <div class="subfield">
+      <label for="rcMin">Minimum reverse-complement distance (nt)</label>
+      <input id="rcMin" type="number" min="1" max="5000" value="3">
+    </div>
+
+    <div class="warning">
+      Pairwise distance constraints can substantially reduce the number of
+      feasible barcodes. The generator uses bounded candidate sampling;
+      failure to reach the requested number does not prove that no valid
+      barcode set exists.
+    </div>
+
+    <div class="button-row">
+      <button class="primary" id="generateBtn">Generate sequences</button>
+      <button class="secondary" id="clearGeneratorBtn">Clear</button>
+    </div>
+
+    <div id="generatorStatus" class="status"></div>
+
+    <div id="generatorResults" class="result-box hidden">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value" id="generatedCount">0</div>
+          <div class="stat-label">Sequences generated</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="generatedLength">0</div>
+          <div class="stat-label">Sequence length</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="sequenceSpace">0</div>
+          <div class="stat-label">Theoretical sequence space</div>
+        </div>
+      </div>
+
+      <label for="generatedOutput">Generated sequences</label>
+      <textarea id="generatedOutput" readonly spellcheck="false"></textarea>
+
+      <div class="button-row">
+        <button class="secondary" id="copyGeneratedBtn">Copy sequences</button>
+        <button class="secondary" id="downloadGeneratedBtn">Download TXT</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= VALIDATOR ================= -->
+
+  <section class="panel">
+    <h2>2. Barcode Set Validator</h2>
+
+    <p class="section-description">
+      Independently evaluate an existing barcode set. Paste sequences in
+      FASTA format or enter one sequence per line.
+    </p>
+
+    <div class="note">
+      The validator accepts unambiguous DNA (A/C/G/T) or RNA (A/C/G/U)
+      sequences. IUPAC ambiguity codes are not accepted here because
+      Hamming and reverse-complement distances require unambiguous bases
+      for the calculations implemented in this tool.
+    </div>
+
+    <div class="field">
+      <label for="validatorInput">Input sequences</label>
+      <textarea
+        id="validatorInput"
+        placeholder=">Barcode_1&#10;ACGTACGTACGT&#10;>Barcode_2&#10;TGCATGCATGCA"
+        spellcheck="false"></textarea>
+      <div class="hint">
+        FASTA headers beginning with &gt; are supported. For plain text,
+        each non-empty line is treated as one sequence.
+        Whitespace within sequence lines is ignored.
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="field">
+        <label for="validatorAlphabet">Sequence alphabet</label>
+        <select id="validatorAlphabet">
+          <option value="DNA">DNA (A, C, G, T)</option>
+          <option value="RNA">RNA (A, C, G, U)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>GC content range (%)</label>
+        <div style="display:flex;gap:8px">
+          <input id="validatorGCMin" type="number" min="0" max="100" value="45" aria-label="Minimum GC percentage">
+          <input id="validatorGCMax" type="number" min="0" max="100" value="65" aria-label="Maximum GC percentage">
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row" style="margin-top:16px">
+      <label>
+        <input type="checkbox" id="validatorUseGC">
+        Check GC content against the specified range
+      </label>
+    </div>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="validatorUseHomopolymer" checked>
+        Check homopolymer runs of 3 or more identical bases
+      </label>
+    </div>
+
+    <hr class="divider">
+
+    <h3>Pairwise distance validation</h3>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="validatorUseHamming">
+        Check minimum pairwise Hamming distance
+      </label>
+    </div>
+
+    <div class="subfield">
+      <label for="validatorHammingMin">Minimum Hamming distance (nt)</label>
+      <input id="validatorHammingMin" type="number" min="1" max="5000" value="3">
+    </div>
+
+    <div class="check-row">
+      <label>
+        <input type="checkbox" id="validatorUseRC">
+        Check minimum pairwise reverse-complement distance
+      </label>
+    </div>
+
+    <div class="subfield">
+      <label for="validatorRCMin">Minimum reverse-complement distance (nt)</label>
+      <input id="validatorRCMin" type="number" min="1" max="5000" value="3">
+    </div>
+
+    <div class="warning">
+      To prevent excessive browser computation, the validator limits the
+      number of pairwise comparisons to <strong>2,000,000</strong>.
+      The limit is checked before pairwise calculations begin.
+      If the input exceeds this limit, reduce the number of sequences.
+    </div>
+
+    <div class="button-row">
+      <button class="primary" id="validateBtn">Validate barcode set</button>
+      <button class="secondary" id="clearValidatorBtn">Clear</button>
+    </div>
+
+    <div id="validatorStatus" class="status"></div>
+
+    <div id="validatorResults" class="result-box hidden">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value" id="validatorCount">0</div>
+          <div class="stat-label">Input sequences</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="validatorDuplicates">0</div>
+          <div class="stat-label">Duplicate records</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="validatorPairs">0</div>
+          <div class="stat-label">Pairs compared</div>
+        </div>
+      </div>
+
+      <h3>Validation summary</h3>
+      <div id="validatorSummary"></div>
+
+      <h3>Individual sequence assessment</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Record</th>
+              <th>Name</th>
+              <th>Length</th>
+              <th>GC (%)</th>
+              <th>Homopolymer</th>
+              <th>Duplicate</th>
+            </tr>
+          </thead>
+          <tbody id="individualTable"></tbody>
+        </table>
+      </div>
+
+      <h3>Pairwise distance assessment</h3>
+      <p class="hint">
+        Each unordered pair of different records is evaluated once.
+        Reverse-complement distance is calculated as the Hamming distance
+        between sequence A and the reverse complement of sequence B.
+      </p>
+
+      <div id="pairwiseSummary"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Record A</th>
+              <th>Record B</th>
+              <th>Hamming distance</th>
+              <th>RC distance</th>
+              <th>Assessment</th>
+            </tr>
+          </thead>
+          <tbody id="pairwiseTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= INFORMATION ================= -->
+
+  <section class="panel">
+    <h2>3. Methodological notes</h2>
+
+    <h3>IUPAC nucleotide codes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Code</th><th>Allowed bases</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A</td><td>A</td></tr>
+          <tr><td>C</td><td>C</td></tr>
+          <tr><td>G</td><td>G</td></tr>
+          <tr><td>T</td><td>T</td></tr>
+          <tr><td>R</td><td>A or G</td></tr>
+          <tr><td>Y</td><td>C or T</td></tr>
+          <tr><td>S</td><td>G or C</td></tr>
+          <tr><td>W</td><td>A or T</td></tr>
+          <tr><td>K</td><td>G or T</td></tr>
+          <tr><td>M</td><td>A or C</td></tr>
+          <tr><td>B</td><td>C, G or T</td></tr>
+          <tr><td>D</td><td>A, G or T</td></tr>
+          <tr><td>H</td><td>A, C or T</td></tr>
+          <tr><td>V</td><td>A, C or G</td></tr>
+          <tr><td>N</td><td>A, C, G or T</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Distance definitions</h3>
+    <p>
+      <strong>Hamming distance:</strong> the number of nucleotide positions
+      that differ between two sequences of equal length.
+    </p>
+    <p>
+      <strong>Reverse-complement distance:</strong> the Hamming distance
+      between one sequence and the reverse complement of another sequence.
+      The comparison is performed between distinct barcode records.
+    </p>
+
+    <h3>Important limitations</h3>
+    <p>
+      GC content and homopolymer filtering are sequence-level screening
+      criteria. Hamming and reverse-complement distances are computational
+      measures of sequence dissimilarity. These metrics do not independently
+      predict PCR cross-amplification, secondary structure, barcode
+      misassignment, sequencing error rates, or experimental performance.
+    </p>
+    <p>
+      The generated barcode sets should therefore be treated as
+      in-silico candidates and subjected to additional experimental
+      and application-specific evaluation before use.
+    </p>
+  </section>
 
 </main>
-<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index.html">Back to Lab Homepage</a></footer>
-<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
-<script>
-'use strict';
-const $=id=>document.getElementById(id);
-let records=[];
-const OUTPUT_CAP=65536;
-const TOTAL_BASE_BUDGET=5000000;
 
-function randomUint32(){
- const a=new Uint32Array(1);
- crypto.getRandomValues(a);
- return a[0];
-}
-function randIndex(n){
- if(!Number.isSafeInteger(n)||n<1)throw new Error('Invalid random selection range.');
- const range=0x100000000,limit=Math.floor(range/n)*n;
- let x;do{x=randomUint32()}while(x>=limit);
- return x%n;
-}
-function gcCount(s){let n=0;for(const c of s)if(c==='G'||c==='C')n++;return n}
-function gc(s){return s.length?(100*gcCount(s)/s.length).toFixed(1):'0.0'}
-function makeSeq(n,bases){
- let s='';for(let i=0;i<n;i++)s+=bases[randIndex(4)];
- return s;
-}
-function binomial(n,k){
- k=Math.min(k,n-k);let v=1n;
- for(let i=1;i<=k;i++)v=v*BigInt(n-k+i)/BigInt(i);
- return v;
-}
-function theoreticalCapacity(n,useGC,minGC,maxGC){
- if(!useGC)return 4n**BigInt(n);
- const kMin=Math.max(0,Math.ceil((minGC*n/100)-1e-10));
- const kMax=Math.min(n,Math.floor((maxGC*n/100)+1e-10));
- if(kMin>kMax)return 0n;
- let sum=0n;
- for(let k=kMin;k<=kMax;k++)sum+=binomial(n,k);
- return sum*(2n**BigInt(n));
-}
-function formatBigInt(v){
- const s=v.toString();
- return s.length>18?s.slice(0,6)+'… ('+s.length+' digits)':s.replace(/\B(?=(\d{3})+(?!\d))/g,',');
-}
-function currentSettings(){
- const n=Number($('length').value);
- const useGC=$('gcFilter').checked;
- const min=Number($('gcMin').value),max=Number($('gcMax').value);
- return {n,useGC,min,max};
-}
-function updateLimits(){
- const {n,useGC,min,max}=currentSettings();
- const validN=Number.isInteger(n)&&n>=1&&n<=5000;
- const validGC=Number.isFinite(min)&&Number.isFinite(max)&&min>=0&&max<=100&&min<=max;
- $('gcMin').disabled=!useGC;$('gcMax').disabled=!useGC;
- if(!validN){
-  $('count').max='1';$('countHelp').textContent='Enter a sequence length from 1 to 5,000 nt to calculate the maximum.';
-  $('gcHelp').textContent='GC range is inclusive; minimum must not exceed maximum.';
-  return;
- }
- if(useGC&&!validGC){
-  $('count').max='1';$('countHelp').textContent='Set a valid GC range (0–100%, minimum ≤ maximum) to calculate the maximum.';
-  $('gcHelp').textContent='Please enter a valid GC range.';
-  return;
- }
- const theoretical=theoreticalCapacity(n,useGC,min,max);
- const resourceCap=BigInt(Math.min(OUTPUT_CAP,Math.max(1,Math.floor(TOTAL_BASE_BUDGET/n))));
- const allowed=theoretical<resourceCap?theoretical:resourceCap;
- const maxCount=Number(allowed>BigInt(Number.MAX_SAFE_INTEGER)?BigInt(Number.MAX_SAFE_INTEGER):allowed);
- $('count').max=String(Math.max(1,maxCount));
- if(Number($('count').value)>maxCount)$('count').value=String(maxCount);
- if(Number($('count').value)<1||!Number.isFinite(Number($('count').value)))$('count').value='1';
- $('countHelp').textContent=`Maximum possible unique sequences${useGC?' within this GC range':''}: ${formatBigInt(theoretical)}. Browser output limit for this run: ${maxCount.toLocaleString()} sequence(s).`;
- $('gcHelp').textContent=useGC
-  ? `Inclusive GC range: ${min}%–${max}%. The theoretical maximum is calculated exactly from sequence length and the allowed integer GC counts.`
-  : 'Optional. When enabled, only sequences whose GC content falls within the inclusive range are returned.';
-}
-function enumerateAll(n,useGC,min,max,isRNA){
- const total=4**n,all=[];
- for(let x=0;x<total;x++){
-  let v=x,s='';
-  for(let i=0;i<n;i++){s='ACGT'[v&3]+s;v=Math.floor(v/4)}
-  if(isRNA)s=s.replace(/T/g,'U');
-  const g=100*gcCount(s)/n;
-  if(!useGC||(g+1e-10>=min&&g-1e-10<=max))all.push(s);
- }
- // Fisher–Yates shuffle using Web Crypto-backed unbiased bounded integers.
- for(let i=all.length-1;i>0;i--){const j=randIndex(i+1);[all[i],all[j]]=[all[j],all[i]]}
- return all;
-}
-function generateUnique(n,count,useGC,min,max,bases,isRNA){
- const output=[];
- // For small sequence spaces, enumerate the complete space. This guarantees
- // that requesting every available sequence returns every valid sequence once.
- if(n<=8){
-  const all=enumerateAll(n,useGC,min,max,isRNA);
-  return all.slice(0,count);
- }
- const seen=new Set();
- const maxAttempts=Math.min(2000000,Math.max(10000,count*100));
- let attempts=0;
- while(output.length<count&&attempts<maxAttempts){
-  attempts++;
-  const s=makeSeq(n,bases);
-  if(seen.has(s))continue;
-  if(useGC){
-   const pct=100*gcCount(s)/n;
-   if(pct+1e-10<min||pct-1e-10>max)continue;
+<footer>
+  Copyright © 2024-<span id="year"></span>
+  The Qingquan Xiao Lab |
+  <a href="../index.html">Back to Lab Homepage</a>
+</footer>
+
+
+<script>
+"use strict";
+
+/* =========================================================
+   GLOBAL SETTINGS
+========================================================= */
+
+const MAX_SEQUENCE_LENGTH = 5000;
+const MAX_GENERATED_COUNT = 10000;
+
+/*
+ * Pairwise comparison budget.
+ * Both generator distance checks and validator checks use
+ * this limit to avoid excessive browser computation.
+ */
+const MAX_PAIR_CHECKS = 2000000;
+
+/*
+ * Maximum candidate-generation attempts.
+ * This is a computational safeguard, not a mathematical
+ * statement about the existence of valid barcode sets.
+ */
+const MAX_CANDIDATE_ATTEMPTS = 1000000;
+
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+
+/* =========================================================
+   IUPAC DEFINITIONS
+========================================================= */
+
+const IUPAC = {
+  A: ["A"],
+  C: ["C"],
+  G: ["G"],
+  T: ["T"],
+  R: ["A", "G"],
+  Y: ["C", "T"],
+  S: ["G", "C"],
+  W: ["A", "T"],
+  K: ["G", "T"],
+  M: ["A", "C"],
+  B: ["C", "G", "T"],
+  D: ["A", "G", "T"],
+  H: ["A", "C", "T"],
+  V: ["A", "C", "G"],
+  N: ["A", "C", "G", "T"]
+};
+
+
+/* =========================================================
+   SECURE RANDOM NUMBER GENERATION
+========================================================= */
+
+function secureRandomInteger(maxExclusive) {
+  if (!Number.isSafeInteger(maxExclusive) || maxExclusive < 1) {
+    throw new Error("Invalid random integer range.");
   }
-  seen.add(s);output.push(s);
- }
- return output;
-}
-function render(){
- const fmt=$('format').value;
- $('list').innerHTML=records.map((s,i)=>`<div class="result-box"><div class="help">Sequence ${i+1}</div><div class="mono sequence">${fmt==='fasta'?`&gt;Random_${i+1}<br>`:''}${s}</div><div class="help">${s.length} nt · GC ${gc(s)}%</div></div>`).join('');
-}
-function outputText(){
- const fmt=$('format').value;
- return records.map((s,i)=>fmt==='fasta'?`>Random_${i+1}\n${s}`:s).join('\n');
-}
-$('length').addEventListener('input',updateLimits);
-$('gcFilter').addEventListener('change',updateLimits);
-$('gcMin').addEventListener('input',updateLimits);
-$('gcMax').addEventListener('input',updateLimits);
-$('format').onchange=()=>{if(records.length)render()};
-$('generate').onclick=()=>{
- $('error').innerHTML='';
- const {n,useGC,min,max}=currentSettings(),c=Number($('count').value);
- if(!Number.isInteger(n)||n<1||n>5000){$('error').innerHTML='<div class="error">Enter a sequence length from 1–5,000 nt.</div>';return}
- if(useGC&&(!Number.isFinite(min)||!Number.isFinite(max)||min<0||max>100||min>max)){
-  $('error').innerHTML='<div class="error">Enter a valid GC range from 0–100%, with minimum ≤ maximum.</div>';return;
- }
- if(!Number.isInteger(c)||c<1||c>Number($('count').max)){
-  $('error').innerHTML='<div class="error">The requested number exceeds the maximum available for the selected sequence length and GC filter. Please reduce the number of sequences.</div>';return;
- }
- if(!window.crypto?.getRandomValues){
-  $('error').innerHTML='<div class="error">A secure browser context with Web Crypto support is required.</div>';return;
- }
- const theoretical=theoreticalCapacity(n,useGC,min,max);
- if(theoretical===0n){$('error').innerHTML='<div class="error">No sequence of this length can satisfy the selected GC range. Adjust the range.</div>';return}
- $('generate').disabled=true;$('generate').textContent='Generating…';
- try{
-  const isRNA=$('type').value==='RNA';
-  records=generateUnique(n,c,useGC,min,max,isRNA?'ACGU':'ACGT',isRNA);
-  $('summary').textContent=`${records.length} unique sequence(s) generated · ${n} nt each · ${isRNA?'RNA':'DNA'} · GC ${useGC?`${min}–${max}%`:'not filtered'}`;
-  $('output').classList.add('show');render();
-  if(records.length<c){
-   $('error').innerHTML=`<div class="notice warning">Generated ${records.length.toLocaleString()} of ${c.toLocaleString()} requested sequences. The GC filter and bounded random sampling limited the yield. You can widen the GC range or request fewer sequences. No duplicate sequences were returned.</div>`;
+
+  if (!window.crypto || !window.crypto.getRandomValues) {
+    throw new Error(
+      "Secure random number generation is unavailable in this browser."
+    );
   }
- }catch(e){
-  $('error').innerHTML=`<div class="error">Generation failed: ${String(e.message||e)}</div>`;
- }finally{
-  $('generate').disabled=false;$('generate').textContent='Generate random sequences';
- }
-};
-$('copy').onclick=async()=>{
- if(!records.length)return;
- try{await navigator.clipboard.writeText(outputText());$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy all',1400)}
- catch(e){$('error').innerHTML='<div class="error">Clipboard access was unavailable. Select and copy the displayed sequences.</div>'}
-};
-$('download').onclick=()=>{
- if(!records.length)return;
- const blob=new Blob([outputText()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='random_sequences.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-};
-$('clear').onclick=()=>{
- records=[];$('list').innerHTML='';$('output').classList.remove('show');$('error').innerHTML='';
-};
-updateLimits();
+
+  /*
+   * Rejection sampling avoids modulo bias.
+   */
+  const range = 0x100000000;
+  const limit = Math.floor(range / maxExclusive) * maxExclusive;
+  const buffer = new Uint32Array(1);
+
+  let value;
+
+  do {
+    window.crypto.getRandomValues(buffer);
+    value = buffer[0];
+  } while (value >= limit);
+
+  return value % maxExclusive;
+}
+
+
+function secureShuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = secureRandomInteger(i + 1);
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
+
+/* =========================================================
+   BASIC SEQUENCE FUNCTIONS
+========================================================= */
+
+function normalizeSequence(sequence) {
+  return String(sequence)
+    .toUpperCase()
+    .replace(/\s+/g, "");
+}
+
+
+function getGCPercent(sequence) {
+  if (!sequence.length) return 0;
+
+  let gc = 0;
+
+  for (const base of sequence) {
+    if (base === "G" || base === "C") {
+      gc++;
+    }
+  }
+
+  return (gc / sequence.length) * 100;
+}
+
+
+function hasHomopolymer(sequence, minimumRun = 3) {
+  if (sequence.length < minimumRun) return false;
+
+  let run = 1;
+
+  for (let i = 1; i < sequence.length; i++) {
+    if (sequence[i] === sequence[i - 1]) {
+      run++;
+      if (run >= minimumRun) return true;
+    } else {
+      run = 1;
+    }
+  }
+
+  return false;
+}
+
+
+function hammingDistance(a, b) {
+  if (a.length !== b.length) return null;
+
+  let distance = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      distance++;
+    }
+  }
+
+  return distance;
+}
+
+
+function reverseComplement(sequence, alphabet) {
+  const map = alphabet === "RNA"
+    ? { A: "U", U: "A", C: "G", G: "C" }
+    : { A: "T", T: "A", C: "G", G: "C" };
+
+  let result = "";
+
+  for (let i = sequence.length - 1; i >= 0; i--) {
+    const base = sequence[i];
+
+    if (!map[base]) {
+      throw new Error("Cannot calculate reverse complement for invalid base: " + base);
+    }
+
+    result += map[base];
+  }
+
+  return result;
+}
+
+
+function validateNumber(value, label, minimum, maximum) {
+  const number = Number(value);
+
+  if (!Number.isInteger(number) ||
+      number < minimum ||
+      number > maximum) {
+    throw new Error(
+      label + " must be an integer between " +
+      minimum + " and " + maximum + "."
+    );
+  }
+
+  return number;
+}
+
+
+function showStatus(elementId, message, type) {
+  const element = document.getElementById(elementId);
+  element.textContent = message;
+  element.className = "status " + type;
+}
+
+
+function hideStatus(elementId) {
+  const element = document.getElementById(elementId);
+  element.textContent = "";
+  element.className = "status";
+}
+
+
+/* =========================================================
+   GENERATOR: PATTERN HANDLING
+========================================================= */
+
+function parsePattern(pattern, alphabet) {
+  const normalized = normalizeSequence(pattern);
+
+  if (!normalized) {
+    throw new Error("The custom pattern is empty.");
+  }
+
+  const choices = [];
+
+  for (const code of normalized) {
+    if (!IUPAC[code]) {
+      throw new Error(
+        "Invalid IUPAC symbol: " + code +
+        ". Please use standard IUPAC nucleotide codes."
+      );
+    }
+
+    let bases = [...IUPAC[code]];
+
+    if (alphabet === "RNA") {
+      bases = bases.map(base => base === "T" ? "U" : base);
+    }
+
+    choices.push(bases);
+  }
+
+  return choices;
+}
+
+
+function makeRandomSequence(choices) {
+  let sequence = "";
+
+  for (const bases of choices) {
+    sequence += bases[secureRandomInteger(bases.length)];
+  }
+
+  return sequence;
+}
+
+
+function getTheoreticalSpace(choices) {
+  let total = 1n;
+
+  for (const bases of choices) {
+    total *= BigInt(bases.length);
+  }
+
+  return total;
+}
+
+
+function passesSequenceFilters(sequence, settings) {
+  if (settings.useGC) {
+    const gc = getGCPercent(sequence);
+
+    if (gc < settings.gcMin || gc > settings.gcMax) {
+      return false;
+    }
+  }
+
+  if (settings.useHomopolymer &&
+      hasHomopolymer(sequence, 3)) {
+    return false;
+  }
+
+  return true;
+}
+
+
+/* =========================================================
+   GENERATOR: DISTANCE CHECKS
+========================================================= */
+
+/*
+ * This function is intentionally optimized:
+ *
+ * 1. If both distance constraints are disabled, return
+ *    immediately. Sequence uniqueness is handled by Set.
+ *
+ * 2. If distance constraints are enabled, compare the
+ *    candidate only against previously selected sequences.
+ *
+ * 3. Reverse-complement distance is evaluated against
+ *    another barcode only, never against the candidate
+ *    itself.
+ */
+function passesDistanceConstraints(candidate, selected, settings, alphabet) {
+  if (!settings.useHamming && !settings.useRC) {
+    return true;
+  }
+
+  let candidateRC = null;
+
+  if (settings.useRC) {
+    candidateRC = reverseComplement(candidate, alphabet);
+  }
+
+  for (const existing of selected) {
+
+    if (settings.useHamming) {
+      const distance = hammingDistance(candidate, existing);
+
+      if (distance === null ||
+          distance < settings.hammingMin) {
+        return false;
+      }
+    }
+
+    if (settings.useRC) {
+      const rcDistance = hammingDistance(candidate, reverseComplement(existing, alphabet));
+
+      if (rcDistance === null ||
+          rcDistance < settings.rcMin) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+
+/*
+ * Maximum set size under the configured pairwise comparison
+ * budget. This is a computational ceiling only.
+ */
+function getMaxSafePairCount() {
+  return Math.floor(
+    (1 + Math.sqrt(1 + 8 * MAX_PAIR_CHECKS)) / 2
+  );
+}
+
+
+/* =========================================================
+   GENERATOR: EXHAUSTIVE CANDIDATE ENUMERATION
+========================================================= */
+
+function enumerateCandidates(choices) {
+  const candidates = [];
+  const current = new Array(choices.length);
+
+  function recurse(position) {
+    if (position === choices.length) {
+      candidates.push(current.join(""));
+      return;
+    }
+
+    for (const base of choices[position]) {
+      current[position] = base;
+      recurse(position + 1);
+    }
+  }
+
+  recurse(0);
+  return candidates;
+}
+
+
+/* =========================================================
+   GENERATOR: MAIN FUNCTION
+========================================================= */
+
+function generateSet(settings) {
+  const choices = settings.choices;
+  const requestedCount = settings.count;
+  const alphabet = settings.alphabet;
+
+  const theoreticalSpace = getTheoreticalSpace(choices);
+
+  if (theoreticalSpace < BigInt(requestedCount)) {
+    throw new Error(
+      "The requested number of unique sequences exceeds the theoretical sequence space."
+    );
+  }
+
+  /*
+   * Check the pairwise computation budget before generation.
+   * No pairwise loops are performed if the distance options
+   * are both disabled.
+   */
+  const distanceEnabled = settings.useHamming || settings.useRC;
+
+  if (distanceEnabled) {
+    const maxSafeCount = getMaxSafePairCount();
+
+    if (requestedCount > maxSafeCount) {
+      throw new Error(
+        "The requested set would exceed the pairwise comparison budget. " +
+        "The maximum supported set size with distance constraints enabled is " +
+        maxSafeCount + " sequences."
+      );
+    }
+  }
+
+  const selected = [];
+  const selectedSet = new Set();
+
+  /*
+   * For short patterns, exhaustive enumeration is practical.
+   * This avoids repeated random sampling when the candidate
+   * space is small.
+   */
+  const canEnumerate =
+    choices.length <= 8 &&
+    theoreticalSpace <= 65536n;
+
+  if (canEnumerate) {
+    const candidates = secureShuffle(enumerateCandidates(choices));
+
+    for (const candidate of candidates) {
+      if (selected.length >= requestedCount) break;
+
+      if (!passesSequenceFilters(candidate, settings)) {
+        continue;
+      }
+
+      if (selectedSet.has(candidate)) {
+        continue;
+      }
+
+      if (!passesDistanceConstraints(
+        candidate,
+        selected,
+        settings,
+        alphabet
+      )) {
+        continue;
+      }
+
+      selected.push(candidate);
+      selectedSet.add(candidate);
+    }
+
+  } else {
+
+    /*
+     * For larger sequence spaces, use bounded random sampling.
+     * The Set guarantees uniqueness without scanning the
+     * selected list when distance constraints are disabled.
+     */
+    let attempts = 0;
+
+    while (
+      selected.length < requestedCount &&
+      attempts < MAX_CANDIDATE_ATTEMPTS
+    ) {
+      attempts++;
+
+      const candidate = makeRandomSequence(choices);
+
+      if (selectedSet.has(candidate)) {
+        continue;
+      }
+
+      if (!passesSequenceFilters(candidate, settings)) {
+        continue;
+      }
+
+      if (!passesDistanceConstraints(
+        candidate,
+        selected,
+        settings,
+        alphabet
+      )) {
+        continue;
+      }
+
+      selected.push(candidate);
+      selectedSet.add(candidate);
+    }
+  }
+
+  return {
+    sequences: selected,
+    theoreticalSpace: theoreticalSpace.toString(),
+    complete: selected.length === requestedCount
+  };
+}
+
+
+/* =========================================================
+   GENERATOR: USER INTERFACE
+========================================================= */
+
+const useGC = document.getElementById("useGC");
+const gcFields = document.getElementById("gcFields");
+
+// Keep sequence length and the available-sequence estimate synchronized.
+const sequenceLengthInput = document.getElementById("sequenceLength");
+const customPatternInput = document.getElementById("customPattern");
+const sequenceLengthHint = document.getElementById("sequenceLengthHint");
+const sequenceCountInput = document.getElementById("sequenceCount");
+const sequenceCountHint = document.getElementById("sequenceCountHint");
+
+function getGeneratorChoices() {
+  const alphabet = document.getElementById("alphabet").value;
+  const pattern = customPatternInput.value.trim();
+
+  if (pattern) return parsePattern(pattern, alphabet);
+
+  const length = validateNumber(
+    sequenceLengthInput.value,
+    "Sequence length",
+    1,
+    MAX_SEQUENCE_LENGTH
+  );
+  const bases = alphabet === "RNA" ? ["A", "C", "G", "U"] : ["A", "C", "G", "T"];
+  return Array.from({ length }, () => [...bases]);
+}
+
+function formatBigInteger(value) {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function updateSequenceCountHint() {
+  try {
+    const choices = getGeneratorChoices();
+    const theoreticalSpace = getTheoreticalSpace(choices);
+    const useHomopolymer = document.getElementById("useHomopolymer").checked;
+    const gcEnabled = useGC.checked;
+    const gcMin = Number(document.getElementById("gcMin").value);
+    const gcMax = Number(document.getElementById("gcMax").value);
+    const gcRangeValid = !gcEnabled || (
+      Number.isFinite(gcMin) && Number.isFinite(gcMax) &&
+      gcMin >= 0 && gcMax <= 100 && gcMin <= gcMax
+    );
+
+    let available = theoreticalSpace;
+    let estimateIsExact = false;
+
+    // For small sequence spaces, count candidates that pass the active
+    // single-sequence filters exactly. For larger spaces, report the raw
+    // sequence space as an upper bound rather than imply an exact count.
+    if (theoreticalSpace <= 65536n && gcRangeValid) {
+      const candidates = enumerateCandidates(choices);
+      let passing = 0n;
+      const filterSettings = {
+        useGC: gcEnabled,
+        gcMin,
+        gcMax,
+        useHomopolymer
+      };
+      for (const candidate of candidates) {
+        if (passesSequenceFilters(candidate, filterSettings)) passing++;
+      }
+      available = passing;
+      estimateIsExact = true;
+    }
+
+    let runCap = BigInt(MAX_GENERATED_COUNT);
+    const distanceEnabled = document.getElementById("useHamming").checked ||
+      document.getElementById("useRC").checked;
+    const pairwiseCap = BigInt(getMaxSafePairCount());
+    if (distanceEnabled && runCap > pairwiseCap) runCap = pairwiseCap;
+
+    const selectableMaximum = available < runCap ? available : runCap;
+    sequenceCountInput.max = (selectableMaximum > 0n ? selectableMaximum : 1n).toString();
+
+    const estimateLabel = estimateIsExact
+      ? "Theoretical unique sequences satisfying the current pattern and sequence filters: " + formatBigInteger(available) + "."
+      : "Upper-bound estimate from the current pattern (before sequence filters): " + formatBigInteger(available) + ".";
+    const capLabel = " Per-run browser output cap: " + formatBigInteger(runCap) + " sequence(s).";
+    const filterLabel = estimateIsExact
+      ? " This count is exact for the active GC and homopolymer filters; pairwise distance constraints may reduce the feasible set further."
+      : " For long or highly degenerate patterns, this is an upper bound; restrictive filters and pairwise distance constraints may reduce the number actually available.";
+    sequenceCountHint.textContent = estimateLabel + capLabel + filterLabel;
+    sequenceCountHint.style.color = available === 0n ? "var(--red)" : "";
+
+    if (available > 0n && BigInt(Math.max(0, Number(sequenceCountInput.value) || 0)) > selectableMaximum) {
+      sequenceCountHint.textContent += " The requested count currently exceeds the selectable maximum.";
+    }
+  } catch (error) {
+    sequenceCountInput.max = String(MAX_GENERATED_COUNT);
+    sequenceCountHint.textContent = "Enter a valid sequence length or IUPAC pattern to calculate the available sequence count. " + (error.message || "");
+    sequenceCountHint.style.color = "var(--red)";
+  }
+}
+
+customPatternInput.addEventListener("input", () => {
+  const pattern = customPatternInput.value.trim();
+  if (pattern) {
+    sequenceLengthInput.value = pattern.length;
+    sequenceLengthInput.readOnly = true;
+    sequenceLengthInput.setAttribute("aria-readonly", "true");
+    sequenceLengthHint.textContent = "Automatically set from the custom IUPAC pattern (" + pattern.length + " nt).";
+  } else {
+    sequenceLengthInput.readOnly = false;
+    sequenceLengthInput.removeAttribute("aria-readonly");
+    sequenceLengthHint.textContent = "Default: 6 nt. Enter a value between 1 and 5,000 nt.";
+  }
+  updateSequenceCountHint();
+});
+
+useGC.addEventListener("change", () => {
+  gcFields.classList.toggle("hidden", !useGC.checked);
+  updateSequenceCountHint();
+});
+
+gcFields.classList.add("hidden");
+
+[
+  "alphabet", "sequenceLength", "gcMin", "gcMax", "useHomopolymer",
+  "useHamming", "useRC"
+].forEach(id => {
+  document.getElementById(id).addEventListener("input", updateSequenceCountHint);
+  document.getElementById(id).addEventListener("change", updateSequenceCountHint);
+});
+sequenceCountInput.addEventListener("input", updateSequenceCountHint);
+updateSequenceCountHint();
+
+
+document.getElementById("generateBtn").addEventListener("click", () => {
+  hideStatus("generatorStatus");
+
+  const button = document.getElementById("generateBtn");
+  button.disabled = true;
+
+  try {
+    const alphabet = document.getElementById("alphabet").value;
+
+    const count = validateNumber(
+      document.getElementById("sequenceCount").value,
+      "Number of sequences",
+      1,
+      MAX_GENERATED_COUNT
+    );
+
+    const rawPattern = document.getElementById("customPattern").value.trim();
+
+    let choices;
+
+    if (rawPattern) {
+      choices = parsePattern(rawPattern, alphabet);
+    } else {
+      const length = validateNumber(
+        document.getElementById("sequenceLength").value,
+        "Sequence length",
+        1,
+        MAX_SEQUENCE_LENGTH
+      );
+
+      const bases = alphabet === "RNA"
+        ? ["A", "C", "G", "U"]
+        : ["A", "C", "G", "T"];
+
+      choices = Array.from(
+        { length },
+        () => [...bases]
+      );
+    }
+
+    if (choices.length > MAX_SEQUENCE_LENGTH) {
+      throw new Error(
+        "Sequence length cannot exceed " +
+        MAX_SEQUENCE_LENGTH + " nt."
+      );
+    }
+
+    const settings = {
+      alphabet,
+      choices,
+      count,
+
+      useGC: useGC.checked,
+      gcMin: 0,
+      gcMax: 100,
+
+      useHomopolymer:
+        document.getElementById("useHomopolymer").checked,
+
+      useHamming:
+        document.getElementById("useHamming").checked,
+
+      hammingMin: 1,
+
+      useRC:
+        document.getElementById("useRC").checked,
+
+      rcMin: 1
+    };
+
+    if (settings.useGC) {
+      settings.gcMin = validateNumber(
+        document.getElementById("gcMin").value,
+        "Minimum GC",
+        0,
+        100
+      );
+
+      settings.gcMax = validateNumber(
+        document.getElementById("gcMax").value,
+        "Maximum GC",
+        0,
+        100
+      );
+
+      if (settings.gcMin > settings.gcMax) {
+        throw new Error(
+          "Minimum GC content cannot exceed maximum GC content."
+        );
+      }
+    }
+
+    if (settings.useHamming) {
+      settings.hammingMin = validateNumber(
+        document.getElementById("hammingMin").value,
+        "Minimum Hamming distance",
+        1,
+        choices.length
+      );
+    }
+
+    if (settings.useRC) {
+      settings.rcMin = validateNumber(
+        document.getElementById("rcMin").value,
+        "Minimum reverse-complement distance",
+        1,
+        choices.length
+      );
+    }
+
+    const theoreticalSpace = getTheoreticalSpace(choices);
+    if (theoreticalSpace < BigInt(count)) {
+      throw new Error(
+        "The requested number (" + count + ") exceeds the theoretical sequence space (" +
+        formatBigInteger(theoreticalSpace) + "). Reduce the requested count or use a longer/more degenerate pattern."
+      );
+    }
+
+    // For small sequence spaces, verify the exact number remaining after
+    // active GC/homopolymer filters before starting generation.
+    if (theoreticalSpace <= 65536n) {
+      let filteredCapacity = 0;
+      for (const candidate of enumerateCandidates(choices)) {
+        if (passesSequenceFilters(candidate, settings)) filteredCapacity++;
+      }
+      if (count > filteredCapacity) {
+        throw new Error(
+          "The requested number (" + count + ") exceeds the number of unique sequences " +
+          "satisfying the current pattern and sequence filters (" +
+          filteredCapacity.toLocaleString() + "). Relax the filters or reduce the requested count."
+        );
+      }
+    }
+
+    const result = generateSet(settings);
+
+    const format = document.getElementById("outputFormat").value;
+
+    let output;
+
+    if (format === "fasta") {
+      output = result.sequences.map(
+        (sequence, index) =>
+          ">Barcode_" + (index + 1) + "\n" + sequence
+      ).join("\n");
+    } else {
+      output = result.sequences.join("\n");
+    }
+
+    document.getElementById("generatedOutput").value = output;
+    document.getElementById("generatedCount").textContent =
+      result.sequences.length;
+
+    document.getElementById("generatedLength").textContent =
+      choices.length;
+
+    document.getElementById("sequenceSpace").textContent =
+      result.theoreticalSpace;
+
+    document.getElementById("generatorResults").classList.remove("hidden");
+
+    if (result.complete) {
+      showStatus(
+        "generatorStatus",
+        "Generated " + result.sequences.length +
+        " unique sequence(s).",
+        "success"
+      );
+    } else {
+      showStatus(
+        "generatorStatus",
+        "Generated " + result.sequences.length + " of " + count +
+        " requested sequences. The bounded search reached its limit " +
+        "or no additional acceptable candidate was found. " +
+        "This does not prove that no valid set exists. " +
+        "Consider relaxing the filters or reducing the requested count.",
+        "info"
+      );
+    }
+
+  } catch (error) {
+    showStatus("generatorStatus", error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+
+document.getElementById("clearGeneratorBtn").addEventListener("click", () => {
+  document.getElementById("customPattern").value = "";
+  document.getElementById("generatedOutput").value = "";
+  document.getElementById("generatorResults").classList.add("hidden");
+  hideStatus("generatorStatus");
+});
+
+
+document.getElementById("copyGeneratedBtn").addEventListener("click", async () => {
+  const text = document.getElementById("generatedOutput").value;
+
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+
+    showStatus(
+      "generatorStatus",
+      "Sequences copied to clipboard.",
+      "success"
+    );
+  } catch {
+    document.getElementById("generatedOutput").select();
+    showStatus(
+      "generatorStatus",
+      "Automatic copying is unavailable. The output has been selected; copy it manually.",
+      "info"
+    );
+  }
+});
+
+
+document.getElementById("downloadGeneratedBtn").addEventListener("click", () => {
+  const text = document.getElementById("generatedOutput").value;
+
+  if (!text) return;
+
+  downloadTextFile(text, "random_sequences.txt");
+});
+
+
+/* =========================================================
+   FILE DOWNLOAD
+========================================================= */
+
+function downloadTextFile(text, filename) {
+  const blob = new Blob(
+    [text],
+    { type: "text/plain;charset=utf-8" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+
+/* =========================================================
+   VALIDATOR: INPUT PARSING
+========================================================= */
+
+function parseValidatorInput(rawText) {
+  const lines = rawText.replace(/\r/g, "").split("\n");
+
+  const records = [];
+  let current = null;
+  let hasFastaHeader = false;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) continue;
+
+    if (line.startsWith(">")) {
+      hasFastaHeader = true;
+
+      if (current) {
+        records.push(current);
+      }
+
+      const name = line.slice(1).trim();
+
+      current = {
+        name: name || "Unnamed_record_" + (records.length + 1),
+        sequence: ""
+      };
+
+    } else {
+      if (!current) {
+        current = {
+          name: "Sequence_" + (records.length + 1),
+          sequence: ""
+        };
+      }
+
+      current.sequence += line.replace(/\s+/g, "");
+    }
+  }
+
+  if (current) {
+    records.push(current);
+  }
+
+  if (!records.length) {
+    throw new Error("Please enter at least one sequence.");
+  }
+
+  /*
+   * For non-FASTA input, each non-empty line is one sequence.
+   * The parser above also supports FASTA records with multiple
+   * sequence lines.
+   */
+  if (!hasFastaHeader) {
+    const plainRecords = [];
+
+    for (const rawLine of lines) {
+      const sequence = normalizeSequence(rawLine);
+
+      if (!sequence) continue;
+
+      plainRecords.push({
+        name: "Sequence_" + (plainRecords.length + 1),
+        sequence
+      });
+    }
+
+    return plainRecords;
+  }
+
+  return records.map(record => ({
+    name: record.name,
+    sequence: normalizeSequence(record.sequence)
+  }));
+}
+
+
+/* =========================================================
+   VALIDATOR: INPUT CHECKS
+========================================================= */
+
+function validateConcreteSequences(records, alphabet) {
+  const allowed = alphabet === "RNA"
+    ? /^[ACGU]+$/
+    : /^[ACGT]+$/;
+
+  records.forEach((record, index) => {
+    if (!record.sequence) {
+      throw new Error(
+        "Record " + (index + 1) + " (" + record.name +
+        ") contains no sequence."
+      );
+    }
+
+    if (!allowed.test(record.sequence)) {
+      throw new Error(
+        "Invalid character in record " + (index + 1) +
+        " (" + record.name + "). Expected only " +
+        (alphabet === "RNA" ? "A, C, G and U." : "A, C, G and T.")
+      );
+    }
+  });
+}
+
+
+/* =========================================================
+   VALIDATOR: PAIRWISE COMPARISON
+========================================================= */
+
+function calculatePairwiseMetrics(records, settings) {
+  const results = [];
+
+  let minHamming = null;
+  let minRC = null;
+
+  let hammingFailures = 0;
+  let rcFailures = 0;
+  let incomparablePairs = 0;
+
+  /*
+   * Each unordered pair is compared exactly once:
+   * i < j.
+   *
+   * There is no self-comparison, including no comparison
+   * between a sequence and its own reverse complement.
+   */
+  for (let i = 0; i < records.length; i++) {
+    for (let j = i + 1; j < records.length; j++) {
+      const a = records[i].sequence;
+      const b = records[j].sequence;
+
+      const pair = {
+        indexA: i,
+        indexB: j,
+        hamming: null,
+        rc: null,
+        comparable: a.length === b.length,
+        passed: true
+      };
+
+      if (!pair.comparable) {
+        incomparablePairs++;
+        pair.passed = false;
+        results.push(pair);
+        continue;
+      }
+
+      if (settings.useHamming) {
+        pair.hamming = hammingDistance(a, b);
+
+        minHamming = minHamming === null
+          ? pair.hamming
+          : Math.min(minHamming, pair.hamming);
+
+        if (pair.hamming < settings.hammingMin) {
+          hammingFailures++;
+          pair.passed = false;
+        }
+      }
+
+      if (settings.useRC) {
+        const bRC = reverseComplement(b, settings.alphabet);
+
+        pair.rc = hammingDistance(a, bRC);
+
+        minRC = minRC === null
+          ? pair.rc
+          : Math.min(minRC, pair.rc);
+
+        if (pair.rc < settings.rcMin) {
+          rcFailures++;
+          pair.passed = false;
+        }
+      }
+
+      results.push(pair);
+    }
+  }
+
+  return {
+    results,
+    minHamming,
+    minRC,
+    hammingFailures,
+    rcFailures,
+    incomparablePairs
+  };
+}
+
+
+/* =========================================================
+   VALIDATOR: MAIN FUNCTION
+========================================================= */
+
+function runValidator() {
+  const rawText = document.getElementById("validatorInput").value;
+
+  const alphabet = document.getElementById("validatorAlphabet").value;
+
+  const settings = {
+    alphabet,
+
+    useGC:
+      document.getElementById("validatorUseGC").checked,
+
+    gcMin: 0,
+    gcMax: 100,
+
+    useHomopolymer:
+      document.getElementById("validatorUseHomopolymer").checked,
+
+    useHamming:
+      document.getElementById("validatorUseHamming").checked,
+
+    hammingMin: 1,
+
+    useRC:
+      document.getElementById("validatorUseRC").checked,
+
+    rcMin: 1
+  };
+
+  if (settings.useGC) {
+    settings.gcMin = validateNumber(
+      document.getElementById("validatorGCMin").value,
+      "Minimum GC",
+      0,
+      100
+    );
+
+    settings.gcMax = validateNumber(
+      document.getElementById("validatorGCMax").value,
+      "Maximum GC",
+      0,
+      100
+    );
+
+    if (settings.gcMin > settings.gcMax) {
+      throw new Error(
+        "Minimum GC content cannot exceed maximum GC content."
+      );
+    }
+  }
+
+  if (settings.useHamming) {
+    settings.hammingMin = validateNumber(
+      document.getElementById("validatorHammingMin").value,
+      "Minimum Hamming distance",
+      1,
+      MAX_SEQUENCE_LENGTH
+    );
+  }
+
+  if (settings.useRC) {
+    settings.rcMin = validateNumber(
+      document.getElementById("validatorRCMin").value,
+      "Minimum reverse-complement distance",
+      1,
+      MAX_SEQUENCE_LENGTH
+    );
+  }
+
+  const records = parseValidatorInput(rawText);
+
+  if (records.length > MAX_GENERATED_COUNT) {
+    throw new Error(
+      "The validator accepts at most " +
+      MAX_GENERATED_COUNT + " records."
+    );
+  }
+
+  validateConcreteSequences(records, alphabet);
+
+  /*
+   * CRITICAL PERFORMANCE GUARD:
+   * Calculate the total number of unordered pairs BEFORE
+   * starting any pairwise comparison.
+   *
+   * This prevents the browser from entering a huge nested
+   * comparison loop for an oversized input.
+   */
+  const totalPairs =
+    records.length * (records.length - 1) / 2;
+
+  const pairwiseEnabled =
+    settings.useHamming || settings.useRC;
+
+  if (pairwiseEnabled && totalPairs > MAX_PAIR_CHECKS) {
+    throw new Error(
+      "This input requires " +
+      totalPairs.toLocaleString() +
+      " pairwise comparisons, exceeding the configured limit of " +
+      MAX_PAIR_CHECKS.toLocaleString() +
+      ". Please reduce the number of input sequences."
+    );
+  }
+
+  /*
+   * Duplicate detection is independent of pairwise distance.
+   * The first occurrence is retained as the reference record.
+   */
+  const firstOccurrence = new Map();
+  const duplicateOf = new Array(records.length).fill(null);
+
+  let duplicateCount = 0;
+
+  records.forEach((record, index) => {
+    if (firstOccurrence.has(record.sequence)) {
+      duplicateOf[index] = firstOccurrence.get(record.sequence);
+      duplicateCount++;
+    } else {
+      firstOccurrence.set(record.sequence, index);
+    }
+  });
+
+  /*
+   * Individual sequence metrics.
+   */
+  const individual = records.map((record, index) => {
+    const gc = getGCPercent(record.sequence);
+    const homopolymer = hasHomopolymer(record.sequence, 3);
+
+    const gcPass =
+      !settings.useGC ||
+      (gc >= settings.gcMin && gc <= settings.gcMax);
+
+    const homopolymerPass =
+      !settings.useHomopolymer || !homopolymer;
+
+    return {
+      index,
+      name: record.name,
+      sequence: record.sequence,
+      length: record.sequence.length,
+      gc,
+      homopolymer,
+      duplicateOf: duplicateOf[index],
+      passed: gcPass && homopolymerPass && duplicateOf[index] === null
+    };
+  });
+
+  /*
+   * Pairwise calculations are skipped entirely when both
+   * distance options are disabled.
+   */
+  let pairwise = {
+    results: [],
+    minHamming: null,
+    minRC: null,
+    hammingFailures: 0,
+    rcFailures: 0,
+    incomparablePairs: 0
+  };
+
+  if (pairwiseEnabled) {
+    pairwise = calculatePairwiseMetrics(records, settings);
+  }
+
+  return {
+    records,
+    individual,
+    pairwise,
+    duplicateCount,
+    totalPairs,
+    settings
+  };
+}
+
+
+/* =========================================================
+   VALIDATOR: SAFE TABLE RENDERING
+========================================================= */
+
+function createCell(text, className) {
+  const td = document.createElement("td");
+  td.textContent = text;
+
+  if (className) {
+    td.className = className;
+  }
+
+  return td;
+}
+
+
+function renderIndividualTable(data) {
+  const tbody = document.getElementById("individualTable");
+  tbody.replaceChildren();
+
+  data.individual.forEach(item => {
+    const tr = document.createElement("tr");
+
+    tr.appendChild(createCell(String(item.index + 1)));
+    tr.appendChild(createCell(item.name));
+    tr.appendChild(createCell(String(item.length)));
+    tr.appendChild(createCell(item.gc.toFixed(2)));
+
+    tr.appendChild(
+      createCell(
+        item.homopolymer ? "Detected" : "Not detected",
+        item.homopolymer ? "fail" : "pass"
+      )
+    );
+
+    let duplicateText = "No";
+
+    if (item.duplicateOf !== null) {
+      duplicateText =
+        "Yes (same as record " + (item.duplicateOf + 1) + ")";
+    }
+
+    tr.appendChild(
+      createCell(
+        duplicateText,
+        item.duplicateOf !== null ? "fail" : "pass"
+      )
+    );
+
+    tbody.appendChild(tr);
+  });
+}
+
+
+function renderPairwiseTable(data) {
+  const tbody = document.getElementById("pairwiseTable");
+  tbody.replaceChildren();
+
+  data.pairwise.results.forEach(pair => {
+    const tr = document.createElement("tr");
+
+    const a = data.records[pair.indexA];
+    const b = data.records[pair.indexB];
+
+    tr.appendChild(
+      createCell((pair.indexA + 1) + ": " + a.name)
+    );
+
+    tr.appendChild(
+      createCell((pair.indexB + 1) + ": " + b.name)
+    );
+
+    tr.appendChild(
+      createCell(
+        pair.hamming === null ? "—" : String(pair.hamming)
+      )
+    );
+
+    tr.appendChild(
+      createCell(
+        pair.rc === null ? "—" : String(pair.rc)
+      )
+    );
+
+    let assessment;
+
+    if (!pair.comparable) {
+      assessment = "Different lengths; not comparable";
+    } else if (pair.passed) {
+      assessment = "Pass";
+    } else {
+      assessment = "Fail";
+    }
+
+    tr.appendChild(
+      createCell(
+        assessment,
+        pair.passed ? "pass" : "fail"
+      )
+    );
+
+    tbody.appendChild(tr);
+  });
+}
+
+
+/* =========================================================
+   VALIDATOR: RESULTS DISPLAY
+========================================================= */
+
+function displayValidatorResults(data) {
+  document.getElementById("validatorResults")
+    .classList.remove("hidden");
+
+  document.getElementById("validatorCount").textContent =
+    data.records.length;
+
+  document.getElementById("validatorDuplicates").textContent =
+    data.duplicateCount;
+
+  document.getElementById("validatorPairs").textContent =
+    data.totalPairs.toLocaleString();
+
+  renderIndividualTable(data);
+  renderPairwiseTable(data);
+
+  const individualFailures =
+    data.individual.filter(item => !item.passed).length;
+
+  const pairwiseEnabled =
+    data.settings.useHamming || data.settings.useRC;
+
+  const pairwiseFailures =
+    data.pairwise.hammingFailures +
+    data.pairwise.rcFailures +
+    data.pairwise.incomparablePairs;
+
+  const allPass =
+    individualFailures === 0 &&
+    (!pairwiseEnabled || pairwiseFailures === 0);
+
+  const summary = document.getElementById("validatorSummary");
+  summary.replaceChildren();
+
+  const summaryLines = [
+    "Individual records failing at least one enabled check: " +
+      individualFailures,
+    "Duplicate records (excluding the first occurrence): " +
+      data.duplicateCount
+  ];
+
+  if (data.settings.useGC) {
+    summaryLines.push(
+      "GC content range: " +
+      data.settings.gcMin + "%–" +
+      data.settings.gcMax + "%"
+    );
+  }
+
+  if (data.settings.useHomopolymer) {
+    summaryLines.push(
+      "Homopolymer threshold: 3 or more identical consecutive bases"
+    );
+  }
+
+  if (pairwiseEnabled) {
+    summaryLines.push(
+      "Unordered pairs evaluated: " +
+      data.totalPairs.toLocaleString()
+    );
+
+    if (data.settings.useHamming) {
+      summaryLines.push(
+        "Minimum observed Hamming distance: " +
+        (data.pairwise.minHamming === null
+          ? "Not available"
+          : data.pairwise.minHamming)
+      );
+
+      summaryLines.push(
+        "Pairs failing Hamming threshold: " +
+        data.pairwise.hammingFailures
+      );
+    }
+
+    if (data.settings.useRC) {
+      summaryLines.push(
+        "Minimum observed reverse-complement distance: " +
+        (data.pairwise.minRC === null
+          ? "Not available"
+          : data.pairwise.minRC)
+      );
+
+      summaryLines.push(
+        "Pairs failing reverse-complement threshold: " +
+        data.pairwise.rcFailures
+      );
+    }
+
+    summaryLines.push(
+      "Pairs with unequal sequence lengths: " +
+      data.pairwise.incomparablePairs
+    );
+
+  } else {
+    summaryLines.push(
+      "Pairwise distance checks were not enabled."
+    );
+  }
+
+  summaryLines.forEach(line => {
+    const p = document.createElement("p");
+    p.textContent = line;
+    summary.appendChild(p);
+  });
+
+  const result = document.createElement("p");
+  result.style.fontWeight = "700";
+  result.textContent = allPass
+    ? "Overall assessment: PASS"
+    : "Overall assessment: FAIL — review the records and pairwise results.";
+
+  result.className = allPass ? "pass" : "fail";
+  summary.appendChild(result);
+
+  const pairwiseSummary =
+    document.getElementById("pairwiseSummary");
+
+  pairwiseSummary.textContent = pairwiseEnabled
+    ? "The table below reports each unordered pair of distinct input records. " +
+      "A record is never compared with itself."
+    : "Pairwise distance checks were disabled. No pairwise distance calculations were performed.";
+}
+
+
+/* =========================================================
+   VALIDATOR: USER INTERFACE
+========================================================= */
+
+document.getElementById("validateBtn").addEventListener("click", () => {
+  hideStatus("validatorStatus");
+
+  const button = document.getElementById("validateBtn");
+  button.disabled = true;
+
+  try {
+    const data = runValidator();
+
+    displayValidatorResults(data);
+
+    const allIndividualPass =
+      data.individual.every(item => item.passed);
+
+    const pairwiseEnabled =
+      data.settings.useHamming || data.settings.useRC;
+
+    const allPairwisePass =
+      !pairwiseEnabled ||
+      (
+        data.pairwise.hammingFailures === 0 &&
+        data.pairwise.rcFailures === 0 &&
+        data.pairwise.incomparablePairs === 0
+      );
+
+    if (allIndividualPass && allPairwisePass) {
+      showStatus(
+        "validatorStatus",
+        "Validation completed. All enabled checks passed.",
+        "success"
+      );
+    } else {
+      showStatus(
+        "validatorStatus",
+        "Validation completed. One or more checks failed. Review the summary and tables below.",
+        "error"
+      );
+    }
+
+  } catch (error) {
+    document.getElementById("validatorResults")
+      .classList.add("hidden");
+
+    showStatus(
+      "validatorStatus",
+      error.message,
+      "error"
+    );
+
+  } finally {
+    button.disabled = false;
+  }
+});
+
+
+document.getElementById("clearValidatorBtn").addEventListener("click", () => {
+  document.getElementById("validatorInput").value = "";
+
+  document.getElementById("validatorResults")
+    .classList.add("hidden");
+
+  document.getElementById("individualTable").replaceChildren();
+  document.getElementById("pairwiseTable").replaceChildren();
+  document.getElementById("validatorSummary").replaceChildren();
+  document.getElementById("pairwiseSummary").textContent = "";
+
+  hideStatus("validatorStatus");
+});
+
+
+/* =========================================================
+   END
+========================================================= */
 </script>
+
 </body>
 </html>
