@@ -3,94 +3,1048 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Perform common DNA and RNA sequence transformations, FASTA formatting, sequence splitting, and translation.">
+<meta name="description" content="DNA, RNA and protein sequence analysis, six-frame translation, ORF identification, codon optimization, CAI and GC analysis.">
 <meta name="theme-color" content="#173b5e">
 <title>Sequence Utilities | The Qingquan Xiao Lab</title>
 <style>
-:root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--paper:#fff;--wash:#f5f8fb;--max-width:1080px;--green:#287a59;--red:#a33b3b;--amber:#8a641b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
-a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+:root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--wash:#f5f8fb;--green:#287a59;--red:#a33b3b;--amber:#8a641b;--max-width:1080px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
 .site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
-.header-inner{max-width:var(--max-width);min-height:68px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}.brand:hover{text-decoration:none}
-.home-link{display:inline-block;padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}.home-link:hover{background:var(--wash);text-decoration:none}
-.hero{background:linear-gradient(135deg,#f4f8fb 0%,#fff 72%);border-bottom:1px solid var(--line)}.hero-inner{max-width:var(--max-width);margin:0 auto;padding:43px 28px 34px}
+.header-inner{max-width:var(--max-width);min-height:68px;margin:auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.brand:hover{text-decoration:none}
+.home-link{padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#f4f8fb,#fff 72%);border-bottom:1px solid var(--line)}
+.hero-inner{max-width:var(--max-width);margin:auto;padding:43px 28px 34px}
 .eyebrow{margin:0 0 9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}.intro{max-width:780px;margin:12px 0 0;color:var(--muted);font-size:16px}
-main{max-width:var(--max-width);margin:0 auto;padding:22px 28px 48px}.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
-h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35;letter-spacing:-.02em}h3{margin:0 0 10px;color:var(--navy);font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}
-label{display:block;margin:0 0 7px;color:var(--ink);font-size:13px;font-weight:650}input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}input,select{height:42px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
-.help{margin-top:5px;color:var(--muted);font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}button,.button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer}button:hover,.button:hover{background:var(--blue);border-color:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover{background:var(--wash)}button:disabled{opacity:.5;cursor:not-allowed}
-.output{display:none;margin-top:18px}.output.show{display:block}.result-box{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:13px;margin:10px 0}.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;overflow-wrap:anywhere;white-space:pre-wrap}.sequence{font-size:17px;font-weight:700;letter-spacing:1px;color:var(--navy)}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}.stat .value{font-size:20px;font-weight:700;color:var(--navy)}.stat .label{font-size:11px;color:var(--muted)}
-table{border-collapse:collapse;width:100%;font-size:13px;margin-top:10px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{color:var(--navy);background:#f5f8fb}
-.notice{padding:11px 13px;border-radius:4px;background:#f1f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}.notice.warning{background:#fff8e9;border-left-color:#c18a2b}.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:4px;color:var(--red);font-size:13px;margin:12px 0}.success{color:var(--green);font-size:13px}.pill{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:14px;padding:3px 9px;font-size:11px;margin:2px}
-footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}footer a{color:var(--blue)}
-@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px;gap:12px}.brand{font-size:16px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.panel{padding:19px}.grid,.grid.three{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:420px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.home-link{font-size:12px}.hero-inner{padding-top:27px}}
+h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}
+.intro{max-width:800px;margin:12px 0 0;color:var(--muted)}
+main{max-width:var(--max-width);margin:auto;padding:22px 28px 48px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
+h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35}
+h3{margin:18px 0 9px;color:var(--navy);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{min-width:0}
+label{display:block;margin:0 0 7px;font-size:13px;font-weight:650}
+input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}
+input,select{height:42px}
+textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:Consolas,monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
+.help{margin-top:5px;color:var(--muted);font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:white;font-size:13px;font-weight:650;cursor:pointer}
+button:hover{background:var(--blue)}
+button.secondary{background:white;color:var(--navy);border-color:#cfdbe5}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hidden{display:none!important}
+.output{display:none;margin-top:18px}
+.output.show{display:block}
+.result-box,.frame-card{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:13px;margin:10px 0}
+.mono{font-family:Consolas,monospace;overflow-wrap:anywhere;white-space:pre-wrap}
+.sequence{font-size:15px;font-weight:650;color:var(--navy)}
+.result-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:12px}
+.stat .value{font-size:20px;font-weight:700;color:var(--navy);overflow-wrap:anywhere}
+.stat .label{font-size:11px;color:var(--muted)}
+.notice{padding:11px 13px;border-radius:4px;background:#f1f6fa;border-left:3px solid var(--blue);font-size:12px;color:#536779;margin:12px 0}
+.notice.warning{background:#fff8e9;border-left-color:#c18a2b}
+.error{background:#fff1f1;border-left:3px solid var(--red);padding:10px 12px;border-radius:4px;color:var(--red);font-size:13px;margin:12px 0}
+.success{color:var(--green);font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:12px;margin:10px 0}
+th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+th{color:var(--navy);background:#f5f8fb}
+.table-wrap{overflow-x:auto}
+.frame-title{font-weight:700;color:var(--navy);margin-bottom:7px}
+.frame-seq{font-family:Consolas,monospace;overflow-wrap:anywhere;font-size:14px;white-space:pre-wrap}
+.tag{display:inline-block;background:#edf3f8;color:var(--navy);border-radius:14px;padding:3px 9px;font-size:11px;margin:2px}
+footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}
+@media(max-width:760px){
+.header-inner{min-height:62px;padding:10px 20px}
+.hero-inner{padding:34px 20px 28px}
+main{padding:18px 20px 38px}
+.panel{padding:19px}
+.grid,.grid.three{grid-template-columns:1fr}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+.header-inner{align-items:flex-start;flex-direction:column;gap:6px}
+}
 </style>
 </head>
 <body>
-<header class="site-header"><div class="header-inner"><a class="brand" href="../index-zh.html">The Qingquan Xiao Lab</a><a class="home-link" href="../index-zh.html">← Back to Lab Homepage</a></div></header>
-<div class="hero"><div class="hero-inner">
-  <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
-  <h1>Sequence Utilities</h1>
-  <p class="intro">Perform common DNA and RNA sequence transformations, FASTA formatting, sequence splitting, and translation.</p></div></div>
+
+<header class="site-header">
+<div class="header-inner">
+<a class="brand" href="../index-zh.html">The Qingquan Xiao Lab</a>
+<a class="home-link" href="../index-zh.html">← Back to Lab Homepage</a>
+</div>
+</header>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+<h1>Sequence Utilities</h1>
+<p class="intro">DNA, RNA and protein sequence analysis, six-frame translation, ORF identification, codon usage analysis, and host-specific codon optimization.</p>
+</div>
+</div>
+
 <main>
+
 <section class="panel">
 <h2>Input sequence</h2>
-<label for="inputSeq">Paste DNA or RNA sequence (FASTA supported)</label>
+<label for="inputSeq">Paste DNA, RNA or protein sequence (FASTA supported)</label>
 <textarea id="inputSeq" spellcheck="false" placeholder=">Sequence_1&#10;ATGCGTACGTAGCTAG"></textarea>
+
 <div class="grid">
- <div class="field"><label for="alphabet">Input alphabet</label><select id="alphabet"><option value="DNA">DNA (A/C/G/T/N)</option><option value="RNA">RNA (A/C/G/U/N)</option></select></div>
- <div class="field"><label for="operation">Operation</label><select id="operation"><option value="revcomp">Reverse complement</option><option value="reverse">Reverse sequence</option><option value="complement">Complement</option><option value="transcribe">DNA → RNA (T → U)</option><option value="back">RNA → DNA (U → T)</option><option value="fasta">Format as FASTA</option><option value="split">Split into fixed-length lines</option><option value="translate">Translate coding sequence to protein</option></select></div>
+<div class="field">
+<label for="alphabet">Input sequence type</label>
+<select id="alphabet">
+<option value="DNA">DNA</option>
+<option value="RNA">RNA</option>
+<option value="PROTEIN">Protein</option>
+</select>
 </div>
-<div class="grid" id="extraField"><div class="field"><label for="lineLength">Line width / FASTA wrap length</label><input id="lineLength" type="number" min="1" max="10000" value="60"></div><div class="field"><label for="header">FASTA header</label><input id="header" value="Sequence_1" maxlength="100"></div></div>
-<div class="actions"><button id="run">Run operation</button><button class="secondary" id="clear">Clear</button></div>
-<div id="error"></div>
+<div class="field">
+<label for="operation">Operation</label>
+<select id="operation">
+<optgroup label="DNA / RNA transformations">
+<option value="revcomp">Reverse complement</option>
+<option value="reverse">Reverse sequence</option>
+<option value="complement">Complement</option>
+<option value="transcribe">DNA → RNA transcription</option>
+<option value="back">RNA → DNA conversion</option>
+</optgroup>
+<optgroup label="Translation and ORF analysis">
+<option value="translate">Translate to protein</option>
+<option value="sixframe">Six-frame translation</option>
+<option value="orf">Find open reading frames (ORFs)</option>
+</optgroup>
+<optgroup label="Codon analysis and optimization">
+<option value="analyze">Codon usage / CAI / GC analysis</option>
+<option value="optimize">Optimize coding sequence</option>
+<option value="backtranslate">Protein → DNA / mRNA (back-translation)</option>
+</optgroup>
+<optgroup label="Formatting">
+<option value="fasta">Format as FASTA</option>
+<option value="split">Split into fixed-length lines</option>
+</optgroup>
+</select>
+</div>
+</div>
+
+<div id="frameField" class="grid hidden">
+<div class="field">
+<label for="frame">Translation reading frame</label>
+<select id="frame">
+<option value="1">+1 frame (start at nucleotide 1)</option>
+<option value="2">+2 frame (start at nucleotide 2)</option>
+<option value="3">+3 frame (start at nucleotide 3)</option>
+<option value="-1">−1 frame (reverse complement, start at nucleotide 1)</option>
+<option value="-2">−2 frame (reverse complement, start at nucleotide 2)</option>
+<option value="-3">−3 frame (reverse complement, start at nucleotide 3)</option>
+</select>
+<div class="help">Reading frame is 1-based. +1, +2 and +3 begin at nucleotide 1, 2 and 3, respectively.</div>
+</div>
+<div class="field">
+<label for="stopMode">Stop-codon handling</label>
+<select id="stopMode">
+<option value="keep">Keep stop codons (*)</option>
+<option value="stop">Stop translation at first stop codon</option>
+</select>
+</div>
+</div>
+
+<div id="orfField" class="grid hidden">
+<div class="field">
+<label for="orfMin">Minimum ORF length (amino acids)</label>
+<input id="orfMin" type="number" min="1" max="1000000" value="30">
+</div>
+<div class="field">
+<label for="orfStart">Initiation codon definition</label>
+<select id="orfStart">
+<option value="standard">Standard code: ATG only</option>
+<option value="bacterial">Bacterial code 11: ATG, GTG, TTG</option>
+</select>
+</div>
+</div>
+
+<div id="hostField" class="grid hidden">
+<div class="field">
+<label for="species">Host codon usage reference</label>
+<select id="species">
+<option value="human">Human · H. sapiens · MANE Select</option>
+<option value="mouse">Mouse · M. musculus · Kazusa</option>
+<option value="ecoli">E. coli · K-12 MG1655</option>
+</select>
+</div>
+<div class="field">
+<label for="rareThreshold">Rare codon threshold (relative adaptiveness)</label>
+<input id="rareThreshold" type="number" min="0" max="1" step="0.05" value="0.20">
+<div class="help">A codon is flagged when its frequency is below this fraction of the most frequent synonymous codon.</div>
+</div>
+</div>
+
+<div id="targetField" class="grid hidden">
+<div class="field">
+<label for="target">Output nucleotide type</label>
+<select id="target">
+<option value="DNA">DNA</option>
+<option value="RNA">mRNA</option>
+</select>
+</div>
+<div class="field">
+<label for="optMethod">Optimization strategy</label>
+<select id="optMethod">
+<option value="max">Highest-frequency synonymous codon</option>
+<option value="weighted">Frequency-weighted synonymous codon</option>
+</select>
+<div class="help">Weighted selection distributes synonymous codons according to their relative frequencies.</div>
+</div>
+</div>
+
+<div id="formatField" class="grid hidden">
+<div class="field">
+<label for="lineLength">Line width / FASTA wrap length</label>
+<input id="lineLength" type="number" min="1" max="10000" value="60">
+</div>
+<div class="field">
+<label for="header">FASTA header</label>
+<input id="header" value="Sequence_1" maxlength="100">
+</div>
+</div>
+
+<div class="actions">
+<button id="run">Run operation</button>
+<button class="secondary" id="clear">Clear</button>
+</div>
+<div id="error" aria-live="polite"></div>
 </section>
+
 <section class="panel output" id="result">
-<div class="grid"><div><h2>Result</h2><div class="help" id="resultInfo"></div></div><div class="actions" style="justify-content:flex-end;margin-top:0"><button class="secondary" id="copy">Copy result</button><button class="secondary" id="download">Download .txt</button></div></div>
-<div class="result-box mono" id="resultText"></div>
+<div class="result-heading">
+<div>
+<h2>Result</h2>
+<div class="help" id="resultInfo"></div>
+</div>
+<div class="actions" style="margin-top:0">
+<button class="secondary" id="copy">Copy result</button>
+<button class="secondary" id="download">Download .txt</button>
+</div>
+</div>
+<div id="stats"></div>
+<div id="resultText"></div>
 </section>
-<div class="notice">Translation uses the standard genetic code and reads from the first nucleotide in the selected frame (frame 1). It does not identify ORFs or predict protein function. Ambiguous codons are translated as X.</div>
+
+<div class="notice">
+<strong>Genetic code:</strong> Translation uses NCBI Standard Genetic Code (translation table 1). For bacterial ORF discovery, an optional set of common bacterial initiation codons is available. Alternative initiation codons are translated as methionine only at the beginning of a predicted ORF.
+</div>
+
+<div class="notice">
+<strong>CAI interpretation:</strong> CAI is calculated as the geometric mean of relative synonymous codon adaptiveness. Methionine and tryptophan are excluded because each has only one codon. Stop codons are evaluated separately using their relative frequencies. This is a reference-set-dependent score, not a direct measurement of expression.
+</div>
+
+<div class="notice warning">
+<strong>Experimental design:</strong> Codon optimization does not guarantee increased expression. This tool does not model mRNA secondary structure, translation initiation context, tRNA abundance, codon-pair effects, cryptic splice sites, restriction sites, repeats, toxicity, or protein folding. Always verify the final sequence and experimental design.
+</div>
 
 </main>
-<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index-zh.html">Back to Lab Homepage</a></footer>
-<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+
+<footer>
+Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br>
+<a href="../index-zh.html">Back to Lab Homepage</a>
+</footer>
+
 <script>
-const $=id=>document.getElementById(id);let output='';
-const compDNA={A:'T',T:'A',C:'G',G:'C',N:'N'},compRNA={A:'U',U:'A',C:'G',G:'C',N:'N'};
-const codons={
-'TTT':'F','TTC':'F','TTA':'L','TTG':'L','TCT':'S','TCC':'S','TCA':'S','TCG':'S','TAT':'Y','TAC':'Y','TAA':'*','TAG':'*','TGT':'C','TGC':'C','TGA':'*','TGG':'W',
-'CTT':'L','CTC':'L','CTA':'L','CTG':'L','CCT':'P','CCC':'P','CCA':'P','CCG':'P','CAT':'H','CAC':'H','CAA':'Q','CAG':'Q','CGT':'R','CGC':'R','CGA':'R','CGG':'R',
-'ATT':'I','ATC':'I','ATA':'I','ATG':'M','ACT':'T','ACC':'T','ACA':'T','ACG':'T','AAT':'N','AAC':'N','AAA':'K','AAG':'K','AGT':'S','AGC':'S','AGA':'R','AGG':'R',
-'GTT':'V','GTC':'V','GTA':'V','GTG':'V','GCT':'A','GCC':'A','GCA':'A','GCG':'A','GAT':'D','GAC':'D','GAA':'E','GAG':'E','GGT':'G','GGC':'G','GGA':'G','GGG':'G'};
-function cleanInput(t){return t.split(/\r?\n/).filter(l=>!l.trim().startsWith('>')).join('').replace(/\s+/g,'').toUpperCase()}
-function wrap(s,n){let a=[];for(let i=0;i<s.length;i+=n)a.push(s.slice(i,i+n));return a.join('\n')}
-$('operation').onchange=()=>{$('extraField').style.display=['fasta','split'].includes($('operation').value)?'grid':'none'};
-$('clear').onclick=()=>{$('inputSeq').value='';$('result').classList.remove('show');$('error').innerHTML='';output=''};
-$('run').onclick=()=>{
- $('error').innerHTML='';const s=cleanInput($('inputSeq').value),type=$('alphabet').value,op=$('operation').value,n=Number($('lineLength').value);
- if(!s){$('error').innerHTML='<div class="error">Enter a sequence first.</div>';return}
- const valid=type==='DNA'?'ACGTN':'ACGUN',bad=[...new Set([...s].filter(x=>!valid.includes(x)))];
- if(bad.length){$('error').innerHTML=`<div class="error">Invalid ${type} character(s): ${bad.join(', ')}.</div>`;return}
- if(['fasta','split'].includes(op)&&(!Number.isInteger(n)||n<1||n>10000)){$('error').innerHTML='<div class="error">Line width must be an integer from 1 to 10,000.</div>';return}
- const map=type==='DNA'?compDNA:compRNA;
- if(op==='reverse')output=[...s].reverse().join('');
- else if(op==='complement')output=[...s].map(x=>map[x]).join('');
- else if(op==='revcomp')output=[...s].reverse().map(x=>map[x]).join('');
- else if(op==='transcribe'){if(type!=='DNA'){$('error').innerHTML='<div class="error">Choose DNA input for DNA → RNA transcription.</div>';return}output=s.replace(/T/g,'U')}
- else if(op==='back'){if(type!=='RNA'){$('error').innerHTML='<div class="error">Choose RNA input for RNA → DNA conversion.</div>';return}output=s.replace(/U/g,'T')}
- else if(op==='fasta')output=`>${$('header').value.trim()||'Sequence_1'}\n${wrap(s,n)}`;
- else if(op==='split')output=wrap(s,n);
- else if(op==='translate'){const dna=s.replace(/U/g,'T');let aa='';for(let i=0;i+2<dna.length;i+=3)aa+=codons[dna.slice(i,i+3)]||'X';output=aa;$('resultInfo').textContent=`${aa.length} amino acids · incomplete trailing ${dna.length%3} nt omitted · * = stop codon`;}
- if(op!=='translate')$('resultInfo').textContent=`Input: ${s.length} nt · Output: ${output.length} character(s)`;
- $('resultText').textContent=output;$('result').classList.add('show');
+'use strict';
+
+const $=id=>document.getElementById(id);
+$('year').textContent=new Date().getFullYear();
+
+let output='';
+
+const CODON_ORDER=[
+'TTT','TTC','TTA','TTG','TCT','TCC','TCA','TCG',
+'TAT','TAC','TAA','TAG','TGT','TGC','TGA','TGG',
+'CTT','CTC','CTA','CTG','CCT','CCC','CCA','CCG',
+'CAT','CAC','CAA','CAG','CGT','CGC','CGA','CGG',
+'ATT','ATC','ATA','ATG','ACT','ACC','ACA','ACG',
+'AAT','AAC','AAA','AAG','AGT','AGC','AGA','AGG',
+'GTT','GTC','GTA','GTG','GCT','GCC','GCA','GCG',
+'GAT','GAC','GAA','GAG','GGT','GGC','GGA','GGG'
+];
+
+const CODON_AA={
+TTT:'F',TTC:'F',TTA:'L',TTG:'L',
+TCT:'S',TCC:'S',TCA:'S',TCG:'S',
+TAT:'Y',TAC:'Y',TAA:'*',TAG:'*',
+TGT:'C',TGC:'C',TGA:'*',TGG:'W',
+CTT:'L',CTC:'L',CTA:'L',CTG:'L',
+CCT:'P',CCC:'P',CCA:'P',CCG:'P',
+CAT:'H',CAC:'H',CAA:'Q',CAG:'Q',
+CGT:'R',CGC:'R',CGA:'R',CGG:'R',
+ATT:'I',ATC:'I',ATA:'I',ATG:'M',
+ACT:'T',ACC:'T',ACA:'T',ACG:'T',
+AAT:'N',AAC:'N',AAA:'K',AAG:'K',
+AGT:'S',AGC:'S',AGA:'R',AGG:'R',
+GTT:'V',GTC:'V',GTA:'V',GTG:'V',
+GCT:'A',GCC:'A',GCA:'A',GCG:'A',
+GAT:'D',GAC:'D',GAA:'E',GAG:'E',
+GGT:'G',GGC:'G',GGA:'G',GGG:'G'
 };
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(output);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy result',1200)}catch(e){$('error').innerHTML='<div class="error">Clipboard access unavailable; select and copy the result manually.</div>'}};
-$('download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([output],{type:'text/plain'}));a.download='sequence_result.txt';a.click();URL.revokeObjectURL(a.href)};
-$('operation').dispatchEvent(new Event('change'));
+
+const AA_NAME={
+A:'Ala',R:'Arg',N:'Asn',D:'Asp',C:'Cys',
+Q:'Gln',E:'Glu',G:'Gly',H:'His',I:'Ile',
+L:'Leu',K:'Lys',M:'Met',F:'Phe',P:'Pro',
+S:'Ser',T:'Thr',W:'Trp',Y:'Tyr',V:'Val','*':'Stop'
+};
+
+const COMP={
+A:'T',T:'A',C:'G',G:'C',
+R:'Y',Y:'R',S:'S',W:'W',K:'M',M:'K',
+B:'V',V:'B',D:'H',H:'D',N:'N'
+};
+
+/*
+Frequency units: occurrences per 1,000 codons.
+All 64 codons are represented in each profile.
+Human: MANE Select v1.5 / GRCh38 reference set.
+Mouse: Mus musculus, Kazusa codon usage.
+E. coli: K-12 MG1655 reference CDS set.
+*/
+
+const FREQUENCIES={
+human:[
+17,19.3,7.9,13,15.5,17.6,12.8,4.6,
+12,14.6,.5,.4,10.6,12.2,.8,11.9,
+13.3,18.9,7.1,39.1,17.9,20.3,17.4,7.3,
+11.1,15,12.8,34.8,4.4,10.4,6.1,11.4,
+15.9,19.7,7.6,21.2,13.5,18.5,15.3,5.9,
+17.3,18.6,25.5,32,12.7,19.9,12.1,11.8,
+11,14,7.2,27.4,18.3,28,16,7.7,
+22.4,25.2,30.8,40.7,10.6,22.3,16.4,16.2
+],
+mouse:[
+17.2,21.8,6.7,13.4,16.2,18.1,11.8,4.2,
+12.2,16.1,1,.8,11.4,12.3,1.6,12.5,
+13.4,20.2,8.1,39.5,18.4,18.2,17.3,6.2,
+10.6,15.3,12,34.1,4.7,9.4,6.6,10.2,
+15.4,22.5,7.4,22.8,13.7,19,16,5.6,
+15.6,20.3,21.9,33.6,12.7,19.7,12.1,12.2,
+10.7,15.4,7.4,28.4,20,26,15.8,6.4,
+21,26,27,39.4,11.4,21.2,16.8,15.2
+],
+ecoli:[
+22.3,16.6,13.8,13.7,8.4,8.6,7,8.9,
+16,12.2,2.1,.2,5.1,6.5,.9,15.2,
+11,11.2,3.9,53.3,7,5.5,8.4,23.4,
+12.9,9.7,15.4,29,21.2,22.2,3.5,5.3,
+30.5,25.3,4.1,27.9,8.8,23.5,6.9,14.4,
+17.4,21.5,33.7,10.2,8.6,16,1.9,1.1,
+18.3,15.3,10.9,26.4,15.2,25.7,20.2,34,
+32,19.1,39.8,17.8,24.7,29.8,7.8,11
+]
+};
+
+const PROFILE_NAMES={
+human:'Homo sapiens · MANE Select v1.5',
+mouse:'Mus musculus · Kazusa',
+ecoli:'Escherichia coli K-12 MG1655'
+};
+
+const PROFILES={};
+
+function buildProfiles(){
+for(const host of Object.keys(FREQUENCIES)){
+const freq={};
+CODON_ORDER.forEach((c,i)=>freq[c]=FREQUENCIES[host][i]);
+const groups={};
+CODON_ORDER.forEach(c=>{
+const aa=CODON_AA[c];
+(groups[aa]??=[]).push(c);
+});
+const weights={};
+for(const [aa,codons] of Object.entries(groups)){
+const max=Math.max(...codons.map(c=>freq[c]));
+codons.forEach(c=>weights[c]=freq[c]/max);
+}
+PROFILES[host]={freq,weights,groups};
+}
+}
+buildProfiles();
+
+function cleanInput(text){
+return text.split(/\r?\n/)
+.filter(line=>!line.trim().startsWith('>'))
+.join('').replace(/\s+/g,'').toUpperCase();
+}
+
+function validateNucleotide(s){
+return [...new Set([...s].filter(c=>! 'ACGTRYSWKMBDHVN'.includes(c)))];
+}
+
+function validateProtein(s){
+return [...new Set([...s].filter(c=>! 'ACDEFGHIKLMNPQRSTVWY*'.includes(c)))];
+}
+
+function reverse(s){return [...s].reverse().join('');}
+
+function complement(s){
+return [...s].map(c=>COMP[c]).join('');
+}
+
+function revcomp(s){return complement(reverse(s));}
+
+function wrap(s,n){
+const lines=[];
+for(let i=0;i<s.length;i+=n)lines.push(s.slice(i,i+n));
+return lines.join('\n');
+}
+
+function translate(s,frame,stopMode='keep'){
+const strand=frame>0?s:revcomp(s);
+const offset=Math.abs(frame)-1;
+const coding=strand.slice(offset);
+let protein='',stops=0,ambiguous=0,complete=0;
+let firstStopPosition=null;
+
+for(let i=0;i+2<coding.length;i+=3){
+const codon=coding.slice(i,i+3);
+const aa=CODON_AA[codon]||'X';
+complete++;
+
+if(aa==='*'){
+stops++;
+if(firstStopPosition===null)firstStopPosition=offset+i+1;
+if(stopMode==='stop')break;
+}
+if(aa==='X')ambiguous++;
+protein+=aa;
+}
+return{
+frame,strand,offset,protein,stops,ambiguous,complete,
+remainder:coding.length%3,firstStopPosition
+};
+}
+
+function allFrames(s){
+return [1,2,3,-1,-2,-3].map(f=>translate(s,f));
+}
+
+function gcStats(s){
+const valid=[...s].filter(c=>'ACGT'.includes(c));
+const gc=valid.filter(c=>c==='G'||c==='C').length;
+return{
+gc:valid.length?100*gc/valid.length:null,
+valid:valid.length,
+total:s.length
+};
+}
+
+function gc3Stats(s){
+const n=Math.floor(s.length/3);
+if(!n)return null;
+let gc=0,valid=0;
+for(let i=0;i<n;i++){
+const b=s[i*3+2];
+if('ACGT'.includes(b)){
+valid++;
+if(b==='G'||b==='C')gc++;
+}
+}
+return valid?100*gc/valid:null;
+}
+
+function getCodons(s){
+const result=[];
+for(let i=0;i+2<s.length;i+=3){
+result.push({codon:s.slice(i,i+3),position:i+1});
+}
+return result;
+}
+
+function calculateMetrics(s,host,threshold){
+const profile=PROFILES[host];
+const codons=getCodons(s);
+const gc=gcStats(s);
+const gc3=gc3Stats(s);
+let sumLog=0,caiN=0;
+const counts={};
+const rare=[];
+let ambiguous=0,stops=0;
+
+codons.forEach(({codon,position})=>{
+if(!CODON_AA[codon]){
+ambiguous++;
+return;
+}
+const aa=CODON_AA[codon];
+counts[codon]=(counts[codon]||0)+1;
+if(aa==='*')stops++;
+
+if(aa==='M'||aa==='W')return;
+
+const w=profile.weights[codon];
+const adjusted=w===0?0.5:w;
+sumLog+=Math.log(adjusted);
+caiN++;
+
+if(w<threshold){
+rare.push({codon,aa,position,weight:w});
+}
+});
+
+const cai=caiN?Math.exp(sumLog/caiN):null;
+
+return{
+codons,cai,gc:gc.gc,gc3,
+gcValid:gc.valid,counts,rare,ambiguous,stops,
+complete:codons.length,
+remainder:s.length%3,
+caiN
+};
+}
+
+function optimizeDNA(s,host,method){
+const profile=PROFILES[host];
+const codons=getCodons(s);
+let optimized='';
+const details=[];
+
+for(const item of codons){
+const codon=item.codon;
+const aa=CODON_AA[codon];
+if(!aa)throw new Error('Cannot optimize ambiguous or invalid codon '+codon+' at nucleotide '+item.position+'.');
+
+const candidates=profile.groups[aa];
+let chosen=codon;
+
+if(method==='max'){
+chosen=[...candidates].sort((a,b)=>
+profile.freq[b]-profile.freq[a]||a.localeCompare(b))[0];
+}else{
+const total=candidates.reduce((n,c)=>n+profile.freq[c],0);
+let r=Math.random()*total;
+for(const c of candidates){
+r-=profile.freq[c];
+if(r<=0){chosen=c;break;}
+}
+}
+optimized+=chosen;
+details.push({position:item.position,original:codon,optimized:chosen,aa});
+}
+return{sequence:optimized,details};
+}
+
+function backTranslate(protein,host,target,method){
+let dna='';
+for(let i=0;i<protein.length;i++){
+const aa=protein[i];
+if(aa==='*'&&i!==protein.length-1){
+throw new Error('A stop symbol (*) is only allowed at the end of a protein sequence.');
+}
+const candidates=PROFILES[host].groups[aa];
+if(!candidates)throw new Error('Unsupported amino acid: '+aa);
+let chosen;
+if(method==='max'){
+chosen=[...candidates].sort((a,b)=>
+PROFILES[host].freq[b]-PROFILES[host].freq[a])[0];
+}else{
+const total=candidates.reduce((n,c)=>n+PROFILES[host].freq[c],0);
+let r=Math.random()*total;
+for(const c of candidates){
+r-=PROFILES[host].freq[c];
+if(r<=0){chosen=c;break;}
+}
+}
+dna+=chosen;
+}
+return target==='RNA'?dna.replace(/T/g,'U'):dna;
+}
+
+function findORFs(s,minAA,startMode){
+const results=[];
+const starts=startMode==='bacterial'
+?new Set(['ATG','GTG','TTG'])
+:new Set(['ATG']);
+
+for(const frame of [1,2,3,-1,-2,-3]){
+const strand=frame>0?s:revcomp(s);
+const offset=Math.abs(frame)-1;
+const open=[];
+
+for(let i=offset;i+2<strand.length;i+=3){
+const codon=strand.slice(i,i+3);
+
+if(starts.has(codon)){
+open.push(i);
+}
+
+if(codon==='TAA'||codon==='TAG'||codon==='TGA'){
+for(const start of open){
+const aaLength=(i-start)/3;
+if(aaLength>=minAA){
+results.push({
+frame,
+start:start+1,
+end:i+3,
+length:aaLength,
+startCodon:strand.slice(start,start+3),
+stopCodon:codon,
+proteinStart:translate(strand.slice(start,i+3),1).protein
+});
+}
+}
+open.length=0;
+}
+}
+}
+return results.sort((a,b)=>b.length-a.length);
+}
+
+function statHTML(items){
+return '<div class="stats">'+items.map(x=>
+'<div class="stat"><div class="value">'+x.value+'</div><div class="label">'+x.label+'</div></div>'
+).join('')+'</div>';
+}
+
+function showError(message){
+$('error').innerHTML='';
+const div=document.createElement('div');
+div.className='error';
+div.textContent=message;
+$('error').appendChild(div);
+}
+
+function setOutput(text,info,stats=''){
+output=text;
+$('resultText').innerHTML='';
+const pre=document.createElement('div');
+pre.className='result-box mono sequence';
+pre.textContent=text;
+$('resultText').appendChild(pre);
+$('resultInfo').textContent=info;
+$('stats').innerHTML=stats;
+$('result').classList.add('show');
+}
+
+function showFrames(results){
+output=results.map(r=>
+'>Frame '+(r.frame>0?'+':'')+r.frame+'\n'+r.protein
+).join('\n\n');
+$('resultText').innerHTML='';
+
+results.forEach(r=>{
+const card=document.createElement('div');
+card.className='frame-card';
+const title=document.createElement('div');
+title.className='frame-title';
+title.textContent='Frame '+(r.frame>0?'+':'')+r.frame;
+const seq=document.createElement('div');
+seq.className='frame-seq';
+seq.textContent=r.protein||'(No complete codons)';
+const detail=document.createElement('div');
+detail.className='help';
+detail.textContent=r.complete+' complete codons · '+r.stops+
+' stop codons · '+r.ambiguous+' ambiguous codons · '+
+r.remainder+' trailing nt omitted';
+card.append(title,seq,detail);
+$('resultText').appendChild(card);
+});
+
+$('resultInfo').textContent='Six-frame translation · Standard genetic code';
+$('stats').innerHTML=statHTML([
+{value:results.reduce((n,r)=>n+r.complete,0),label:'Codons examined'},
+{value:results.reduce((n,r)=>n+r.stops,0),label:'Stop codons'},
+{value:results.reduce((n,r)=>n+r.ambiguous,0),label:'Ambiguous codons'},
+{value:6,label:'Reading frames'}
+]);
+$('result').classList.add('show');
+}
+
+function showORFs(orfs){
+output=orfs.map((o,i)=>
+'>ORF_'+(i+1)+' frame='+(o.frame>0?'+':'')+o.frame+
+' start='+o.start+' end='+o.end+' aa='+o.length+
+'\n'+o.proteinStart
+).join('\n\n');
+
+if(!orfs.length){
+setOutput('No ORFs found meeting the selected minimum length.',
+'ORF search completed · No qualifying candidates');
+return;
+}
+
+$('resultText').innerHTML='';
+const wrap=document.createElement('div');
+wrap.className='table-wrap';
+const table=document.createElement('table');
+table.innerHTML='<thead><tr><th>Rank</th><th>Frame</th><th>Start (nt)</th><th>Stop end (nt)</th><th>Length (aa)</th><th>Start codon</th><th>Stop codon</th></tr></thead>';
+const tbody=document.createElement('tbody');
+
+orfs.forEach((o,i)=>{
+const tr=document.createElement('tr');
+[
+i+1,(o.frame>0?'+':'')+o.frame,o.start,o.end,o.length,o.startCodon,o.stopCodon
+].forEach(v=>{
+const td=document.createElement('td');
+td.textContent=v;
+tr.appendChild(td);
+});
+tbody.appendChild(tr);
+});
+table.appendChild(tbody);
+wrap.appendChild(table);
+$('resultText').appendChild(wrap);
+$('resultInfo').textContent='Candidate ORFs · Sorted by descending amino acid length';
+$('stats').innerHTML=statHTML([
+{value:orfs.length,label:'ORFs identified'},
+{value:orfs[0].length,label:'Longest ORF (aa)'},
+{value:orfs.filter(o=>o.frame>0).length,label:'Forward-strand ORFs'},
+{value:orfs.filter(o=>o.frame<0).length,label:'Reverse-strand ORFs'}
+]);
+$('result').classList.add('show');
+}
+
+function showCodonTable(metrics,host){
+const profile=PROFILES[host];
+const threshold=Number($('rareThreshold').value);
+let html='<div class="table-wrap"><table><thead><tr>'+
+'<th>Codon</th><th>Amino acid</th><th>Host frequency (/1000)</th>'+
+'<th>Relative adaptiveness</th><th>Sequence count</th><th>Status</th>'+
+'</tr></thead><tbody>';
+
+CODON_ORDER.forEach(c=>{
+const aa=CODON_AA[c];
+const w=profile.weights[c];
+const count=metrics.counts[c]||0;
+const rare=w<threshold;
+html+='<tr><td><strong>'+c+'</strong></td><td>'+AA_NAME[aa]+' ('+aa+')</td>'+
+'<td>'+profile.freq[c].toFixed(1)+'</td><td>'+w.toFixed(3)+'</td>'+
+'<td>'+count+'</td><td>'+(rare?'Rare':'—')+'</td></tr>';
+});
+html+='</tbody></table></div>';
+return html;
+}
+
+function showCodonComparison(original,optimized,host){
+const a=getCodons(original);
+const b=getCodons(optimized);
+let html='<h3>Synonymous codon comparison</h3><div class="table-wrap"><table><thead>'+
+'<tr><th>Position</th><th>Original</th><th>Optimized</th><th>Amino acid</th><th>Change</th></tr>'+
+'</thead><tbody>';
+
+a.forEach((x,i)=>{
+const y=b[i];
+html+='<tr><td>'+(i+1)+'</td><td>'+x.codon+'</td><td>'+y.codon+
+'</td><td>'+AA_NAME[CODON_AA[x.codon]]+' ('+CODON_AA[x.codon]+')</td>'+
+'<td>'+(x.codon===y.codon?'Unchanged':'Changed')+'</td></tr>';
+});
+html+='</tbody></table></div>';
+return html;
+}
+
+function showAnalysis(original,optimized,host,details){
+const threshold=Number($('rareThreshold').value);
+const before=calculateMetrics(original,host,threshold);
+const after=optimized?calculateMetrics(optimized,host,threshold):null;
+const gc=gcStats(original);
+
+let html='';
+if(optimized){
+html+='<h3>Optimized sequence</h3>';
+const pre=document.createElement('div');
+pre.className='result-box mono sequence';
+pre.textContent=optimized;
+$('resultText').appendChild(pre);
+}
+html+='<h3>Codon usage reference: '+PROFILE_NAMES[host]+'</h3>';
+html+=showCodonTable(before,host);
+
+if(optimized){
+html+=showCodonComparison(original,optimized,host);
+}
+
+html+='<h3>Rare codons</h3>';
+if(before.rare.length){
+html+='<div class="table-wrap"><table><thead><tr><th>Position</th><th>Codon</th><th>Amino acid</th><th>Relative adaptiveness</th></tr></thead><tbody>';
+before.rare.forEach(r=>{
+html+='<tr><td>'+r.position+'</td><td>'+r.codon+'</td><td>'+r.aa+'</td><td>'+r.weight.toFixed(3)+'</td></tr>';
+});
+html+='</tbody></table></div>';
+}else{
+html+='<p class="success">No rare codons detected at the selected threshold.</p>';
+}
+
+if(after){
+html+='<h3>Optimization summary</h3>';
+html+='<p class="help">The original and optimized sequences are translated using the standard genetic code to verify amino acid identity.</p>';
+}
+
+$('resultText').innerHTML=html;
+
+const statItems=[
+{value:before.cai===null?'N/A':before.cai.toFixed(3),label:'Original CAI'},
+{value:before.gc===null?'N/A':before.gc.toFixed(2)+'%',label:'GC content'},
+{value:before.gc3===null?'N/A':before.gc3.toFixed(2)+'%',label:'GC3 content'},
+{value:before.rare.length,label:'Rare codons'}
+];
+
+if(after){
+const changed=details.filter(d=>d.original!==d.optimized).length;
+statItems.push(
+{value:after.cai===null?'N/A':after.cai.toFixed(3),label:'Optimized CAI'},
+{value:after.gc.toFixed(2)+'%',label:'Optimized GC'},
+{value:after.gc3.toFixed(2)+'%',label:'Optimized GC3'},
+{value:changed,label:'Codons changed'}
+);
+}
+$('stats').innerHTML=statHTML(statItems);
+$('resultInfo').textContent=
+PROFILE_NAMES[host]+' · '+before.complete+' complete codons · '+
+before.remainder+' trailing nucleotide(s) omitted · '+
+before.ambiguous+' ambiguous codons';
+$('result').classList.add('show');
+
+output='Original sequence:\n'+original+
+'\n\nHost: '+PROFILE_NAMES[host]+
+'\nCAI: '+(before.cai===null?'N/A':before.cai.toFixed(4))+
+'\nGC: '+(before.gc===null?'N/A':before.gc.toFixed(2)+'%')+
+'\nGC3: '+(before.gc3===null?'N/A':before.gc3.toFixed(2)+'%')+
+'\nRare codons: '+before.rare.length+
+(optimized?'\n\nOptimized sequence:\n'+optimized+
+'\nOptimized CAI: '+after.cai.toFixed(4):'');
+}
+
+function updateFields(){
+const op=$('operation').value;
+$('frameField').classList.toggle('hidden',op!=='translate');
+$('orfField').classList.toggle('hidden',op!=='orf');
+$('hostField').classList.toggle('hidden',!['analyze','optimize','backtranslate'].includes(op));
+$('targetField').classList.toggle('hidden',!['optimize','backtranslate'].includes(op));
+$('formatField').classList.toggle('hidden',!['fasta','split'].includes(op));
+
+if(op==='backtranslate'){
+$('alphabet').value='PROTEIN';
+}else if(op==='translate'||op==='sixframe'||op==='orf'||op==='analyze'||op==='optimize'){
+if($('alphabet').value==='PROTEIN')$('alphabet').value='DNA';
+}
+}
+
+$('operation').addEventListener('change',updateFields);
+$('alphabet').addEventListener('change',()=>{
+if($('alphabet').value==='PROTEIN'&&
+!['backtranslate'].includes($('operation').value)){
+$('operation').value='backtranslate';
+}
+if($('alphabet').value!=='PROTEIN'&&
+$('operation').value==='backtranslate'){
+$('operation').value='translate';
+}
+updateFields();
+});
+
+$('clear').addEventListener('click',()=>{
+$('inputSeq').value='';
+$('result').classList.remove('show');
+$('error').innerHTML='';
+$('stats').innerHTML='';
+$('resultText').innerHTML='';
+$('resultInfo').textContent='';
+output='';
+});
+
+$('run').addEventListener('click',()=>{
+$('error').innerHTML='';
+$('result').classList.remove('show');
+$('resultText').innerHTML='';
+$('stats').innerHTML='';
+output='';
+
+const s=cleanInput($('inputSeq').value);
+const type=$('alphabet').value;
+const op=$('operation').value;
+const host=$('species').value;
+
+if(!s){
+showError('Enter a sequence first.');
+return;
+}
+
+try{
+
+const nucleotideOps=[
+'revcomp','reverse','complement','transcribe','back',
+'translate','sixframe','orf','analyze','optimize','fasta','split'
+];
+
+if(nucleotideOps.includes(op)&&type!=='PROTEIN'){
+const bad=validateNucleotide(s);
+if(bad.length){
+throw new Error('Invalid nucleotide character(s): '+bad.join(', ')+'. Supported IUPAC ambiguity codes include R, Y, S, W, K, M, B, D, H, V and N.');
+}
+}
+
+if(['revcomp','reverse','complement','transcribe','back'].includes(op)){
+if(op==='transcribe'){
+if(type!=='DNA')throw new Error('Select DNA input for transcription.');
+setOutput(s.replace(/T/g,'U'),s.length+' nt · DNA → RNA');
+return;
+}
+if(op==='back'){
+if(type!=='RNA')throw new Error('Select RNA input for RNA → DNA conversion.');
+setOutput(s.replace(/U/g,'T'),s.length+' nt · RNA → DNA');
+return;
+}
+if(op==='reverse'){
+setOutput(reverse(s),s.length+' nt · Reversed');
+return;
+}
+if(op==='complement'){
+setOutput(complement(s),s.length+' nt · Complement');
+return;
+}
+if(op==='revcomp'){
+setOutput(revcomp(s),s.length+' nt · Reverse complement');
+return;
+}
+}
+
+if(op==='translate'||op==='sixframe'||op==='orf'){
+if(type==='PROTEIN')throw new Error('Select DNA or RNA input.');
+const dna=s.replace(/U/g,'T');
+
+if(op==='translate'){
+const frame=Number($('frame').value);
+const r=translate(dna,frame,$('stopMode').value);
+setOutput(r.protein,
+'Frame '+(frame>0?'+':'')+frame+
+' · '+r.complete+' complete codons · '+r.remainder+' trailing nt omitted',
+statHTML([
+{value:dna.length,label:'Input nucleotides'},
+{value:r.protein.length,label:'Amino acid symbols'},
+{value:r.stops,label:'Stop codons'},
+{value:r.ambiguous,label:'Ambiguous codons'}
+]));
+return;
+}
+
+if(op==='sixframe'){
+showFrames(allFrames(dna));
+return;
+}
+
+if(op==='orf'){
+const min=Number($('orfMin').value);
+if(!Number.isInteger(min)||min<1)throw new Error('Minimum ORF length must be a positive integer.');
+const orfs=findORFs(dna,min,$('orfStart').value);
+showORFs(orfs);
+return;
+}
+}
+
+if(op==='analyze'||op==='optimize'){
+if(type==='PROTEIN')throw new Error('Select DNA or RNA input.');
+const dna=s.replace(/U/g,'T');
+if(dna.length<3)throw new Error('At least one complete codon is required.');
+if(dna.length%3!==0)throw new Error('Coding sequence length must be divisible by 3 for codon analysis. Please check the reading frame and sequence boundaries.');
+const threshold=Number($('rareThreshold').value);
+if(!Number.isFinite(threshold)||threshold<0||threshold>1)throw new Error('Rare codon threshold must be between 0 and 1.');
+
+const badCodons=getCodons(dna).filter(x=>!CODON_AA[x.codon]);
+if(badCodons.length)throw new Error('Ambiguous or invalid codon '+badCodons[0].codon+' at nucleotide '+badCodons[0].position+'. Codon analysis requires unambiguous A, T, G and C.');
+
+const originalProtein=translate(dna,1).protein;
+if(originalProtein.includes('*')&&originalProtein.indexOf('*')!==originalProtein.length-1){
+throw new Error('Internal stop codon detected. Check the reading frame, sequence boundaries or genetic code before codon optimization.');
+}
+
+if(op==='analyze'){
+showAnalysis(dna,null,host,null);
+return;
+}
+
+const result=optimizeDNA(dna,host,$('optMethod').value);
+const optimized=result.sequence;
+const optimizedProtein=translate(optimized,1).protein;
+
+if(originalProtein!==optimizedProtein){
+throw new Error('Optimization validation failed: translated protein sequences differ.');
+}
+
+const target=$('target').value;
+const displayed=target==='RNA'?optimized.replace(/T/g,'U'):optimized;
+showAnalysis(dna,displayed,host,result.details);
+return;
+}
+
+if(op==='backtranslate'){
+if(type!=='PROTEIN')throw new Error('Select Protein as the input sequence type.');
+const bad=validateProtein(s);
+if(bad.length)throw new Error('Invalid amino acid symbol(s): '+bad.join(', ')+'. Supported: 20 standard amino acids and terminal *.');
+const result=backTranslate(s,host,$('target').value,$('optMethod').value);
+const dna=result.replace(/U/g,'T');
+const translated=translate(dna,1).protein;
+if(translated!==s)throw new Error('Back-translation validation failed.');
+setOutput(result,
+'Protein back-translation · '+PROFILE_NAMES[host]+' · '+$('target').value,
+statHTML([
+{value:s.length,label:'Input amino acids'},
+{value:result.length,label:'Output nucleotides'},
+{value:calculateMetrics(dna,host,.2).cai.toFixed(3),label:'CAI'},
+{value:gcStats(dna).gc.toFixed(2)+'%',label:'GC content'}
+]));
+return;
+}
+
+if(op==='fasta'||op==='split'){
+const n=Number($('lineLength').value);
+if(!Number.isInteger(n)||n<1||n>10000)throw new Error('Line width must be an integer from 1 to 10,000.');
+const result=op==='fasta'
+? '>'+( $('header').value.trim()||'Sequence_1')+'\n'+wrap(s,n)
+:wrap(s,n);
+setOutput(result,s.length+' characters · '+op.toUpperCase());
+return;
+}
+
+throw new Error('Unsupported operation.');
+
+}catch(e){
+showError(e.message||'An unexpected error occurred.');
+}
+});
+
+$('copy').addEventListener('click',async()=>{
+if(!output)return;
+try{
+await navigator.clipboard.writeText(output);
+$('copy').textContent='Copied';
+setTimeout(()=>$('copy').textContent='Copy result',1200);
+}catch(e){
+showError('Clipboard access unavailable; select and copy the result manually.');
+}
+});
+
+$('download').addEventListener('click',()=>{
+if(!output)return;
+const blob=new Blob([output],{type:'text/plain;charset=utf-8'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;
+a.download='sequence_result.txt';
+document.body.appendChild(a);
+a.click();
+a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+
+updateFields();
 </script>
-</body></html>
+</body>
+</html>
