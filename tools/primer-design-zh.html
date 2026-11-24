@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173b5e">
+<title>Primer Design Tool | Qingquan Xiao Lab</title>
+<style>
+:root{--navy:#173b5e;--blue:#2d648d;--ink:#263442;--muted:#647484;--line:#e3e9ef;--wash:#f5f8fb;--green:#287a59;--red:#a33b3b;--amber:#8a641b;--max-width:2000px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--wash);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.site-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);min-height:68px;margin:auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{color:var(--navy);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}.brand:hover{text-decoration:none}
+.home-link{padding:5px 12px;color:var(--navy);border:1px solid var(--line);border-radius:18px;font-size:13px;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#f4f8fb,#fff 72%);border-bottom:1px solid var(--line)}
+.hero-inner{max-width:var(--max-width);margin:auto;padding:43px 28px 34px}
+.eyebrow{margin:0 0 9px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:0;color:var(--navy);font-size:clamp(28px,4vw,38px);line-height:1.2;letter-spacing:-.035em}
+.intro{max-width:800px;margin:12px 0 0;color:var(--muted)}
+main{max-width:var(--max-width);margin:auto;padding:22px 28px 48px}
+.section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(23,59,94,.025)}
+.section+.section{border-top:1px solid var(--line);padding-top:24px}
+h2{margin:0 0 16px;color:var(--navy);font-size:20px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.field{min-width:0}.field label{display:block;margin:0 0 7px;font-size:13px;font-weight:650;color:var(--ink)}
+input,select,textarea{width:100%;border:1px solid #d8e1e9;border-radius:5px;background:#fff;color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:10px 11px}
+input,select{height:42px}textarea{min-height:145px;resize:vertical;line-height:1.55;font-family:Consolas,monospace}
+input:focus,select:focus,textarea:focus{outline:2px solid #c8d9e7;border-color:var(--blue)}
+.help,.field small{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-weight:400}
+.mode-row{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin:10px 0 14px}
+.mode-row label{display:flex;align-items:center;gap:7px;margin:0;font-size:13px;font-weight:600}.mode-row input{width:auto;height:auto;margin:0;accent-color:var(--navy)}
+.actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:16px}
+button{border:1px solid var(--navy);border-radius:5px;padding:9px 15px;background:var(--navy);color:#fff;font-size:13px;font-weight:650;cursor:pointer}
+button:hover{background:var(--blue)}button.secondary{background:#fff;color:var(--navy);border-color:#cfdbe5}button.secondary:hover{background:#f2f6f9}button:disabled{opacity:.5;cursor:not-allowed}
+.notice,.warning{padding:11px 13px;border-radius:4px;font-size:12px;margin:12px 0}.notice{background:#f1f6fa;border-left:3px solid var(--blue);color:#536779}.warning{background:#fff8e9;border-left:3px solid #c18a2b;color:#76551c}
+.status{margin:15px 0;padding:12px 14px;border-radius:5px;background:#f1f6fa;color:var(--navy);display:none;font-size:13px}.status.error{background:#fff1f1;color:var(--red)}.status.success{background:#edf7f0;color:var(--green)}
+.results-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px}.results-head h2{margin:0}
+.result-block{margin:20px 0 28px;border:1px solid var(--line);border-radius:7px;overflow:hidden}.result-title{background:#f5f8fb;padding:10px 13px;font-weight:700;color:var(--navy);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.table-wrap{width:100%;overflow-x:auto;overscroll-behavior-x:contain}table{border-collapse:collapse;width:100%;min-width:1450px;font-size:12px;white-space:nowrap}
+th,td{border:1px solid #e3e9ef;padding:8px 9px;text-align:center;vertical-align:middle}th{background:#f5f8fb;color:#334c60;font-weight:700}td.seq{font-family:Consolas,monospace;letter-spacing:.3px;text-align:left}td.penalty{font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}tr:hover td{background:#fbfdff}.empty{padding:20px;text-align:center;color:var(--muted)}
+.stats{padding:9px 12px;background:#fbfcfd;border-top:1px solid #e6ebef;color:var(--muted);font-size:12px}
+footer{padding:24px 28px 32px;color:#81909d;text-align:center;font-size:12px;background:#fff;border-top:1px solid var(--line)}
+@media(max-width:760px){.header-inner{min-height:62px;padding:10px 20px}.hero-inner{padding:34px 20px 28px}main{padding:18px 20px 38px}.section{padding:19px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.header-inner{align-items:flex-start;flex-direction:column;gap:6px}.grid{grid-template-columns:1fr}.hero-inner{padding:28px 18px 24px}main{padding:14px 14px 30px}.section{padding:16px}header h1{font-size:21px}}
+</style>
+</head>
+
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index-zh.html">The Qingquan Xiao Lab</a>
+    <a class="home-link" href="../index-zh.html">← Back to Lab Homepage</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">ONLINE TOOLS · THE QINGQUAN XIAO LAB</div>
+    <h1>Primer Design Tool</h1>
+    <p class="intro">Standalone browser-based PCR primer design. Enter a single DNA sequence or multiple FASTA records, adjust primer and product parameters, and evaluate candidate primer pairs locally in your browser.</p>
+  </div>
+</div>
+
+<main>
+
+<section class="section">
+  <h2>1. Input sequence</h2>
+
+  <div class="mode-row">
+    <label><input type="radio" name="mode" value="single" checked> Single sequence</label>
+    <label><input type="radio" name="mode" value="batch"> Batch FASTA</label>
+  </div>
+
+  <textarea id="sequenceInput" spellcheck="false"
+    placeholder="Paste a DNA sequence or FASTA records here..."></textarea>
+
+  <div class="help">
+    Single sequence accepts either a plain DNA sequence or one FASTA record.
+    Batch FASTA requires FASTA headers (>) and supports up to 20 records.
+    Maximum sequence length: 20,000 nt per record. Whitespace and digits are ignored.
+  </div>
+
+  <div class="actions">
+    <button class="secondary" id="exampleBtn" type="button">Load example</button>
+    <button class="secondary" id="clearBtn" type="button">Clear</button>
+  </div>
+</section>
+
+<section class="section">
+  <h2>2. Primer parameters</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label for="minLen">Minimum length (nt)</label>
+      <input id="minLen" type="number" min="15" max="35" step="1" value="18">
+      <small>Allowed range: 15–35 nt</small>
+    </div>
+
+    <div class="field">
+      <label for="optLen">Optimal length (nt)</label>
+      <input id="optLen" type="number" min="15" max="35" step="1" value="20">
+    </div>
+
+    <div class="field">
+      <label for="maxLen">Maximum length (nt)</label>
+      <input id="maxLen" type="number" min="15" max="35" step="1" value="27">
+    </div>
+
+    <div class="field">
+      <label for="minTm">Minimum Tm (°C)</label>
+      <input id="minTm" type="number" min="40" max="85" step="0.1" value="57">
+    </div>
+
+    <div class="field">
+      <label for="optTm">Optimal Tm (°C)</label>
+      <input id="optTm" type="number" min="40" max="85" step="0.1" value="60">
+    </div>
+
+    <div class="field">
+      <label for="maxTm">Maximum Tm (°C)</label>
+      <input id="maxTm" type="number" min="40" max="85" step="0.1" value="63">
+    </div>
+
+    <div class="field">
+      <label for="maxTmDiff">Maximum Tm difference (°C)</label>
+      <input id="maxTmDiff" type="number" min="0" max="15" step="0.1" value="2">
+    </div>
+
+    <div class="field">
+      <label for="minGC">Minimum GC (%)</label>
+      <input id="minGC" type="number" min="0" max="100" step="1" value="40">
+    </div>
+
+    <div class="field">
+      <label for="optGC">Optimal GC (%)</label>
+      <input id="optGC" type="number" min="0" max="100" step="1" value="50">
+    </div>
+
+    <div class="field">
+      <label for="maxGC">Maximum GC (%)</label>
+      <input id="maxGC" type="number" min="0" max="100" step="1" value="60">
+    </div>
+
+    <div class="field">
+      <label for="maxPoly">Maximum homopolymer length</label>
+      <input id="maxPoly" type="number" min="2" max="10" step="1" value="4">
+      <small>For example, AAAAA has length 5</small>
+    </div>
+
+    <div class="field">
+      <label for="gcClamp">3′ GC clamp</label>
+      <select id="gcClamp">
+        <option value="0" selected>Not required</option>
+        <option value="1">At least 1 G/C at 3′ end</option>
+        <option value="2">At least 2 consecutive G/C at 3′ end</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="notice">
+    Default values are typical starting points, not universal optima.
+    Minimum and maximum values are hard filters; optimal values contribute
+    to the ranking penalty.
+  </div>
+</section>
+
+<section class="section">
+  <h2>3. PCR product parameters</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label for="minProduct">Minimum product size (bp)</label>
+      <input id="minProduct" type="number" min="1" max="20000" step="1" value="100">
+    </div>
+
+    <div class="field">
+      <label for="optProductMin">Optimal product range — minimum (bp)</label>
+      <input id="optProductMin" type="number" min="1" max="20000" step="1" value="400">
+    </div>
+
+    <div class="field">
+      <label for="optProductMax">Optimal product range — maximum (bp)</label>
+      <input id="optProductMax" type="number" min="1" max="20000" step="1" value="800">
+    </div>
+
+    <div class="field">
+      <label for="maxProduct">Maximum product size (bp)</label>
+      <input id="maxProduct" type="number" min="1" max="20000" step="1" value="1000">
+    </div>
+  </div>
+
+  <div class="notice">
+    Products within the optimal range receive no product-size penalty.
+    Products outside that range may still be returned if they satisfy
+    the minimum and maximum product-size limits.
+  </div>
+</section>
+
+<section class="section">
+  <h2>4. Reaction and structure parameters</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label for="salt">Monovalent salt (mM)</label>
+      <input id="salt" type="number" min="1" max="1000" step="1" value="50">
+    </div>
+
+    <div class="field">
+      <label for="primerConc">Primer concentration (nM)</label>
+      <input id="primerConc" type="number" min="1" max="5000" step="1" value="50">
+    </div>
+
+    <div class="field">
+      <label for="maxSelfAny">Maximum self-any score</label>
+      <input id="maxSelfAny" type="number" min="0" max="35" step="1" value="8">
+    </div>
+
+    <div class="field">
+      <label for="maxSelfEnd">Maximum self-3′ score</label>
+      <input id="maxSelfEnd" type="number" min="0" max="35" step="1" value="3">
+    </div>
+
+    <div class="field">
+      <label for="maxPairAny">Maximum pair-any score</label>
+      <input id="maxPairAny" type="number" min="0" max="35" step="1" value="8">
+    </div>
+
+    <div class="field">
+      <label for="maxPairEnd">Maximum pair-3′ score</label>
+      <input id="maxPairEnd" type="number" min="0" max="35" step="1" value="3">
+    </div>
+
+    <div class="field">
+      <label for="numPairs">Maximum number of primer pairs</label>
+      <input id="numPairs" type="number" min="1" max="15" step="1" value="10">
+      <small>Maximum output: 15 pairs per sequence</small>
+    </div>
+
+    <div class="field">
+      <label for="candidateCap">Candidate pool per direction</label>
+      <select id="candidateCap">
+        <option value="150">150 — faster</option>
+        <option value="300" selected>300 — balanced</option>
+        <option value="500">500 — broader search</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>Important model limitation:</strong>
+    Self-any, Self-3′, Pair-any and Pair-3′ are longest contiguous
+    complementary-match indicators. They are not Primer3 thermodynamic
+    alignment scores, ΔG values, SELF_ANY_TH or SELF_END_TH.
+    Tm uses a nearest-neighbor calculation with a simplified monovalent
+    salt correction. No genome-wide off-target specificity search is performed.
+  </div>
+</section>
+
+<div class="actions">
+  <button class="primary" id="designBtn" type="button">Design primers</button>
+  <button class="secondary" id="exportCsvBtn" type="button" disabled>Export CSV</button>
+  <button class="secondary" id="exportFastaBtn" type="button" disabled>Export FASTA</button>
+  <button class="secondary" id="exportTxtBtn" type="button" disabled>Export TXT</button>
+</div>
+
+<div id="status" class="status" role="status" aria-live="polite"></div>
+
+<section class="section" id="resultsSection" style="display:none;margin-top:28px">
+  <div class="results-head">
+    <h2>5. Primer design results</h2>
+    <span id="summary" class="help"></span>
+  </div>
+  <div id="results"></div>
+</section>
+
+</main>
+
+<footer>Copyright © 2024-<span id="year"></span> The Qingquan Xiao Lab · Jinhua Institute of Zhejiang University<br><a href="../index-zh.html">Back to Lab Homepage</a></footer>
+<script>
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+</script>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const EXAMPLE_SINGLE = `>seq1
+ATGAGTATTCAACATTTCCGTGTCGCCCTTATTCCCTTTTTTGCGGCATTTTGCCTTCCTGTTTTTGCTCACCCAGAAACGCTGGTGAAAGTAAAAGATGCTGAAGATCAGTTGGGTGCACGAGTGGGTTACATCGAACTGGATCTCAACAGCGGTAAGATCCTTGAGAGTTTTCGCCCCGAAGAACGTTTTCCAATGATGAGCACTTTTAAAGTTCTGCTATGTGGCGCGGTATTATCCCGTATTGACGCCGGGCAAGAGCAACTCGGTCGCCGCATACACTATTCTCAGAATGACTTGGTTGAGTACTCACCAGTCACAGAAAAGCATCTTACGGATGGCATGACAGTAAGAGAATTATGCAGTGCTGCCATAACCATGAGTGATAACACTGCGGCCAACTTACTTCTGACAACGATTGGAGGACCGAAGGAGCTAACCGCTTTTTTGCACAACATGGGGGATCATGTAACTCGCCTTGATCGTTGGGAACCGGAGCTGAATGAAGCCATACCAAACGACGAGCGTGACACCACGATGCCTGTAGCAATGGCAACAACGTTGCGCAAACTATTAACTGGC GAACTACTTACTCTAGCTTCCCGGCAACAATTAATAGACTGGATGGAGGCGGATAAAGTTGCAGGACCACTTCTGCGCTCGGCCCTTCCGGCTGGCTGGTTTATTGCTGATAAATCTGGAGCCGGTGAGCGTGGAAGCCGCGGTATCATTGCAGCACTGGGGCCAGATGGTAAGCCCTCCCGTATCGTAGTTATCTACACGACGGGGAGTCAGGCAACTATGGATGAACGAAATAGACAGATCGCTGAGATAGGTGCCTCACTGATTAAGCATTGGTAA`;
+
+const EXAMPLE_BATCH = `>seq1
+ATGAGTATTCAACATTTCCGTGTCGCCCTTATTCCCTTTTTTGCGGCATTTTGCCTTCCTGTTTTTGCTCACCCAGAAACGCTGGTGAAAGTAAAAGATGCTGAAGATCAGTTGGGTGCACGAGTGGGTTACATCGAACTGGATCTCAACAGCGGTAAGATCCTTGAGAGTTTTCGCCCCGAAGAACGTTTTCCAATGATGAGCACTTTTAAAGTTCTGCTATGTGGCGCGGTATTATCCCGTATTGACGCCGGGCAAGAGCAACTCGGTCGCCGCATACACTATTCTCAGAATGACTTGGTTGAGTACTCACCAGTCACAGAAAAGCATCTTACGGATGGCATGACAGTAAGAGAATTATGCAGTGCTGCCATAACCATGAGTGATAACACTGCGGCCAACTTACTTCTGACAACGATTGGAGGACCGAAGGAGCTAACCGCTTTTTTGCACAACATGGGGGATCATGTAACTCGCCTTGATCGTTGGGAACCGGAGCTGAATGAAGCCATACCAAACGACGAGCGTGACACCACGATGCCTGTAGCAATGGCAACAACGTTGCGCAAACTATTAACTGGC GAACTACTTACTCTAGCTTCCCGGCAACAATTAATAGACTGGATGGAGGCGGATAAAGTTGCAGGACCACTTCTGCGCTCGGCCCTTCCGGCTGGCTGGTTTATTGCTGATAAATCTGGAGCCGGTGAGCGTGGAAGCCGCGGTATCATTGCAGCACTGGGGCCAGATGGTAAGCCCTCCCGTATCGTAGTTATCTACACGACGGGGAGTCAGGCAACTATGGATGAACGAAATAGACAGATCGCTGAGATAGGTGCCTCACTGATTAAGCATTGGTAA
+>seq2
+ttgagatcctttttttctgcgcgtaatctgctgcttgcaaacaaaaaaaccaccgctaccagcggtggtttgtttgccggatcaagagctaccaactctttttccgaaggtaactggcttcagcagagcgcagataccaaatactgtccttctagtgtagccgtagttaggccaccacttcaagaactctgtagcaccgcctacatacctcgctctgctaatcctgttaccagtggctgctgccagtggcgataagtcgtgtcttaccgggttggactcaagacgatagttaccggataaggcgcagcggtcgggctgaacggggggttcgtgcacacagcccagcttggagcgaacgacctacaccgaactgagatacctacagcgtgagctatgagaaagcgccacgcttcccgaagggagaaaggcggacaggtatccggtaagcggcagggtcggaacaggagagcgcacgagggagcttccagggggaaacgcctggtatctttatagtcctgtcgggtttcgccacctctgacttgagcgtcgatttttgtgatgctcgtcaggggggcggagcctatggaaa`;
+
+let latestResults = [];
+let runToken = 0;
+
+/* -------------------- Parameter validation -------------------- */
+
+function readNumber(id) {
+  const el = $(id);
+  const value = el.value.trim() === "" ? NaN : Number(el.value);
+
+  if (!Number.isFinite(value)) {
+    throw new Error("Please enter a valid number for: " +
+      el.previousElementSibling.textContent);
+  }
+
+  return value;
+}
+
+function getParams() {
+  const p = {
+    minLen:readNumber("minLen"),
+    optLen:readNumber("optLen"),
+    maxLen:readNumber("maxLen"),
+
+    minTm:readNumber("minTm"),
+    optTm:readNumber("optTm"),
+    maxTm:readNumber("maxTm"),
+    maxTmDiff:readNumber("maxTmDiff"),
+
+    minGC:readNumber("minGC"),
+    optGC:readNumber("optGC"),
+    maxGC:readNumber("maxGC"),
+
+    maxPoly:readNumber("maxPoly"),
+    gcClamp:readNumber("gcClamp"),
+
+    minProduct:readNumber("minProduct"),
+    optProductMin:readNumber("optProductMin"),
+    optProductMax:readNumber("optProductMax"),
+    maxProduct:readNumber("maxProduct"),
+
+    salt:readNumber("salt"),
+    primerConc:readNumber("primerConc"),
+
+    maxSelfAny:readNumber("maxSelfAny"),
+    maxSelfEnd:readNumber("maxSelfEnd"),
+    maxPairAny:readNumber("maxPairAny"),
+    maxPairEnd:readNumber("maxPairEnd"),
+
+    numPairs:readNumber("numPairs"),
+    candidateCap:readNumber("candidateCap")
+  };
+
+  if (
+    !Number.isInteger(p.minLen) ||
+    !Number.isInteger(p.optLen) ||
+    !Number.isInteger(p.maxLen) ||
+    p.minLen < 15 ||
+    p.minLen > p.optLen ||
+    p.optLen > p.maxLen ||
+    p.maxLen > 35
+  ) {
+    throw new Error(
+      "Primer lengths must satisfy 15 ≤ minimum ≤ optimal ≤ maximum ≤ 35 nt."
+    );
+  }
+
+  if (
+    p.minTm < 40 ||
+    p.minTm > p.optTm ||
+    p.optTm > p.maxTm ||
+    p.maxTm > 85
+  ) {
+    throw new Error(
+      "Tm values must satisfy 40 ≤ minimum ≤ optimal ≤ maximum ≤ 85 °C."
+    );
+  }
+
+  if (
+    p.minGC < 0 ||
+    p.minGC > p.optGC ||
+    p.optGC > p.maxGC ||
+    p.maxGC > 100
+  ) {
+    throw new Error(
+      "GC values must satisfy 0 ≤ minimum ≤ optimal ≤ maximum ≤ 100%."
+    );
+  }
+
+  if (
+    !Number.isInteger(p.maxPoly) ||
+    p.maxPoly < 2 ||
+    p.maxPoly > 10
+  ) {
+    throw new Error("Maximum homopolymer length must be an integer from 2 to 10.");
+  }
+
+  if (
+    p.minProduct < 1 ||
+    p.minProduct > p.optProductMin ||
+    p.optProductMin > p.optProductMax ||
+    p.optProductMax > p.maxProduct ||
+    p.maxProduct > 20000
+  ) {
+    throw new Error(
+      "Product sizes must satisfy 1 ≤ minimum ≤ optimal minimum ≤ optimal maximum ≤ maximum ≤ 20,000 bp."
+    );
+  }
+
+  if (p.maxTmDiff < 0 || p.maxTmDiff > 15) {
+    throw new Error("Maximum Tm difference must be 0–15 °C.");
+  }
+
+  for (const key of [
+    "maxSelfAny","maxSelfEnd","maxPairAny","maxPairEnd"
+  ]) {
+    if (!Number.isInteger(p[key]) || p[key] < 0 || p[key] > 35) {
+      throw new Error("Structure score limits must be integers from 0 to 35.");
+    }
+  }
+
+  if (
+    p.salt <= 0 || p.salt > 1000 ||
+    p.primerConc <= 0 || p.primerConc > 5000
+  ) {
+    throw new Error("Check salt and primer concentration values.");
+  }
+
+  if (
+    !Number.isInteger(p.numPairs) ||
+    p.numPairs < 1 ||
+    p.numPairs > 15
+  ) {
+    throw new Error("Maximum primer pairs must be an integer from 1 to 15.");
+  }
+
+  return p;
+}
+
+/* -------------------- Sequence input -------------------- */
+
+function cleanSequence(sequence) {
+  return sequence.toUpperCase().replace(/[\s\d]/g, "");
+}
+
+function parseInput() {
+  const raw = $("sequenceInput").value.trim();
+
+  if (!raw) {
+    throw new Error("Please enter a DNA sequence.");
+  }
+
+  const mode = document.querySelector(
+    'input[name="mode"]:checked'
+  ).value;
+
+  const records = [];
+  const hasFastaHeader = /^\s*>/m.test(raw);
+
+  if (mode === "single" && !hasFastaHeader) {
+    records.push({
+      id:"Sequence_1",
+      seq:cleanSequence(raw)
+    });
+  } else {
+    if (mode === "batch" && !hasFastaHeader) {
+      throw new Error(
+        "Batch FASTA mode requires FASTA headers beginning with '>'."
+      );
+    }
+
+    const lines = raw.replace(/\r/g, "").split("\n");
+    let current = null;
+
+    for (const line of lines) {
+      if (line.trim().startsWith(">")) {
+        if (current) records.push(current);
+
+        const header = line.trim().slice(1).trim();
+        current = {
+          id:header || "Sequence_" + (records.length + 1),
+          seq:""
+        };
+      } else if (line.trim()) {
+        if (!current) {
+          throw new Error(
+            "FASTA sequence data appears before the first '>' header."
+          );
+        }
+        current.seq += cleanSequence(line);
+      }
+    }
+
+    if (current) records.push(current);
+
+    if (mode === "single" && records.length !== 1) {
+      throw new Error(
+        "Single-sequence mode accepts exactly one FASTA record. " +
+        "Select Batch FASTA for multiple records."
+      );
+    }
+  }
+
+  if (!records.length) {
+    throw new Error("No sequences were found.");
+  }
+
+  if (records.length > 20) {
+    throw new Error("A maximum of 20 FASTA records is allowed per run.");
+  }
+
+  const nameCounts = new Map();
+
+  for (const record of records) {
+    if (!record.seq) {
+      throw new Error("Empty sequence: " + record.id);
+    }
+
+    if (!/^[ATGC]+$/.test(record.seq)) {
+      throw new Error(
+        "Only A, T, G and C are accepted. Invalid or ambiguous bases in: " +
+        record.id
+      );
+    }
+
+    if (record.seq.length > 20000) {
+      throw new Error("Sequence exceeds 20,000 nt: " + record.id);
+    }
+
+    const count = (nameCounts.get(record.id) || 0) + 1;
+    nameCounts.set(record.id, count);
+
+    if (count > 1) {
+      record.id += "_" + count;
+    }
+  }
+
+
+  return records;
+}
+
+/* -------------------- Basic sequence functions -------------------- */
+
+function revComp(sequence) {
+  const map = {A:"T",T:"A",G:"C",C:"G"};
+  let output = "";
+
+  for (let i = sequence.length - 1; i >= 0; i--) {
+    output += map[sequence[i]];
+  }
+
+  return output;
+}
+
+function gcPercent(sequence) {
+  let count = 0;
+
+  for (const base of sequence) {
+    if (base === "G" || base === "C") count++;
+  }
+
+  return 100 * count / sequence.length;
+}
+
+function maxHomopolymer(sequence) {
+  let best = 1;
+  let run = 1;
+
+  for (let i = 1; i < sequence.length; i++) {
+    run = sequence[i] === sequence[i - 1] ? run + 1 : 1;
+    if (run > best) best = run;
+  }
+
+  return best;
+}
+
+/* -------------------- Nearest-neighbor Tm -------------------- */
+
+/*
+  SantaLucia nearest-neighbor parameters:
+  ΔH: kcal/mol
+  ΔS: cal/(K mol)
+
+  The salt correction below is simplified. It is not the complete
+  thermodynamic implementation used by Primer3.
+*/
+
+const NN = {
+  AA:[-7.9,-22.2],
+  TT:[-7.9,-22.2],
+  AT:[-7.2,-20.4],
+  TA:[-7.2,-21.3],
+  CA:[-8.5,-22.7],
+  TG:[-8.5,-22.7],
+  GT:[-8.4,-22.4],
+  AC:[-8.4,-22.4],
+  CT:[-7.8,-21.0],
+  AG:[-7.8,-21.0],
+  GA:[-8.2,-22.2],
+  TC:[-8.2,-22.2],
+  CG:[-10.6,-27.2],
+  GC:[-9.8,-24.4],
+  GG:[-8.0,-19.9],
+  CC:[-8.0,-19.9]
+};
+
+function calcTm(sequence, p) {
+  let dh = 0.2;
+  let ds = -5.7;
+
+  for (let i = 0; i < sequence.length - 1; i++) {
+    const values = NN[sequence.slice(i, i + 2)];
+
+    if (!values) return NaN;
+
+    dh += values[0];
+    ds += values[1];
+  }
+
+  // Terminal A/T correction.
+  for (const base of [sequence[0], sequence[sequence.length - 1]]) {
+    if (base === "A" || base === "T") {
+      dh += 2.2;
+      ds += 6.9;
+    }
+  }
+
+  const R = 1.987;
+  const concentration = p.primerConc * 1e-9;
+  const saltM = p.salt / 1000;
+
+  const denominator = ds + R * Math.log(concentration / 4);
+
+  if (!(saltM > 0) || denominator === 0) {
+    return NaN;
+  }
+
+  return (
+    (1000 * dh / denominator) -
+    273.15 +
+    16.6 * Math.log10(saltM)
+  );
+}
+
+/* -------------------- Complementarity -------------------- */
+
+/*
+  Compare sequence A against reverse-complement(B).
+
+  any:
+    Longest contiguous complementary match.
+
+  end:
+    Longest contiguous match touching either primer's 3' end.
+
+  These are alignment indicators, not thermodynamic ΔG scores.
+*/
+
+function complementarity(a, b) {
+  const br = revComp(b);
+
+  let bestAny = 0;
+  let bestEnd = 0;
+
+  for (let offset = -(br.length - 1); offset < a.length; offset++) {
+    let run = 0;
+    let runA = -1;
+    let runB = -1;
+
+    function recordRun() {
+      if (run <= 0) return;
+
+      bestAny = Math.max(bestAny, run);
+
+      const touchesA3 = runA + run - 1 === a.length - 1;
+      const touchesB3 = runB === 0;
+
+      if (touchesA3 || touchesB3) {
+        bestEnd = Math.max(bestEnd, run);
+      }
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      const j = i - offset;
+
+      if (j >= 0 && j < br.length && a[i] === br[j]) {
+        if (run === 0) {
+          runA = i;
+          runB = j;
+        }
+
+        run++;
+
+      } else {
+        recordRun();
+        run = 0;
+        runA = -1;
+        runB = -1;
+      }
+    }
+
+    recordRun();
+  }
+
+  return {
+    any:bestAny,
+    end:bestEnd
+  };
+}
+
+/* -------------------- Hairpin screening -------------------- */
+
+/*
+  This estimates the longest possible complementary stem with
+  a minimum three-base loop. It is not a thermodynamic hairpin model.
+*/
+
+function hairpinStem(sequence) {
+  let best = 0;
+
+  for (let left = 0; left < sequence.length; left++) {
+    for (let right = left + 4; right < sequence.length; right++) {
+      let stem = 0;
+
+      while (left + stem < right - stem - 3) {
+        const a = sequence[left + stem];
+        const b = sequence[right - stem];
+
+        const paired =
+          (a === "A" && b === "T") ||
+          (a === "T" && b === "A") ||
+          (a === "G" && b === "C") ||
+          (a === "C" && b === "G");
+
+        if (!paired) break;
+
+        stem++;
+      }
+
+      if (stem > best) best = stem;
+    }
+  }
+
+  return best;
+}
+
+/* -------------------- Primer penalty -------------------- */
+
+/*
+  Heuristic ranking penalty:
+  lower values indicate a closer match to the selected preferences.
+
+  This is NOT the native Primer3 penalty formula.
+*/
+
+function primerPenalty(candidate, p) {
+  const tmPenalty = Math.abs(candidate.tm - p.optTm);
+  const lengthPenalty = Math.abs(candidate.length - p.optLen);
+  const gcPenalty = Math.abs(candidate.gc - p.optGC) / 5;
+
+  return (
+    tmPenalty * 1.0 +
+    lengthPenalty * 1.0 +
+    gcPenalty +
+    candidate.selfAny * 0.45 +
+    candidate.selfEnd * 1.25 +
+    candidate.hairpin * 0.8
+  );
+}
+
+/* -------------------- Candidate generation -------------------- */
+
+function makeCandidate(template, start, end, strand, p) {
+  const segment = template.slice(start, end + 1);
+  const primer = strand === "+" ? segment : revComp(segment);
+
+  // Apply inexpensive sequence-composition filters first.
+  const gc = gcPercent(primer);
+  if (gc < p.minGC || gc > p.maxGC) return null;
+
+  const poly = maxHomopolymer(primer);
+  if (poly > p.maxPoly) return null;
+
+  if (p.gcClamp === 1 && !/[GC]$/.test(primer)) return null;
+  if (p.gcClamp === 2 && !/[GC]{2}$/.test(primer)) return null;
+
+  // Thermodynamic and structure calculations are performed only
+  // after the inexpensive hard filters have passed.
+  const tm = calcTm(primer, p);
+  if (!Number.isFinite(tm) || tm < p.minTm || tm > p.maxTm) return null;
+
+  const self = complementarity(primer, primer);
+  if (self.any > p.maxSelfAny || self.end > p.maxSelfEnd) return null;
+
+  const hairpin = hairpinStem(primer);
+  if (hairpin >= 6) return null;
+
+  const candidate = {
+    seq:primer,
+    strand,
+    length:primer.length,
+    start,
+    end,
+    tm,
+    gc,
+    selfAny:self.any,
+    selfEnd:self.end,
+    hairpin,
+    poly
+  };
+
+  candidate.penalty = primerPenalty(candidate, p);
+  return candidate;
+}
+
+function generateCandidates(sequence, strand, p) {
+  const candidates = [];
+
+  for (let start = 0; start <= sequence.length - p.minLen; start++) {
+    const maxEnd = Math.min(
+      sequence.length - 1,
+      start + p.maxLen - 1
+    );
+
+    for (
+      let end = start + p.minLen - 1;
+      end <= maxEnd;
+      end++
+    ) {
+      const candidate = makeCandidate(
+        sequence,
+        start,
+        end,
+        strand,
+        p
+      );
+
+      if (candidate) candidates.push(candidate);
+    }
+  }
+
+  candidates.sort((a, b) =>
+    a.penalty - b.penalty ||
+    a.start - b.start ||
+    a.length - b.length
+  );
+
+  // Keep the candidate pool position-aware. A simple global top-N cap can
+  // otherwise retain nearly all candidates from one favorable local region,
+  // leaving other regions without primers and missing valid product windows.
+  const cap = p.candidateCap;
+  let selected = candidates;
+
+  if (candidates.length > cap) {
+    const binCount = Math.min(20, cap, Math.max(1, sequence.length));
+    const bins = Array.from({length:binCount}, () => []);
+
+    for (const candidate of candidates) {
+      const index = Math.min(
+        binCount - 1,
+        Math.floor(candidate.start / sequence.length * binCount)
+      );
+      bins[index].push(candidate);
+    }
+
+    const chosen = new Set();
+    const balanced = [];
+    const perBin = Math.ceil(cap / binCount);
+
+    for (const bin of bins) {
+      for (const candidate of bin.slice(0, perBin)) {
+        if (balanced.length >= cap) break;
+        balanced.push(candidate);
+        chosen.add(candidate);
+      }
+    }
+
+    // Fill any unused slots with the globally best remaining candidates.
+    if (balanced.length < cap) {
+      for (const candidate of candidates) {
+        if (chosen.has(candidate)) continue;
+        balanced.push(candidate);
+        if (balanced.length >= cap) break;
+      }
+    }
+
+    balanced.sort((a, b) =>
+      a.penalty - b.penalty ||
+      a.start - b.start ||
+      a.length - b.length
+    );
+
+    selected = balanced;
+  }
+
+  return {
+    allCount:candidates.length,
+    items:selected
+  };
+}
+
+/* -------------------- Pair scoring -------------------- */
+
+function productPenalty(size, p) {
+  if (
+    size >= p.optProductMin &&
+    size <= p.optProductMax
+  ) {
+    return 0;
+  }
+
+  if (size < p.optProductMin) {
+    const span = Math.max(
+      1,
+      p.optProductMin - p.minProduct
+    );
+
+    return 3 * (p.optProductMin - size) / span;
+  }
+
+  const span = Math.max(
+    1,
+    p.maxProduct - p.optProductMax
+  );
+
+  return 3 * (size - p.optProductMax) / span;
+}
+
+function designOne(record, p) {
+  const sequence = record.seq;
+
+  const left = generateCandidates(sequence, "+", p);
+  const right = generateCandidates(sequence, "-", p);
+
+  const pairs = [];
+
+  let productRejected = 0;
+  let tmRejected = 0;
+  let structureRejected = 0;
+  let considered = 0;
+
+  for (const forward of left.items) {
+    for (const reverse of right.items) {
+
+      // Reverse primer binding site must be downstream.
+      if (reverse.start <= forward.end) continue;
+
+      const productSize =
+        reverse.end - forward.start + 1;
+
+      if (
+        productSize < p.minProduct ||
+        productSize > p.maxProduct
+      ) {
+        productRejected++;
+        continue;
+      }
+
+      considered++;
+
+      const tmDiff = Math.abs(
+        forward.tm - reverse.tm
+      );
+
+      if (tmDiff > p.maxTmDiff) {
+        tmRejected++;
+        continue;
+      }
+
+      const pairComp = complementarity(
+        forward.seq,
+        reverse.seq
+      );
+
+      if (
+        pairComp.any > p.maxPairAny ||
+        pairComp.end > p.maxPairEnd
+      ) {
+        structureRejected++;
+        continue;
+      }
+
+      const pairPenalty =
+        forward.penalty +
+        reverse.penalty +
+        tmDiff * 2.0 +
+        productPenalty(productSize, p) +
+        pairComp.any * 0.5 +
+        pairComp.end * 1.25;
+
+      pairs.push({
+        id:record.id,
+        forward,
+        reverse,
+        productSize,
+        tmDiff,
+        pairAny:pairComp.any,
+        pairEnd:pairComp.end,
+        penalty:pairPenalty
+      });
+    }
+  }
+
+  pairs.sort((a, b) =>
+    a.penalty - b.penalty ||
+    a.forward.start - b.forward.start ||
+    a.reverse.start - b.reverse.start
+  );
+
+  // Remove pairs with nearly identical binding sites.
+  const selected = [];
+
+  for (const pair of pairs) {
+    const redundant = selected.some(existing =>
+      Math.abs(existing.forward.start - pair.forward.start) < 5 &&
+      Math.abs(existing.forward.end - pair.forward.end) < 5 &&
+      Math.abs(existing.reverse.start - pair.reverse.start) < 5 &&
+      Math.abs(existing.reverse.end - pair.reverse.end) < 5
+    );
+
+    if (!redundant) selected.push(pair);
+
+    if (selected.length >= p.numPairs) break;
+  }
+
+  return {
+    id:record.id,
+    length:sequence.length,
+    pairs:selected,
+
+    stats:{
+      forwardCandidates:left.allCount,
+      reverseCandidates:right.allCount,
+      forwardUsed:left.items.length,
+      reverseUsed:right.items.length,
+      considered,
+      productRejected,
+      tmRejected,
+      structureRejected,
+      validPairs:pairs.length,
+      candidateCap:p.candidateCap
+    }
+  };
+}
+
+/* -------------------- Result rendering -------------------- */
+
+function fmt(value, digits = 2) {
+  return Number(value).toFixed(digits);
+}
+
+function addCell(row, value, className = "") {
+  const cell = document.createElement("td");
+  cell.textContent = String(value);
+
+  if (className) cell.className = className;
+
+  row.appendChild(cell);
+}
+
+function renderResults(results) {
+  const root = $("results");
+  root.replaceChildren();
+
+  for (const result of results) {
+    const block = document.createElement("div");
+    block.className = "result-block";
+
+    const title = document.createElement("div");
+    title.className = "result-title";
+
+    const name = document.createElement("span");
+    name.textContent =
+      result.id + " · " + result.length.toLocaleString() + " bp";
+
+    const count = document.createElement("span");
+    count.textContent =
+      result.pairs.length + " pair(s) returned";
+
+    title.append(name, count);
+    block.appendChild(title);
+
+    if (!result.pairs.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+
+      empty.textContent =
+        "No primer pairs passed all current filters. " +
+        "Consider widening the Tm or product-size range, " +
+        "relaxing structure limits, or increasing the candidate pool.";
+
+      block.appendChild(empty);
+
+    } else {
+      const wrap = document.createElement("div");
+      wrap.className = "table-wrap";
+
+      const table = document.createElement("table");
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th rowspan="2">Pair</th>
+            <th colspan="9">Forward primer</th>
+            <th colspan="9">Reverse primer</th>
+            <th colspan="5">Pair properties</th>
+          </tr>
+          <tr>
+            <th>Sequence (5′→3′)</th>
+            <th>Strand</th>
+            <th>Length</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Tm (°C)</th>
+            <th>GC (%)</th>
+            <th>Self-any</th>
+            <th>Self-3′</th>
+
+            <th>Sequence (5′→3′)</th>
+            <th>Strand</th>
+            <th>Length</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Tm (°C)</th>
+            <th>GC (%)</th>
+            <th>Self-any</th>
+            <th>Self-3′</th>
+
+            <th>Product (bp)</th>
+            <th>Tm diff. (°C)</th>
+            <th>Pair-any</th>
+            <th>Pair-3′</th>
+            <th>Pair penalty ↓</th>
+          </tr>
+        </thead>
+      `;
+
+      const tbody = document.createElement("tbody");
+
+      result.pairs.forEach((pair, index) => {
+        const f = pair.forward;
+        const r = pair.reverse;
+
+        const row = document.createElement("tr");
+
+        const cells = [
+          [index + 1, ""],
+
+          [f.seq, "seq"],
+          ["Plus", ""],
+          [f.length, ""],
+          [f.start + 1, ""],
+          [f.end + 1, ""],
+          [fmt(f.tm), ""],
+          [fmt(f.gc), ""],
+          [f.selfAny, ""],
+          [f.selfEnd, ""],
+
+          [r.seq, "seq"],
+          ["Minus", ""],
+          [r.length, ""],
+          [r.end + 1, ""],
+          [r.start + 1, ""],
+          [fmt(r.tm), ""],
+          [fmt(r.gc), ""],
+          [r.selfAny, ""],
+          [r.selfEnd, ""],
+
+          [pair.productSize, ""],
+          [fmt(pair.tmDiff), ""],
+          [pair.pairAny, ""],
+          [pair.pairEnd, ""],
+          [fmt(pair.penalty), "penalty"]
+        ];
+
+        for (const [value, className] of cells) {
+          addCell(row, value, className);
+        }
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      block.appendChild(wrap);
+    }
+
+    const stats = document.createElement("div");
+    stats.className = "stats";
+
+    stats.textContent =
+      "Candidates generated (forward/reverse): " +
+      result.stats.forwardCandidates + " / " +
+      result.stats.reverseCandidates +
+
+      " · Candidates used in pair search: " +
+      result.stats.forwardUsed + " / " +
+      result.stats.reverseUsed +
+
+      " · Pair combinations evaluated: " +
+      result.stats.considered +
+
+      " · Rejected by product size / Tm difference / pair structure: " +
+      result.stats.productRejected + " / " +
+      result.stats.tmRejected + " / " +
+      result.stats.structureRejected +
+
+      " · Passing pairs before de-duplication: " +
+      result.stats.validPairs +
+
+      (
+        result.stats.forwardCandidates > result.stats.forwardUsed ||
+        result.stats.reverseCandidates > result.stats.reverseUsed
+        ? " · Candidate pool cap applied (" +
+          result.stats.candidateCap + " per direction)."
+        : ""
+      );
+
+    block.appendChild(stats);
+    root.appendChild(block);
+  }
+}
+
+/* -------------------- Status and export -------------------- */
+
+function setStatus(message, type = "") {
+  const element = $("status");
+
+  element.textContent = message;
+  element.className = "status" + (type ? " " + type : "");
+  element.style.display = "block";
+}
+
+function downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], {type:mimeType});
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  return '"' + text.replace(/"/g, '""') + '"';
+}
+
+function exportCSV() {
+  const rows = [[
+    "Sequence ID",
+    "Pair",
+
+    "Forward sequence",
+    "Forward strand",
+    "Forward length",
+    "Forward start",
+    "Forward stop",
+    "Forward Tm",
+    "Forward GC (%)",
+    "Forward self-any",
+    "Forward self-3prime",
+
+    "Reverse sequence",
+    "Reverse strand",
+    "Reverse length",
+    "Reverse start",
+    "Reverse stop",
+    "Reverse Tm",
+    "Reverse GC (%)",
+    "Reverse self-any",
+    "Reverse self-3prime",
+
+    "Product size",
+    "Tm difference",
+    "Pair-any",
+    "Pair-3prime",
+    "Pair penalty"
+  ]];
+
+  latestResults.forEach(result => {
+    result.pairs.forEach((pair, index) => {
+      const f = pair.forward;
+      const r = pair.reverse;
+
+      rows.push([
+        result.id,
+        index + 1,
+
+        f.seq,
+        "Plus",
+        f.length,
+        f.start + 1,
+        f.end + 1,
+        f.tm,
+        f.gc,
+        f.selfAny,
+        f.selfEnd,
+
+        r.seq,
+        "Minus",
+        r.length,
+        r.end + 1,
+        r.start + 1,
+        r.tm,
+        r.gc,
+        r.selfAny,
+        r.selfEnd,
+
+        pair.productSize,
+        pair.tmDiff,
+        pair.pairAny,
+        pair.pairEnd,
+        pair.penalty
+      ]);
+    });
+  });
+
+  const csv =
+    "\uFEFF" +
+    rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+
+  downloadFile(
+    "primer_design_results.csv",
+    csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+function exportFASTA() {
+  let output = "";
+
+  latestResults.forEach(result => {
+    result.pairs.forEach((pair, index) => {
+      output +=
+        ">" + result.id + "_Pair_" + (index + 1) + "_Forward\n" +
+        pair.forward.seq + "\n";
+
+      output +=
+        ">" + result.id + "_Pair_" + (index + 1) + "_Reverse\n" +
+        pair.reverse.seq + "\n";
+    });
+  });
+
+  downloadFile(
+    "primer_design_results.fasta",
+    output,
+    "text/plain;charset=utf-8"
+  );
+}
+
+function exportTXT() {
+  let output =
+    "Primer Design Results\n" +
+    "=====================\n\n" +
+    "Pair penalty is a heuristic ranking value; lower is better.\n" +
+    "Structure values are contiguous-match indicators, not thermodynamic scores.\n\n";
+
+  latestResults.forEach(result => {
+    output +=
+      result.id + " (" + result.length + " bp)\n" +
+      "Pairs returned: " + result.pairs.length + "\n\n";
+
+    result.pairs.forEach((pair, index) => {
+      const f = pair.forward;
+      const r = pair.reverse;
+
+      output +=
+        "Pair " + (index + 1) +
+        " | Pair penalty: " + fmt(pair.penalty) + "\n";
+
+      output +=
+        "Forward: " + f.seq +
+        " | Plus | " + (f.start + 1) + "-" + (f.end + 1) +
+        " | Tm " + fmt(f.tm) + " °C" +
+        " | GC " + fmt(f.gc) + "%" +
+        " | Self any/3': " + f.selfAny + "/" + f.selfEnd + "\n";
+
+      output +=
+        "Reverse: " + r.seq +
+        " | Minus | " + (r.end + 1) + "-" + (r.start + 1) +
+        " | Tm " + fmt(r.tm) + " °C" +
+        " | GC " + fmt(r.gc) + "%" +
+        " | Self any/3': " + r.selfAny + "/" + r.selfEnd + "\n";
+
+      output +=
+        "Product: " + pair.productSize + " bp" +
+        " | Tm difference: " + fmt(pair.tmDiff) + " °C" +
+        " | Pair any/3': " + pair.pairAny + "/" + pair.pairEnd +
+        "\n\n";
+    });
+
+    output += "\n";
+  });
+
+  downloadFile(
+    "primer_design_results.txt",
+    output,
+    "text/plain;charset=utf-8"
+  );
+}
+
+/* -------------------- User interface events -------------------- */
+
+function resetExports() {
+  $("exportCsvBtn").disabled = true;
+  $("exportFastaBtn").disabled = true;
+  $("exportTxtBtn").disabled = true;
+}
+
+$("exampleBtn").addEventListener("click", () => {
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  $("sequenceInput").value = mode === "batch" ? EXAMPLE_BATCH : EXAMPLE_SINGLE;
+});
+
+$("clearBtn").addEventListener("click", () => {
+  runToken++;
+
+  $("sequenceInput").value = "";
+  $("resultsSection").style.display = "none";
+  $("status").style.display = "none";
+
+  latestResults = [];
+  resetExports();
+});
+
+$("designBtn").addEventListener("click", () => {
+  let params;
+  let records;
+
+  try {
+    params = getParams();
+    records = parseInput();
+
+  } catch (error) {
+    setStatus(error.message || String(error), "error");
+    return;
+  }
+
+  const token = ++runToken;
+  const button = $("designBtn");
+
+  button.disabled = true;
+  button.textContent = "Designing...";
+
+  resetExports();
+
+  setStatus(
+    "Designing primers with the built-in JavaScript engine. " +
+    "All calculations run locally in this browser; no external files or server are required. " +
+    "Large templates or broad search settings may take longer."
+  );
+
+  // Allow the browser to paint the status message first.
+  setTimeout(() => {
+    if (token !== runToken) return;
+
+    try {
+      const computed = records.map(record =>
+        designOne(record, params)
+      );
+
+      if (token !== runToken) return;
+
+      latestResults = computed;
+
+      renderResults(latestResults);
+
+      $("resultsSection").style.display = "block";
+
+      const total = latestResults.reduce(
+        (sum, result) => sum + result.pairs.length,
+        0
+      );
+
+      $("summary").textContent =
+        records.length + " sequence(s) · " +
+        total + " pair(s) returned";
+
+      setStatus(
+        "Analysis completed. " + total +
+        " qualifying pair(s) returned. " +
+        "The requested pair count is a maximum, not a guarantee.",
+        "success"
+      );
+
+      const hasResults = total > 0;
+
+      $("exportCsvBtn").disabled = !hasResults;
+      $("exportFastaBtn").disabled = !hasResults;
+      $("exportTxtBtn").disabled = !hasResults;
+
+    } catch (error) {
+      setStatus(error.message || String(error), "error");
+
+    } finally {
+      if (token === runToken) {
+        button.disabled = false;
+        button.textContent = "Design primers";
+      }
+    }
+  }, 30);
+});
+
+$("exportCsvBtn").addEventListener("click", exportCSV);
+$("exportFastaBtn").addEventListener("click", exportFASTA);
+$("exportTxtBtn").addEventListener("click", exportTXT);
+
+</script>
+</body>
+</html>
